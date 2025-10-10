@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port $SERVER_PORT",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
-  },
+  "dev": "next dev -p 3000",
+  "build": "next build",
+  "start": "next start -p 3000",
+  "lint": "eslint .",
+  "format": "prettier --write .",
+  "format:check": "prettier --check ."
+},
   "dependencies": {
     "autoprefixer": "^10.4.21",
     "next": "15.5.4",
