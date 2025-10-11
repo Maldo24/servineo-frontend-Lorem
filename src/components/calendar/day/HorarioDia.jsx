@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
 const API = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 export default function DaySchedule({ fixerId = "fx-202" }) {
   const [date, setDate] = useState("2025-08-17");
   const [loading, setLoading] = useState(false);
@@ -33,9 +31,9 @@ export default function DaySchedule({ fixerId = "fx-202" }) {
   const labelByEstado = (estado) => {
     switch (estado) {
       case "libre":
-        return { text: "DISPONIBLE", cls: "text-emerald-600", icon: "＋" };
+        return { text: "DISPONIBLE",cls:"text-emerald-600", icon: "＋" };
       case "ocupado":
-        return { text: "RESERVADO", cls: "text-amber-500", icon: "✎" };
+        return { text: "RESERVADO",cls:"text-amber-500", icon: "✎" };
       case "no_disponible":
         return { text: "NO DISPONIBLE", cls: "text-slate-400", icon: null };
       default:
