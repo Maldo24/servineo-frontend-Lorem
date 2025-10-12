@@ -1,33 +1,6 @@
 "use client";
-
 import { useEffect, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
-
-
-type MapPickerModalProps = {
-  open: boolean;
-  initialLat?: number;
-  initialLon?: number;
-  apiBase: string;
-  locationIqKey?: string;
-  onClose: () => void;
-  onConfirm: (picked: {
-    lat: number;
-    lon: number;
-    display_name: string;
-    place_id?: string;
-    icon?: string;
-  }) => void;
-};
-
-const MapPickerModal = dynamic(() => import("@/components/calendar/day/ModalUbicacionMapa"), {
-  ssr: false,
-  loading: () => <div>Cargando mapa...</div>
-}) as React.ComponentType<MapPickerModalProps>;
-
 const API = process.env.NEXT_PUBLIC_API_BASE_URL as string;
-const LTK = process.env.NEXT_PUBLIC_LOCATIONIQ_TOKEN;
-
 type CitaResponse = {
   Cita: {
     id_Cita: string;
@@ -78,14 +51,6 @@ type CitaResponse = {
   };
 };
 
-type SearchItem = {
-  place_id: string;
-  display_name: string;
-  lat: string;
-  lon: string;
-  icon?: string;
-};
-
 function formatFechaHora(iso: string) {
   const d = new Date(iso);
   const fmtFecha = d.toLocaleDateString("es-ES", {
@@ -113,14 +78,8 @@ export default function EditBookingModal({
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
   const [data, setData] = useState<CitaResponse | null>(null);
-
-  const [ubicacionEditable, setUbicacionEditable] = useState(false);
   const [descEditable, setDescEditable] = useState(false);
-  const [direccion, setDireccion] = useState("");
   const [desc, setDesc] = useState("");
-
-  const [pickedLoc, setPickedLoc] = useState<SearchItem | null>(null);
-  const [mapOpen, setMapOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -132,7 +91,6 @@ export default function EditBookingModal({
         if (!res.ok) throw new Error(`No se pudo cargar la cita (HTTP ${res.status})`);
         const json: CitaResponse = JSON.parse(txt);
         setData(json);
-        setDireccion(json.Ubicacion?.direccion ?? "");
         setDesc(json.DetalleCita?.descripcion_Cita ?? "");
       } catch (e) {
         if (e instanceof Error) setErr(e.message);
@@ -157,29 +115,6 @@ export default function EditBookingModal({
     try {
       setSaving(true);
       setErr("");
-
-      if (ubicacionEditable && (pickedLoc || direccion !== data.Ubicacion?.direccion)) {
-        const body = {
-          Ubicacion: {
-            id_Ubicacion: data.DetalleCita.id_Ubicacion,
-            nombre_Ubicacion: data.Ubicacion?.nombre_Ubicacion ?? "Ubicación",
-            direccion: pickedLoc?.display_name ?? direccion,
-            latitud_Ubicacion: pickedLoc ? Number(pickedLoc.lat) : data.Ubicacion?.latitud_Ubicacion,
-            longitud_Ubicacion: pickedLoc ? Number(pickedLoc.lon) : data.Ubicacion?.longitud_Ubicacion,
-            provider: LTK ? "locationiq" : "mock",
-            place_id: pickedLoc?.place_id ?? data.Ubicacion?.place_id,
-            display_name: pickedLoc?.display_name ?? data.Ubicacion?.display_name,
-          },
-        };
-
-        const r1 = await fetch(`${API}/citas/${data.Cita.id_Cita}/ubicacion`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        if (!r1.ok) throw new Error("No se pudo guardar la ubicación");
-      }
-
       if (descEditable && desc !== data.DetalleCita.descripcion_Cita) {
         const r2 = await fetch(`${API}/citas/${data.Cita.id_Cita}`, {
           method: "PATCH",
@@ -204,22 +139,7 @@ export default function EditBookingModal({
     }
   }
 
-  const handleMapConfirm = (picked: {
-    lat: number;
-    lon: number;
-    display_name: string;
-    place_id?: string;
-    icon?: string;
-  }) => {
-    setMapOpen(false);
-    setPickedLoc({
-      place_id: picked.place_id ?? "picked",
-      display_name: picked.display_name,
-      lat: String(picked.lat),
-      lon: String(picked.lon),
-    });
-    setDireccion(picked.display_name);
-    setUbicacionEditable(true);
+  const handleEditUbicacion = () => {
   };
 
   return (
@@ -261,21 +181,21 @@ export default function EditBookingModal({
                 Ubicación:
                 <button
                   type="button"
-                  onClick={() => setMapOpen(true)}
+                  onClick={handleEditUbicacion}
                   className="ml-2 rounded-md p-1 text-slate-500 hover:bg-slate-100"
-                  title="Editar en mapa"
+                  title="Editar ubicación (no disponible)"
                 >
                   ✎
                 </button>
               </label>
 
               <input
-                value={direccion}
+                value={data.Ubicacion?.direccion ?? ""}
                 readOnly
                 className="w-full rounded-xl border bg-slate-100 p-2.5 text-[15px] text-slate-700"
               />
               <p className="mt-1 text-xs text-slate-500">
-                Toca ✎ para mover el pin en el mapa y actualizar la dirección.
+                La edición de ubicación no está disponible temporalmente.
               </p>
             </div>
 
@@ -288,7 +208,7 @@ export default function EditBookingModal({
                   className={`rounded-md p-1 ${
                     descEditable
                       ? "bg-amber-100 text-amber-700"
-                      : "text-slate-500 hover:bg-slate-100"
+                      : "text-slate-800 hover:bg-slate-100"
                   }`}
                   title={descEditable ? "Salir de edición" : "Editar"}
                 >
@@ -309,7 +229,7 @@ export default function EditBookingModal({
                 placeholder="Describe el trabajo…"
                 className={`w-full resize-none rounded-xl border p-2.5 text-[15px] transition ${
                   descEditable
-                    ? "bg-white ring-2 ring-sky-400 border-sky-300"
+                    ? "bg-white ring-2 ring-sky-400 border-sky-300 text-gray-900"
                     : "bg-slate-100 text-slate-600"
                 }`}
               />
@@ -337,18 +257,6 @@ export default function EditBookingModal({
                 {saving ? "Guardando…" : "Aceptar"}
               </button>
             </div>
-
-            {mapOpen && (
-              <MapPickerModal
-                open={mapOpen}
-                apiBase={API}
-                locationIqKey={LTK}
-                initialLat={data?.Ubicacion?.latitud_Ubicacion ?? -16.5}
-                initialLon={data?.Ubicacion?.longitud_Ubicacion ?? -68.15}
-                onClose={() => setMapOpen(false)}
-                onConfirm={handleMapConfirm}
-              />
-            )}
           </>
         )}
       </div>
