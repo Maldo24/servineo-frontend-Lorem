@@ -12,13 +12,8 @@ export default function CalendarPage() {
     // const [showRequesterIdInput, setShowRequesterIdInput] = useState(false);
 
     const router = useRouter();
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const today = new Date();
-    const events = [
-        { title: 'Evento 1', date: new Date(today.getFullYear(), today.getMonth(), 5) },
-        { title: 'Evento 2', date: new Date(today.getFullYear(), today.getMonth(), 12) },
-        { title: 'Evento 3', date: new Date(today.getFullYear(), today.getMonth(), 12) },
-    ];
 
     //Effect para manejar los event listeners de teclado
     useEffect(() => {
@@ -26,13 +21,13 @@ export default function CalendarPage() {
             // Verificar si se presionaron Ctrl + Alt + E
             if (event.ctrlKey && event.altKey && event.key === 'e') {
                 event.preventDefault(); // Prevenir comportamiento por defecto
-                
+
                 // Mostrar prompt para introducir requesterId
                 const newRequesterId = prompt(
                     "Introduce el requesterId:",
                     requesterId
                 );
-                
+
                 // Si el usuario introdujo un valor (no canceló)
                 if (newRequesterId !== null) {
                     setRequesterId(newRequesterId);
@@ -50,6 +45,13 @@ export default function CalendarPage() {
         };
     }, [requesterId]); // Dependencia: se recrea cuando requesterId cambia
 
+
+
+    const handleDataChange = (newDate: Date) => {
+        setSelectedDate(newDate);
+    }
+
+    //console.log(selectedDate);
     return (
         <div className="flex flex-col font-bold bg-white min-h-screen">
             <div className="flex items-center">
@@ -92,14 +94,15 @@ export default function CalendarPage() {
                 <MobileCalendar
                     fixer_id={fixerId}
                     selectedDate={selectedDate}
-                    onSelectDate={setSelectedDate}
-                   
+                    onSelectDate={handleDataChange}
+
                 />
                 <div></div>
                 <MobileList
                     selectedDate={selectedDate}
                     fixerId={fixerId}
                     requesterId={requesterId}
+                    onDateChange={handleDataChange}
                 />
             </div>
         </div>

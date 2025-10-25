@@ -2,20 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 
-import DaySchedule  from '../calendar/mobile/MobileDayliView'
-import WeekSchedule  from '../calendar/mobile/MobileWeekView'
+import DaySchedule from '../calendar/mobile/MobileDayliView'
+import WeekSchedule from '../calendar/mobile/MobileWeekView'
 
 interface MobileListProps {
     selectedDate: Date | null;
     fixerId: string,
     requesterId: string
+    onDateChange?: (newDate: Date) => void;
 }
 
 
 export default function MobileList({
     selectedDate,
     fixerId,
-    requesterId
+    requesterId,
+    onDateChange
 }: MobileListProps) {
     const today = selectedDate;
     const [type, setType] = useState<'day' | 'week'>('day');
@@ -45,17 +47,22 @@ export default function MobileList({
                             }`}
                     >
                         Horario de la semana
-                    </button>  
+                    </button>
                 </div>
             </div>
             <div className="mt-4">
                 {type === "day" &&
-                <DaySchedule fixerId={fixerId} requesterId={requesterId} selectedDate={selectedDate} />
+                    <DaySchedule
+                        fixerId={fixerId}
+                        requesterId={requesterId}
+                        selectedDate={selectedDate}
+                        onDateChange={onDateChange}
+                    />
                 }
             </div>
             <div className="mt-4">
                 {type === "week" &&
-                <WeekSchedule fixerId={fixerId} requesterId={requesterId} selectedDate={selectedDate} />
+                    <WeekSchedule fixerId={fixerId} requesterId={requesterId} selectedDate={selectedDate} />
                 }
             </div>
         </div>

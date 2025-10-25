@@ -5,6 +5,7 @@ import axios from "axios";
 import AppointmentForm from "../../appointments/forms/AppointmentForm";
 import type { AppointmentFormHandle } from "../../appointments/forms/AppointmentForm";
 import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
+<<<<<<< Updated upstream
 import type { EditAppointmentFormHandle, ExistingAppointment } from "../../appointments/forms/EditAppointmentForm";
 
 const API_BASE = "https://servineo-backend-lorem.onrender.com";
@@ -31,10 +32,44 @@ interface HorarioItem {
 interface DatosDia {
   nombre_Fixer?: string;
   horarios?: HorarioItem[];
+=======
+import DatePicker from "../../list/DatePicker/DatePicker";
+import type {
+    EditAppointmentFormHandle,
+    ExistingAppointment,
+} from "../../appointments/forms/EditAppointmentForm";
+const AVAILABILITY_URL =
+    "https://servineo-backend-lorem.onrender.com/api/crud_read/appointments/get_meeting_status";
+const DEFAULT_FIXER_NAME = "John";
+interface DayScheduleProps {
+    fixerId: string;
+    requesterId: string;
+    selectedDate: Date | string | null;
+    onDateChange?: (newDate: Date) => void;
+}
+interface HorarioItem {
+    id_Horario: string;
+    Hora_Inicio: string;
+    estado_Horario: "libre" | "ocupado" | "no_disponible";
+    cliente?: string;
+    contacto?: string;
+    modalidad?: "virtual" | "presencial";
+    descripcion?: string;
+    lugar?: string;
+    meetingLink?: string;
+    type?: "banner";
+    text?: string;
+}
+
+interface DayData {
+    nombre_Fixer?: string;
+    horarios?: HorarioItem[];
+>>>>>>> Stashed changes
 }
 
 type Icono = "＋" | "✎" | null;
 
+<<<<<<< Updated upstream
 type SchedState = "booked" | "occupied";
 
 interface SchedRow {
@@ -184,9 +219,196 @@ export default function HorarioDelDia({ fixerId, requesterId, selectedDate }: Pr
       refActiveLoads.current = Math.max(0, refActiveLoads.current - 1);
       if (refActiveLoads.current === 0) setCargando(false);
       if (refAbort.current) refAbort.current = null;
-    }
-  }
+=======
+interface HourApiResponse {
+    message: string;
+    name: string;
+    status: ApiStatus;
+}
 
+function ymdToLocalDate(ymd: string) {
+    const [y, m, d] = ymd.split("-").map(Number);
+    return new Date(y, m - 1, d);
+}
+
+function toYMDAny(d: Date | string) {
+    const date = typeof d === "string" ? ymdToLocalDate(d) : d;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function hourIntsRange(start = 8, end = 17) {
+    const out: number[] = [];
+    for (let h = start; h <= end; h++) out.push(h);
+    return out;
+}
+
+function formatHourDisplay(h: number) {
+    return `${String(h).padStart(2, "0")}:00`;
+}
+
+function mapApiToEstado(s: ApiStatus): HorarioItem["estado_Horario"] {
+    switch (s) {
+        case "occupied":
+            return "no_disponible";
+        case "booked":
+            return "ocupado";
+        case "available":
+            return "libre";
+        case "cancelled":
+            return "libre";
+        default:
+            return "no_disponible";
+    }
+}
+
+async function fetchHour(
+    id_fixer: string,
+    id_requester: string,
+    selected_date: string,
+    starting_time: number
+): Promise<HourApiResponse> {
+    const { data } = await axios.get<HourApiResponse>(AVAILABILITY_URL, {
+        params: { id_fixer, id_requester, selected_date, starting_time },
+        headers: { Accept: "application/json" },
+    });
+    return data;
+}
+
+export default function DaySchedule({
+    fixerId,
+    requesterId,
+    selectedDate,
+    onDateChange,
+}: DayScheduleProps) {
+    const formattedDate = selectedDate ? toYMDAny(selectedDate as any) : "";
+    const [date, setDate] = useState<string>(formattedDate);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [data, setData] = useState<DayData | null>(null);
+    const [err, setErr] = useState<string>("");
+
+    const appointmentFormRef = useRef<AppointmentFormHandle | null>(null);
+    const editAppointmentFormRef = useRef<EditAppointmentFormHandle | null>(null);
+    const refreshTimerRef = useRef<number | null>(null);
+    const refreshIntervalRef = useRef<number | null>(null);
+
+    const convertToDate = (selectedDate: Date | string | null): Date => {
+        if (!selectedDate) {
+            return new Date();
+        }
+
+        if (selectedDate instanceof Date) {
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth();
+            const day = selectedDate.getDate();
+            return new Date(year, month, day, 12, 0, 0);
+        }
+
+        if (selectedDate.includes('T')) {
+            return new Date(selectedDate);
+        } else {
+            return new Date(`${selectedDate}T12:00:00`);
+        }
+    };
+
+    const fechaInicial = convertToDate(selectedDate);
+
+    function clearRefreshTimers() {
+        if (refreshTimerRef.current) {
+            window.clearTimeout(refreshTimerRef.current);
+            refreshTimerRef.current = null;
+        }
+        if (refreshIntervalRef.current) {
+            window.clearInterval(refreshIntervalRef.current);
+            refreshIntervalRef.current = null;
+        }
+    }
+
+    function kickRefreshBurst(targetDate?: string) {
+        const d = targetDate || date;
+        if (!d) return;
+
+        clearRefreshTimers();
+
+        refreshTimerRef.current = window.setTimeout(() => fetchDay(d), 1200);
+
+        let attempts = 0;
+        refreshIntervalRef.current = window.setInterval(() => {
+            attempts++;
+            fetchDay(d);
+            if (attempts >= 4) {
+                clearRefreshTimers();
+            }
+        }, 2000);
+    }
+    const labelByEstado = (
+        estado: "libre" | "ocupado" | "no_disponible"
+    ): { text: string; cls: string; icon: Icon } => {
+        switch (estado) {
+            case "libre":
+                return { text: "DISPONIBLE", cls: "text-emerald-600", icon: "＋" };
+            case "ocupado":
+                return { text: "RESERVADO", cls: "text-amber-500", icon: "✎" };
+            case "no_disponible":
+                return { text: "NO DISPONIBLE", cls: "text-slate-400", icon: null };
+            default:
+                return { text: "", cls: "", icon: null };
+        }
+    };
+
+    async function fetchDay(d: string) {
+        try {
+            setLoading(true);
+            setErr("");
+            const hours = hourIntsRange(8, 17);
+            const horarios: HorarioItem[] = [];
+            for (const h of hours) {
+                const horaDisplay = formatHourDisplay(h);
+                const baseId = `${d}-${String(h).padStart(2, "0")}`;
+                if (h === 12 || h === 13) {
+                    horarios.push({
+                        id_Horario: baseId,
+                        Hora_Inicio: horaDisplay,
+                        estado_Horario: "no_disponible",
+                    });
+                    continue;
+                }
+                try {
+                    const resp = await fetchHour(fixerId, requesterId, d, h);
+                    const estado = mapApiToEstado(resp.status);
+                    horarios.push({
+                        id_Horario: baseId,
+                        Hora_Inicio: horaDisplay,
+                        estado_Horario: estado,
+                    });
+                    if (resp.status === "cancelled") {
+                        horarios.push({
+                            id_Horario: `${baseId}-banner`,
+                            Hora_Inicio: horaDisplay,
+                            estado_Horario: "libre",
+                            type: "banner",
+                            text: "CANCELADO POR EL USUARIO",
+                        });
+                    }
+                } catch {
+                    horarios.push({
+                        id_Horario: baseId,
+                        Hora_Inicio: horaDisplay,
+                        estado_Horario: "no_disponible",
+                    });
+                }
+            }
+            const nombre_Fixer = DEFAULT_FIXER_NAME;
+            setData({ nombre_Fixer, horarios });
+        } catch (e) {
+            setErr((e as Error).message || "Error");
+        } finally {
+            setLoading(false);
+        }
+>>>>>>> Stashed changes
+    }
+
+<<<<<<< Updated upstream
   useEffect(() => {
     if (fecha) obtenerDia(fecha);
   }, []);
@@ -337,4 +559,154 @@ export default function HorarioDelDia({ fixerId, requesterId, selectedDate }: Pr
       <EditAppointmentForm ref={refFormularioEditarCita} />
     </div>
   );
+=======
+    // Handler para cuando cambia la fecha en el DatePicker
+    const handleDatePickerChange = (newDate: Date) => {
+        const newDateStr = toYMDAny(newDate);
+        setDate(newDateStr);
+        fetchDay(newDateStr);
+        if (onDateChange) {
+            onDateChange(newDate);
+        }
+    };
+
+    useEffect(() => {
+        if (date) fetchDay(date);
+    }, []);
+
+    useEffect(() => {
+        if (selectedDate) {
+            const d = toYMDAny(selectedDate as any);
+            setDate(d);
+            fetchDay(d);
+        }
+    }, [selectedDate, fixerId, requesterId]);
+
+    useEffect(() => {
+        const onFocus = () => {
+            if (date) fetchDay(date);
+        };
+        const onVisibility = () => {
+            if (document.visibilityState === "visible" && date) fetchDay(date);
+        };
+
+        window.addEventListener("focus", onFocus);
+        document.addEventListener("visibilitychange", onVisibility);
+
+        return () => {
+            window.removeEventListener("focus", onFocus);
+            document.removeEventListener("visibilitychange", onVisibility);
+        };
+    }, [date, fixerId, requesterId]);
+
+    useEffect(() => {
+        return () => {
+            clearRefreshTimers();
+        };
+    }, []);
+
+    const handleSlotClick = (item: HorarioItem) => {
+        if (item.type === "banner") return;
+        const meta = labelByEstado(item.estado_Horario);
+
+        if (meta.icon === "＋") {
+            const currentDate = new Date(date);
+            const currentYear = currentDate.getUTCFullYear();
+            const currentMonth = currentDate.getUTCMonth();
+            const currentDay = currentDate.getUTCDate();
+            const currentHour = parseInt(item.Hora_Inicio);
+            const finalDate = new Date(Date.UTC(currentYear, currentMonth, currentDay, currentHour + 4, 0, 0));
+            appointmentFormRef.current?.open(finalDate.toISOString(), {
+                eventId: item.id_Horario,
+                title: meta.text,
+            });
+
+            kickRefreshBurst(date);
+        } else if (meta.icon === "✎") {
+            const existingAppointment: ExistingAppointment = {
+                id: item.id_Horario,
+                datetime: `${date}T${item.Hora_Inicio}:00`,
+                client: item.cliente || "",
+                contact: item.contacto || "",
+                modality: item.modalidad || "virtual",
+                description: item.descripcion || meta.text,
+                place: item.lugar || "",
+                meetingLink: item.meetingLink || "",
+            };
+            editAppointmentFormRef.current?.open(existingAppointment);
+
+            kickRefreshBurst(date);
+        }
+    };
+
+    return (
+        <div className="mx-auto max-w-sm p-4 text-black">
+            <h1 className="text-2xl font-semibold mb-3">
+                Calendario de {data?.nombre_Fixer ?? DEFAULT_FIXER_NAME}
+            </h1>
+
+            <div className="mb-3">
+                <label className="block text-sm mb-1">Fecha</label>
+                <DatePicker
+                    selectedDate={fechaInicial}
+                    onDateChange={handleDatePickerChange}
+                />
+            </div>
+
+            {loading && <div className="text-slate-500">Cargando…</div>}
+            {err && <div className="text-red-600">{String(err)}</div>}
+
+            {data && (
+                <div className="rounded-xl bg-slate-100 p-3 text-black">
+                    <div className="text-sm font-semibold text-slate-600 mb-2">
+                        {date
+                            ? ymdToLocalDate(date).toLocaleDateString("es-BO", {
+                                day: "2-digit",
+                                month: "long",
+                            })
+                            : ""}
+                    </div>
+
+                    <div className="space-y-2">
+                        {data.horarios?.map((item: HorarioItem, idx: number) => {
+                            if (item.type === "banner") {
+                                return (
+                                    <div
+                                        key={item.id_Horario || `banner-${idx}`}
+                                        className="rounded-lg bg-rose-500 text-white text-center text-xs font-semibold py-2"
+                                    >
+                                        {item.text}
+                                    </div>
+                                );
+                            }
+
+                            const meta = labelByEstado(item.estado_Horario);
+                            const clickable = meta.icon === "＋" || meta.icon === "✎";
+
+                            return (
+                                <div
+                                    key={item.id_Horario}
+                                    onClick={() => clickable && handleSlotClick(item)}
+                                    className={`grid grid-cols-[64px_1fr_28px] items-center rounded-lg border bg-white px-3 py-2 shadow-sm ${item.estado_Horario === "no_disponible"
+                                        ? "opacity-60"
+                                        : clickable
+                                            ? "hover:bg-slate-50 cursor-pointer"
+                                            : ""
+                                        }`}
+                                >
+                                    <div className="font-semibold text-slate-800">{item.Hora_Inicio}</div>
+                                    <div className={`text-sm font-semibold ${meta.cls}`}>{meta.text}</div>
+                                    <div className="text-xl text-slate-500 text-right">{meta.icon}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            <AppointmentForm ref={appointmentFormRef} fixerId={fixerId} requesterId={requesterId} />
+            <EditAppointmentForm ref={editAppointmentFormRef} />
+        </div>
+    );
+>>>>>>> Stashed changes
 }

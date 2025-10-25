@@ -1,6 +1,6 @@
 
 'use client';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MobileHeader from "./MobileHeader";
 import MobileMonthView from "./MobileMonthView";
 
@@ -20,14 +20,23 @@ export default function MobileCalendar({
     const [month, setMonth] = useState(today.getMonth());
     const [message, setMessage] = useState("");
 
-    const handleSelectedClick = () => {
+    useEffect(() => {
         if (selectedDate) {
-            setMessage(`La fecha seleccionada es: ${selectedDate.toLocaleDateString()}`);
+            setTempSelectedDate(selectedDate);
+            setYear(selectedDate.getFullYear());
+            setMonth(selectedDate.getMonth());
+        }
+    }, [selectedDate]);
+
+    const [tempSelectedDate, setTempSelectedDate] = useState<Date | null>(selectedDate);
+    const handleSelectedClick = () => {
+        if (tempSelectedDate) {
+            onSelectDate(tempSelectedDate);
+        } else {
+            setMessage("Por favor selecciona una fecha primero");
         }
     }
-
-
-
+    //console.log(selectedDate);
     return (
         <div className="bg-white rounded-2xl shadow p-4 max-w-md mx-auto">
             <MobileHeader
@@ -41,8 +50,8 @@ export default function MobileCalendar({
                 year={year}
                 month={month}
                 fixer_id={fixer_id}
-                selectedDate={selectedDate}
-                onSelectDate={onSelectDate}
+                selectedDate={tempSelectedDate}
+                onSelectDate={setTempSelectedDate}
             />
 
             <div className="flex justify-end mt-4">

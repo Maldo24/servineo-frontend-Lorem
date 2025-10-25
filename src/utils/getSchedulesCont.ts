@@ -13,7 +13,6 @@ export async function getSchedulesCont(fixer_id: string, selected_date: string) 
         );
 
         const data = response.data;
-        console.log(data);
         const schedulesCount = data.accessed_appointments?.length || 0;
 
         return schedulesCount;

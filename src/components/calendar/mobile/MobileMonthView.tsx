@@ -20,11 +20,6 @@ export default function MobileMonthView({
 }: MobileMonthViewProps) {
     const today = new Date();
 
-    // Función para comparar días
-    const isSameDay = (a: Date, b: Date) =>
-        a.getDate() === b.getDate() &&
-        a.getMonth() === b.getMonth() &&
-        a.getFullYear() === b.getFullYear();
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -35,12 +30,11 @@ export default function MobileMonthView({
     for (let i = 0; i < firstDay; i++) {
         days.push(<div key={`empty-${i}`} className="h-12" />);
     }
+    //    console.log(selectedDate);
 
     // Agregar los días del mes
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
-        const isToday = isSameDay(date, today);
-        const isSelected = selectedDate && isSameDay(date, selectedDate);
 
         days.push(
             <DayCell
@@ -55,7 +49,6 @@ export default function MobileMonthView({
             />
         );
     }
-
     return (
         <div className="p-4">
             {/* Encabezado de días (lunes = primer día) */}
