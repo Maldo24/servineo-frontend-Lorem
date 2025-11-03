@@ -4,6 +4,8 @@ import { createContext, useContext, ReactNode } from 'react';
 
 export type UserRole = 'fixer' | 'requester';
 
+
+
 interface UserRoleContextType {
     role: UserRole;
     fixer_id: string;

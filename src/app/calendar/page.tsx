@@ -80,7 +80,7 @@ export default function CalendarPage() {
                     )}
                     <button
                         onClick={switchRole}
-                        className="ml-auto w-60 bg-green-700 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors">
+                        className="ml-auto w-60 bg-green-700 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors cursor-pointer">
                         Vista Actual: {userRole}
                     </button>
 
