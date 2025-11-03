@@ -156,9 +156,7 @@ const cancelAppointmentsForDay = async (day: DayWithAppointments) => {
           }
         }
       );
-
-      
-      
+ 
       if (response.data && response.data.succeed === true) {
         successCount++;
       } else {
