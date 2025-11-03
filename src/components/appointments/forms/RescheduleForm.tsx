@@ -6,14 +6,15 @@ import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
 
 export type AppointmentFormHandle = {
-  open: (datetimeISO: string) => void;
+  open: () => void;
   close: () => void;
 };
 
 interface AppointmentFormProps {
   fixerId: string;
   requesterId: string;
-  pastDatetimeISO: string;
+  pastDate: string;
+  motivo: string;
 }
 
 // Zod esquema de validacion
@@ -85,9 +86,9 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
 
   useImperativeHandle(ref, () => ({
-    open: (dt: string) => {
-      console.log("create.openingModal", { datetimeReceived: dt });
-      setDatetime(dt);
+    open: () => {
+      console.log("create.openingModal");
+      //setDatetime(pastDate);
       setOpen(true);
       setTimeout(() => firstFieldRef.current?.focus(), 40);
     },
