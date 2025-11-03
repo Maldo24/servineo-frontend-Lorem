@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../atoms/button';
+import { useUserRole } from "@/utils/contexts/UserRoleContext";
 import axios from 'axios';
+
+const { fixer_id } = useUserRole();
 
 interface DayWithAppointments {
   date: string;
@@ -24,7 +27,7 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
   onClose,
   onConfirm,
   loading = false,
-  fixer_id
+
 }) => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [daysWithAppointments, setDaysWithAppointments] = useState<DayWithAppointments[]>([]);
@@ -36,7 +39,7 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
   const API_BASE = 'https://servineo-backend-lorem.onrender.com/api';
-  const FIXER_ID = fixer_id || "68e87a9cdae3b73d8040102f";
+  const FIXER_ID = fixer_id;
   
   const months = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
