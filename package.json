@@ -13,6 +13,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/material": "^7.3.4",
     "@mui/x-date-pickers": "^8.14.0",
     "autoprefixer": "^10.4.21",
@@ -26,6 +27,7 @@
     "react": "19.1.0",
     "react-big-calendar": "^1.19.4",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.66.0",
     "react-leaflet": "^5.0.0",
     "zod": "^4.1.12"
   },

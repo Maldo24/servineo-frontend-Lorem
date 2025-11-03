@@ -1,10 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import AppointmentForm from "../../appointments/forms/AppointmentForm";
-import type { AppointmentFormHandle } from "../../appointments/forms/AppointmentForm";
-import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
-import DatePicker from "@/components/list/DatePicker/DatePicker"
+// Antes: AppointmentForm e EditAppointmentForm por separado
+// import AppointmentForm from "../../appointments/forms/AppointmentForm";
+// import type { AppointmentFormHandle } from "../../appointments/forms/AppointmentForm";
+// import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
+
+// Ahora usamos el modal único para crear/editar
+import AppointmentFormModal, { AppointmentFormHandle } from "../../../modals/AppointmentFormModal"; // <- CORREGIDO
+
+import DatePicker from "@/components/list/DatePicker/DatePicker";
 
 const API_BASE = "https://servineo-backend-lorem.onrender.com";
 const EP_BOOKED = `${API_BASE}/api/crud_read/schedules/get_by_fixer_current_requester_day`;
@@ -269,7 +274,6 @@ export default function HorarioDelDia({ fixerId, requesterId, selectedDate, onDa
             setEditDateTime(null);
     }
     const manejarClickEnSlot = (item: HorarioItem) => {
-        const meta = etiquetaPorEstado(item.estado_Horario);
         if (item.estado_Horario === "libre") {
             const fechaActual = new Date(fecha);
             const anio = fechaActual.getUTCFullYear();
@@ -277,13 +281,21 @@ export default function HorarioDelDia({ fixerId, requesterId, selectedDate, onDa
             const dia = fechaActual.getUTCDate();
             const horaActual = parseInt(item.Hora_Inicio);
             const fechaFinal = new Date(Date.UTC(anio, mes, dia, horaActual + 4, 0, 0));
-            refFormularioCita.current?.open(fechaFinal.toISOString());
+
+            // Antes: se mandaban fixerId/requesterId/mode en open → ahora solo datetime
+                refFormularioCita.current?.open({
+                    datetime: fechaFinal.toISOString(),
+                    mode: "create"  // indicamos creación
+                });
         } else if (item.estado_Horario === "reservado_propio") {
             const appointmentDateTime = convertToDate(date);
-            console.log('Fecha Matsi:', item.Hora_Inicio);
             appointmentDateTime.setHours(parseInt(item.Hora_Inicio), 0, 0, 0);
-            setEditDateTime(appointmentDateTime);
-            setIsEditModalOpen(true);
+
+            // Antes: EditAppointmentForm separado → ahora usamos modal único
+                refFormularioCita.current?.open({
+                    datetime: appointmentDateTime.toISOString(),
+                    mode: "edit"    // indicamos edición
+                });
         }
     };
 
@@ -338,16 +350,17 @@ export default function HorarioDelDia({ fixerId, requesterId, selectedDate, onDa
                     )}
                 </div>
             )}
-            <AppointmentForm ref={refFormularioCita} fixerId={fixerId} requesterId={requesterId} />
-            {isEditModalOpen && editDateTime && (
-                <EditAppointmentForm
-                    isOpen={isEditModalOpen}
-                    onClose={handleCloseEditModal}
-                    datetime={editDateTime}
-                    fixerId={fixerId}
-                    requesterId={requesterId}
-                />
-            )}
+            {/* Antes: AppointmentForm y EditAppointmentForm por separado */}
+            {/* <AppointmentForm ref={refFormularioCita} fixerId={fixerId} requesterId={requesterId} /> */}
+            {/* <EditAppointmentForm isOpen={isEditModalOpen} onClose={handleCloseEditModal} datetime={editDateTime} fixerId={fixerId} requesterId={requesterId} /> */}
+
+            {/* Ahora: modal único para create/edit/reschedule/view */}
+            <AppointmentFormModal
+                ref={refFormularioCita}
+                fixerId={fixerId}          // Props que antes pasábamos por open
+                requesterId={requesterId}  // Props que antes pasábamos por open
+                // mode se define dentro del modal según el contexto: create/edit
+            />
         </div>
     );
 }
