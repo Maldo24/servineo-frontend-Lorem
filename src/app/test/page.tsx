@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Button } from '@/components/atoms/button'; // Ajusta la ruta según tu estructura'
+import { Button } from '@/components/atoms/button';
 import CancelDaysAppointments from '@/components/appointments/forms/CancelDaysAppointment';
 
 export default function TestPage() {
