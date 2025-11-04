@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import DesktopCalendar from "@/components/calendar/DesktopCalendar";
 import { UserRoleProvider } from "@/utils/contexts/UserRoleContext";
 import MobileCalendar from "@/components/calendar/mobile/MobileCalendar";
 import MobileList from "@/components/list/MobileList";
+import { ModeSelectionModal, ModeSelectionModalHandles } from '@/components/appointments/forms/ModeSelectionModal';
 import CancelDaysAppointments from "@/components/appointments/forms/CancelDaysAppointment"; // Asegúrate de que la ruta sea correcta
+
 
 const fixer_id = "68e87a9cdae3b73d8040102f";
 const requester_id = "68ec99ddf39c7c140f42fcfa"
@@ -17,6 +19,7 @@ function cancelAppointments() {
 
 export default function CalendarPage() {
     const router = useRouter();
+    const modeModalRef = useRef<ModeSelectionModalHandles>(null);
 
     const [userRole, setUserRole] = useState<'requester' | 'fixer'>('fixer');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -34,6 +37,11 @@ export default function CalendarPage() {
             setUserRole('requester');
         }
     }
+
+    const handleOpenAvailabilityModal = () => {
+        modeModalRef.current?.open();
+    }
+
 
     const openCancelModal = () => {
         setIsCancelModalOpen(true);
@@ -76,19 +84,24 @@ export default function CalendarPage() {
                     )}
                     <button
                         onClick={switchRole}
-                        className="ml-auto w-60 bg-green-700 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors">
+                        className="ml-auto w-60 bg-green-700 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors cursor-pointer">
                         Vista Actual: {userRole}
                     </button>
 
-                    <button className="ml-auto w-60 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors">
-                        Modificar Disponibilidad
-                    </button>
-                    <button 
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors ml-2" 
-                        onClick={openCancelModal} 
-                    >
-                        Cancelar
-                    </button>
+                    {userRole === 'fixer' && (
+                        <div className="flex items-center ml-4">
+                            <button 
+                                className="w-60 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+                                onClick={handleOpenAvailabilityModal}
+                            >
+                                Modificar Disponibilidad
+                            </button>
+                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors ml-2"  onClick={openCancelModal}>
+                                Cancelar
+                            </button>
+                        </div>
+                    )}
+
                 </div>
 
                 <div className="flex justify-center md:block hidden">
@@ -112,12 +125,18 @@ export default function CalendarPage() {
                         onDateChange={handleDataChange}
                     />
                 </div>
+                
+                <ModeSelectionModal 
+                    ref={modeModalRef} 
+                    fixerId={fixer_id}
+                />
 
                 {/* Modal de cancelación */}
                 <CancelDaysAppointments
                     isOpen={isCancelModalOpen}
                     onClose={closeCancelModal}
                     fixer_id={fixer_id}
+
                 />
             </div>
         </UserRoleProvider>

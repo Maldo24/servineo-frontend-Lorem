@@ -83,6 +83,7 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
     const handleConfirm = () => {
       if (selectedDays.length > 0) {
         // console.log("dias seleccionados para editar:", selectedDays);
+        setIsOpen(false);
         hourModalRef.current?.open(selectedDays);
       }
     };
@@ -108,7 +109,7 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
 
     return (
       <>
-        <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300 ${
+        <div className={`fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}>
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-300 ${
@@ -166,7 +167,6 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
           </div>
         </div>
 
-        {/* Modal de horas - siempre en el DOM */}
         <DayAvailabilityModal 
           ref={hourModalRef}
           fixerId={fixerId}

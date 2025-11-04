@@ -52,13 +52,16 @@ export default function HourCell({
     const getColor = () => {
         if (isBooked) return "bg-[#FFC857]";
         else if (isRequester) {
+            if (isWeekend) return "bg-[#DADADA]"
             return "bg-[#16A34A]"
         }
     }
 
     const getText = () => {
         if (isBooked) return "Ocupado";
-        else if (isRequester) return "Disponible";
+        else if (isRequester) return "Inhabilitado"
+
+        return "Disponible";
     }
 
 
@@ -74,6 +77,7 @@ export default function HourCell({
 
     };
 
+    const isWeekend = date.getDay() === 6 || date.getDay() === 0;
 
     const { isFixer, isRequester, fixer_id: fixi } = useUserRole();
     const handleOpenForm = () => {
