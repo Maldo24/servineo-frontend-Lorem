@@ -3,7 +3,6 @@
 import { useState } from "react";
 import DaySchedule from "../calendar/mobile/MobileDayliView";
 import WeekSchedule from "../calendar/mobile/MobileWeekView";
-import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterContext";
 
 interface MobileListProps {
   selectedDate: Date;
@@ -46,11 +45,6 @@ export default function MobileList({
 
 
       <div className="mt-4">
-        <AppointmentsStatusProvider
-          fixerId={fixerId}
-          requesterId={requesterId}
-          selectedDate={selectedDate}
-        >
           {type === "day" && (
             <DaySchedule
               fixerId={fixerId}
@@ -59,7 +53,6 @@ export default function MobileList({
               onDateChange={onDateChange}
             />
           )}
-        </AppointmentsStatusProvider>
       </div>
 
       <div className="mt-4">

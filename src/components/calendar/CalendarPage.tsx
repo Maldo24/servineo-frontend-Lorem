@@ -7,6 +7,7 @@ import DesktopCalendar from "@/components/calendar/DesktopCalendar";
 
 import MobileCalendar from "@/components/calendar/mobile/MobileCalendar";
 import MobileList from "@/components/list/MobileList";
+import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterContext";
 
 
 const fixer_id = "68e87a9cdae3b73d8040102f";
@@ -62,6 +63,11 @@ export default function CalendarPage({
                 <h2 className="text-black p-4 text-2xl text-center">Calendario Diego Paredes</h2>
             </div>
 
+            <AppointmentsStatusProvider
+                fixerId={fixer_id}
+                requesterId={requester_id}
+                selectedDate={selectedDate}
+            >
             <div className="flex justify-center md:block hidden">
                 <DesktopCalendar
                     fixer_id={fixer_id}
@@ -85,6 +91,7 @@ export default function CalendarPage({
                     onDateChange={handleDataChange}
                 />
             </div>
+            </AppointmentsStatusProvider>
         </div>
     );
 }

@@ -6,11 +6,13 @@ import type { AppointmentFormHandle } from "../../appointments/forms/Appointment
 import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
 import type { EditAppointmentFormHandle, ExistingAppointment } from "../../appointments/forms/EditAppointmentForm";
 import DatePicker from "@/components/list/DatePicker/DatePicker";
+
 import { useUserRole } from "@/utils/contexts/UserRoleContext";
 // Contexto para Requester 
 import { useAppointmentsContext as RequesterContext } from "@/utils/contexts/DayliViewRequesterContext";
 // Contexto para Fixer 
 import { useAppointmentsContext as FixerContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
+
 
 const API_BASE = "https://servineo-backend-lorem.onrender.com";
 
@@ -110,7 +112,7 @@ export default function HorarioDelDia({
     
     // Usar el loading del contexto correspondiente al rol
     const contextLoading = isFixer ? fixerContext.loading : requesterContext.loading;
-    
+
     const fechaFormateadaInicial = selectedDate ? aYMDDeCualquiera(selectedDate as any) : "";
     const [fecha, setFecha] = useState<string>(fechaFormateadaInicial);
     const [cargando, setCargando] = useState<boolean>(false);

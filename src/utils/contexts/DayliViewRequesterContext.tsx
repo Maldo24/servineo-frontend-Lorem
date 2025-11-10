@@ -12,7 +12,7 @@ type Ctx = {
 
 const CtxObj = createContext<Ctx | null>(null);
 
-export function useAppointmentsContext(): Ctx {
+export function useDailyAppointments(): Ctx {
   const ctx = useContext(CtxObj);
   if (!ctx) throw new Error("useAppointmentsContext must be within AppointmentsStatusProvider");
   return ctx;
@@ -94,6 +94,12 @@ export function AppointmentsStatusProvider({
         setOccupiedOthers(new Set((rOccupied ?? []).map(x => Number(x.starting_hour))));
         setCancelByFixer(new Set((rCFixer?.cancelled_schedules_fixer ?? []).map(x => Number(x.starting_hour))));
         setCancelByRequester(new Set((rCReq?.cancelled_schedules_requester ?? []).map(x => Number(x.starting_hour))));
+      } catch(err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          console.log('Requested aborted.');
+          return;
+        }
+        console.error('Error loading appointments: ', err);
       } finally {
         if (alive) setLoading(false);
       }
