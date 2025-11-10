@@ -117,7 +117,7 @@ export function AppointmentsStatusProvider({
   function isOccupiedByOther(date: Date, hour: number) {
     return sameDay(date) && occupiedOthers.has(hour);
   }
-  function isHourBooked(date: Date, hour: number) {
+  function isHourBookedRequester(date: Date, hour: number) {
     if (!sameDay(date)) return false;
     if (cancelByRequester.has(hour)) return false;
     if (cancelByFixer.has(hour)) return false;
@@ -132,11 +132,11 @@ export function AppointmentsStatusProvider({
 
   const value: Ctx = {
     loading,
-    isHourBooked,
-    isOccupiedByOther,
+    isHourBooked: isHourBookedRequester, //horario ocupado por el req
+    isOccupiedByOther, //horario ocupado por otro req
     isDisabled,
-    isCancelledByFixer,
-    isCancelledByRequester,
+    isCancelledByFixer, //cancelado por el fixer para el req
+    isCancelledByRequester, // cancelado por el req para si mismo
   };
 
   return <CtxObj.Provider value={value}>{children}</CtxObj.Provider>;

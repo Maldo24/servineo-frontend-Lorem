@@ -36,10 +36,10 @@ interface AppointmentsProviderProps {
 
 export function AppointmentsProvider({
     children,
-    isHourBookedFixer,
-    isHourBooked,
-    isEnabled,
-    isCanceled,
+    isHourBookedFixer, //todos los booked para ese fixer
+    isHourBooked, //self si esta ocupado por el propio requester // other si esta ocupado por otros requesters
+    isEnabled, //horarios disponibles
+    isCanceled, //fixer si cancelo el fixer //requester si cancelo el requeste // other si cancelo el fixer a otros
     loading
 }: AppointmentsProviderProps) {
     const value = useMemo(
