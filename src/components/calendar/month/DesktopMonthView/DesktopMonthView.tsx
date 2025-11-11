@@ -1,19 +1,17 @@
 'use client'
 import React from "react";
 import DateCell from "../dateCell/DateCell"
-
+import useDayUtilities from "@/hooks/useDayUtilities";
 interface DesktopMonthViewProps {
     year: number;
     month: number;
-    fixer_id: string;
-    requester_id: string;
+    cont: number[];
 
 }
 export default function DesktopMonthView({
     year,
     month,
-    fixer_id,
-    requester_id
+    cont,
 }: DesktopMonthViewProps) {
 
 
@@ -22,18 +20,33 @@ export default function DesktopMonthView({
 
     const days: React.ReactNode[] = [];
 
+
+
+
+
+
     for (let i = 0; i < firstDay; i++) {
         days.push(<div key={`empty-${i}`} className="border-x border-[#b8bec6]" />)
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
-
+        const {
+            isPast,
+            isToday,
+            getColor,
+            getText
+        } = useDayUtilities(date);
+        //      console.log(day, month, getColor(cont[day - 1]));
         days.push(
             <DateCell
                 key={day}
                 date={date}
-                fixer_id={fixer_id}
+                isToday={isToday}
+                isPast={isPast}
+                color={getColor(cont[day - 1])}
+                text={getText(cont[day - 1])}
+
             />
 
         );

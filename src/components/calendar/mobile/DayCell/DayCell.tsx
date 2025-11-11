@@ -24,10 +24,9 @@ export default function DayCell({
         isPast,
         isSameDay,
         getColor
-    } = useDayUtilities({
-        date,
-        fixer_id
-    });
+    } = useDayUtilities(
+        date
+    );
     const dayNumber = date.getDate();
     const isSelected = selectedDate && isSameDay(date, selectedDate);
 
