@@ -15,8 +15,8 @@ import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterC
 
 //const fixer_id = "68ef1993be38c7f1c3c2c777";
 const fixer_id = "68e87a9cdae3b73d8040102f";
-const requester_id = "68ec99ddf39c7c140f42fcfa";
-//const requester_id = "68f3f37a44d9cf8aa91537fb";
+//const requester_id = "68ec99ddf39c7c140f42fcfa";
+const requester_id = "68f518e5ef03787169f81b22";
 
 function cancelAppointments() {
     console.log("Citas canceladas");

@@ -7,7 +7,7 @@ import MobileMonthView from "./MobileMonthView";
 
 interface MobileCalendarProps {
     fixer_id: string;
-    selectedDate: Date | null;
+    selectedDate: Date;
     onSelectDate: (dato: Date) => void;
 }
 export default function MobileCalendar({
@@ -29,7 +29,7 @@ export default function MobileCalendar({
         }
     }, [selectedDate]);
 
-    const [tempSelectedDate, setTempSelectedDate] = useState<Date | null>(selectedDate);
+    const [tempSelectedDate, setTempSelectedDate] = useState<Date>(selectedDate);
     const handleSelectedClick = () => {
         if (tempSelectedDate) {
             onSelectDate(tempSelectedDate);
@@ -37,7 +37,7 @@ export default function MobileCalendar({
             setMessage("Por favor selecciona una fecha primero");
         }
     }
-    //console.log(selectedDate);
+
     return (
         <div className="bg-white rounded-2xl shadow p-4 max-w-md mx-auto">
             <MobileHeader
@@ -52,7 +52,6 @@ export default function MobileCalendar({
             <MobileMonthView
                 year={year}
                 month={month}
-                fixer_id={fixer_id}
                 selectedDate={tempSelectedDate}
                 onSelectDate={setTempSelectedDate}
             />

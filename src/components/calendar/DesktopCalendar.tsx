@@ -8,7 +8,6 @@ import DesktopDailyView from "./day/DesktopDailyView";
 import DesktopWeekView from "./week/DesktopWeekView";
 
 
-import useDailyConts from "@/utils/useDailyConts";
 
 
 
@@ -41,7 +40,6 @@ export default function DesktopCalendar({
         return new Date(year, month, day);
     }, [year, month, day, view]);
 
-    const cont = useDailyConts({ date: selectedDate, fixer_id });
 
 
 
@@ -68,7 +66,6 @@ export default function DesktopCalendar({
                     {view === 'month' && <DesktopMonthView
                         year={year}
                         month={month}
-                        cont={cont}
                     />}
 
                     {view === 'week' && <DesktopWeekView

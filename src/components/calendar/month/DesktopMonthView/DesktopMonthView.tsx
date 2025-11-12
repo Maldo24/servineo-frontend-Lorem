@@ -2,16 +2,19 @@
 import React from "react";
 import DateCell from "../dateCell/DateCell"
 import useDayUtilities from "@/hooks/useDayUtilities";
+import useDailyConts from "@/utils/useDailyConts";
+import { useUserRole } from "@/utils/contexts/UserRoleContext";
+
+
+const today = new Date();
 interface DesktopMonthViewProps {
     year: number;
     month: number;
-    cont: number[];
 
 }
 export default function DesktopMonthView({
     year,
     month,
-    cont,
 }: DesktopMonthViewProps) {
 
 
@@ -21,9 +24,10 @@ export default function DesktopMonthView({
     const days: React.ReactNode[] = [];
 
 
-
-
-
+    const { fixer_id } = useUserRole();
+    const {
+        getAppointmentsForDay,
+    } = useDailyConts({ date: today, fixer_id });
 
     for (let i = 0; i < firstDay; i++) {
         days.push(<div key={`empty-${i}`} className="border-x border-[#b8bec6]" />)
@@ -37,15 +41,17 @@ export default function DesktopMonthView({
             getColor,
             getText
         } = useDayUtilities(date);
+
         //      console.log(day, month, getColor(cont[day - 1]));
+
         days.push(
             <DateCell
                 key={day}
                 date={date}
                 isToday={isToday}
                 isPast={isPast}
-                color={getColor(cont[day - 1])}
-                text={getText(cont[day - 1])}
+                color={getColor(getAppointmentsForDay(day, month, year))}
+                text={getText(getAppointmentsForDay(day, month, year))}
 
             />
 

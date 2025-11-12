@@ -1,25 +1,31 @@
 'use client';
 import React from "react";
 import DayCell from "./DayCell/DayCell"
+import useDayUtilities from '@/hooks/useDayUtilities';
 
+import { useUserRole } from "@/utils/contexts/UserRoleContext";
 
+import useDailyConts from "@/utils/useDailyConts";
+
+const today = new Date();
 interface MobileMonthViewProps {
     year: number;
-    month: number; // 0 = enero
-    fixer_id: string;
-    selectedDate: Date | null;
+    month: number;
+    selectedDate: Date;
     onSelectDate: (date: Date) => void;
 }
 
 export default function MobileMonthView({
     year,
     month,
-    fixer_id,
     selectedDate,
     onSelectDate,
 
 }: MobileMonthViewProps) {
-    const today = new Date();
+    const { fixer_id } = useUserRole();
+    const {
+        getAppointmentsForDay,
+    } = useDailyConts({ date: today, fixer_id });
 
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -27,6 +33,16 @@ export default function MobileMonthView({
     const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
 
     const days: React.ReactNode[] = [];
+
+    const {
+        isToday,
+        isPast,
+        isSameDay,
+        getColor
+    } = useDayUtilities(
+        selectedDate
+    );
+
 
     for (let i = 0; i < firstDay; i++) {
         days.push(<div key={`empty-${i}`} className="h-12" />);
@@ -39,10 +55,10 @@ export default function MobileMonthView({
             <DayCell
                 key={day}
                 date={date}
-                fixer_id={fixer_id}
+                isToday={isToday}
                 selectedDate={selectedDate}
                 onSelectDate={onSelectDate}
-                today={today}
+                color={getColor(getAppointmentsForDay(day, month, year))}
 
             />
         );
