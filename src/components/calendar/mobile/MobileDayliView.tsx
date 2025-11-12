@@ -21,7 +21,7 @@ interface PropiedadesHorarioDia {
   onSlotSelect?: (iso: string) => void;
 }
 
-type Estado = "disponible" | "reservado" | "cancelado_fixer" | "cancelado_requester" | "no_disponible" | "inhabilitado";
+type Estado = "disponible" | "reservado" | "cancelado_fixer" | "cancelado_requester" | "no_disponible" | "ocupado" | "inhabilitado";
 
 interface HorarioItem {
     id_Horario: string;
@@ -192,7 +192,9 @@ export default function HorarioDelDia({
             else if (isRequester) {
                 if (booked === "self") {
                     estadoHora = "reservado"; 
-                } else if (booked === "other" || canceled === "otherFixer") {
+                } else if (booked === "other" ) {
+                    estadoHora = "ocupado";
+                } else if ( canceled === "otherFixer") {
                     estadoHora = "no_disponible";
                 } else if (canceled === "fixer") {
                     estadoHora = "cancelado_fixer";
@@ -283,6 +285,8 @@ export default function HorarioDelDia({
                 return { text: "CANCELADO POR REQUESTER", icon: null, textCls: "text-white", rowCls: "bg-rose-600" };
             case "no_disponible":
                 return { text: "NO DISPONIBLE", icon: null, textCls: "text-slate-400", rowCls: "bg-white opacity-60" };
+            case "ocupado":
+                return { text: "OCUPADO", icon: null, textCls: "text-slate-400", rowCls: "bg-white opacity-60" };
             case "inhabilitado":
                 return { text: "INHABILITADO", icon: null, textCls: "text-slate-400", rowCls: "bg-white opacity-60" };
         }

@@ -111,9 +111,9 @@ export const EditAppointmentActions = ({
 
       {formType === "edit" && (
         <>
-          <Button variant="secondary" onClick={askConfirmReprogram}>Reprogramar</Button>
+          <Button type="submit" onClick={askConfirmReprogram}>Reprogramar</Button>
           <Button type="submit" loading={loading} disabled={!changesDetected || submitDisabled}>
-            Actualizar
+            Editar
           </Button>
         </>
       )}

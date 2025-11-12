@@ -415,7 +415,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
 
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-300 text-sm">
-                  Cancelar
+                  Volver
                 </button>
                 <button
                   type="submit"
