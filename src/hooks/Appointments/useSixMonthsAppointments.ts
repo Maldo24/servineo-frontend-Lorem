@@ -89,9 +89,9 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
             const aptState = apt.schedule_state;
             const aptCanceledFixer = apt.cancelled_fixer;
             return (
-                aptDate.getFullYear() === day.getFullYear() &&
-                aptDate.getMonth() === day.getMonth() &&
-                aptDate.getDate() === day.getDate() &&
+                aptDate.getUTCFullYear() === day.getFullYear() &&
+                aptDate.getUTCMonth() === day.getMonth() &&
+                aptDate.getUTCDate() === day.getDate() &&
                 aptDate.getUTCHours() === hour &&
                 aptState === 'booked' && aptCanceledFixer === false
             );
@@ -106,9 +106,9 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
             const aptCanceledFixer = apt.cancelled_fixer;
             const aptState = apt.schedule_state;
             return (
-                aptDate.getFullYear() === day.getFullYear() &&
-                aptDate.getMonth() === day.getMonth() &&
-                aptDate.getDate() === day.getDate() &&
+                aptDate.getUTCFullYear() === day.getFullYear() &&
+                aptDate.getUTCMonth() === day.getMonth() &&
+                aptDate.getUTCDate() === day.getDate() &&
                 aptDate.getUTCHours() === hour &&
                 aptState === 'booked' && aptCanceledFixer === false
             );
@@ -138,11 +138,10 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const isCanceled = useCallback((day: Date, hour: number, requester_id: string): 'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel' => {
         const appointment = appointments.find((apt: Appointment) => {
             const aptDate = new Date(apt.starting_time);
-            const aptCancel = apt.schedule_state;
             return (
-                aptDate.getFullYear() === day.getFullYear() &&
-                aptDate.getMonth() === day.getMonth() &&
-                aptDate.getDate() === day.getDate() &&
+                aptDate.getUTCFullYear() === day.getFullYear() &&
+                aptDate.getUTCMonth() === day.getMonth() &&
+                aptDate.getUTCDate() === day.getDate() &&
                 aptDate.getUTCHours() === hour
             );
         });

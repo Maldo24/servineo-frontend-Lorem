@@ -3,13 +3,10 @@
 import { useState, useMemo } from "react";
 import DesktopMonthView from "@/components/calendar/month/DesktopMonthView/DesktopMonthView";
 import HeaderDesktop from "@/components/calendar/Header/HeaderDesktop";
-import useAppointmentsByDate from "@/hooks/useDailyAppointments";
 import useCalendarView from "@/hooks/useCalendarView";
 import DesktopDailyView from "./day/DesktopDailyView";
 import DesktopWeekView from "./week/DesktopWeekView";
-import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
 
-import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 
 
 
@@ -69,8 +66,6 @@ export default function DesktopCalendar({
                     {view === 'month' && <DesktopMonthView
                         year={year}
                         month={month}
-                        fixer_id={fixer_id}
-                        requester_id={requester_id}
                     />}
 
                     {view === 'week' && <DesktopWeekView

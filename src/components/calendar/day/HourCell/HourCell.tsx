@@ -79,13 +79,13 @@ export default function HourCell({
         if (estado === 'disponible')
             return "bg-[#16A34A]"
 
-        if (estado === 'cancelOtherFixer' || estado === 'cancelFixer' || estado === 'cancelOtherRequester' || estado === 'cancelRequester')
+        if (estado === 'cancelFixer' || estado === 'cancelOtherRequester' || estado === 'cancelRequester')
             return "bg-[#FF3E17]"
 
         if (estado === 'reservado' || estado === 'ocupado' || estado === 'reservadoOtro')
             return "bg-[#FFC857]";
 
-        if (estado === 'inhabilitado')
+        if (estado === 'inhabilitado' || estado === 'cancelOtherFixer')
             return "bg-[#64748B]";
     }
 
@@ -119,8 +119,11 @@ export default function HourCell({
 
             if (estado === 'ocupado' || estado === 'reservadoOtro')
                 return "Ocupado";
-            if (estado === 'inhabilitado' || estado === 'cancelOtherFixer')
+            if (estado === 'inhabilitado')
                 return 'Inhabilitado';
+
+            if (estado === 'cancelOtherFixer')
+                return 'No Disponible';
 
 
         }

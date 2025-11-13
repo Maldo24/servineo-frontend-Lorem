@@ -1,23 +1,38 @@
 import axios from 'axios';
 
-export async function getSchedulesCont(fixer_id: string, selected_date: string) {
+interface AppointmentsResponse {
+    message: string;
+    number_of_appointments: Record<string, Record<string, number>>;
+}
+
+export async function getSchedulesCont(
+    fixer_id: string,
+    month: number,
+    year: number
+): Promise<Record<string, Record<string, number>>> {
     try {
-        const response = await axios.get(
-            'https://servineo-backend-lorem.onrender.com/api/crud_read/appointments/get_appointments_date',
+        const response = await axios.get<AppointmentsResponse>(
+            'https://servineo-backend-lorem.onrender.com/api/crud_read/schedules/get_number_of_appointments',
             {
                 params: {
-                    id_fixer: fixer_id,
-                    selected_date,
+                    fixer_id,
+                    month,
+                    year
                 },
             }
         );
 
         const data = response.data;
-        const schedulesCount = data.accessed_appointments?.length || 0;
+        const appointments = data.number_of_appointments;
 
-        return schedulesCount;
+        if (!appointments || typeof appointments !== 'object') {
+            console.warn('No se encontraron appointments en la respuesta:', data);
+            return {};
+        }
+
+        return appointments;
     } catch (error) {
-        console.error('Error al obtener schedules:', error);
-        return 0;
+        console.error('Error al obtener contador de schedules:', error);
+        return {};
     }
 }

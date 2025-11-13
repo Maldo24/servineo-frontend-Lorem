@@ -3,8 +3,6 @@ import React from "react";
 
 import HourCell from "./HourCell/HourCell";
 
-import { useUserRole } from "@/utils/contexts/UserRoleContext";
-
 
 interface DesktopDailyViewProps {
 
@@ -19,10 +17,6 @@ export default function DesktopDailyHours({
     date,
     view
 }: DesktopDailyViewProps) {
-    const {
-        fixer_id,
-        requester_id
-    } = useUserRole();
 
     const isPast = (hour: number) => {
         const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());

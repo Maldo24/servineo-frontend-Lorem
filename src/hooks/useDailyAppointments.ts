@@ -17,31 +17,7 @@ const DAY_MAP: { [key: number]: DayOfWeek } = {
 
 
 
-
-
-const getMondayOfWeek = (date: Date): Date => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = day === 0 ? -6 : 1 - day;
-    d.setDate(d.getDate() + diff);
-    d.setHours(0, 0, 0, 0);
-    return d;
-};
-
-const getWeekDays = (selectedDate: Date) => {
-    const days: Date[] = [];
-    const current = new Date(selectedDate);
-    const dayOfWeek = current.getDay();
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(current);
-        day.setDate(current.getDate() + diff + i);
-        days.push(day);
-    }
-
-    return days;
-};
+;
 
 
 

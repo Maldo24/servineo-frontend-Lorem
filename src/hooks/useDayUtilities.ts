@@ -1,32 +1,6 @@
-import { getSchedulesCont } from "@/utils/getSchedulesCont";
-import { useState, useEffect } from "react";
 
-interface useDayUtilitiesProps {
-    date: Date;
-    fixer_id: string;
-}
+export default function useDayUtilities(date: Date) {
 
-export default function useDayUtilities({
-    date,
-    fixer_id,
-}: useDayUtilitiesProps) {
-
-    const [count, setCount] = useState(0);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await getSchedulesCont(
-                    fixer_id,
-                    date.toISOString().split('T')[0]
-                );
-                setCount(result);
-            } catch {
-                setCount(0);
-            }
-        };
-        fetchData();
-    }, [date, fixer_id]);
 
     const normalize = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
     const today = normalize(new Date());
@@ -42,7 +16,8 @@ export default function useDayUtilities({
     const isWeekend = currentDate.getDay() === 6 || currentDate.getDay() === 0;
     const isPast = currentDate < today;
 
-    const getColor = () => {
+
+    const getColor = (count: number) => {
         if (isPast) return 'text-black';
         if (isWeekend) return 'bg-[#9FA1A5]';
         if (count === 0) return 'bg-[#16A34A] ';
@@ -51,7 +26,7 @@ export default function useDayUtilities({
         return 'bg-gray-200 text-black';
     };
 
-    const getText = () => {
+    const getText = (count: number) => {
         if (isPast) return '';
         if (isWeekend) return 'Inhabilitado';
         if (count === 0) return 'Disponible';
@@ -59,5 +34,5 @@ export default function useDayUtilities({
         if (count === 24) return 'Ocupado';
         return '';
     };
-    return { count, isPast, isSameDay, isToday, getColor, getText };
+    return { isPast, isSameDay, isToday, getColor, getText };
 }
