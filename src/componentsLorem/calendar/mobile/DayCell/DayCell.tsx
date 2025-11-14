@@ -3,36 +3,40 @@
 import React from 'react';
 import useDayUtilities from '@/hooks/useDayUtilities';
 
+import { useAppointmentsContext } from '@/utils/contexts/AppointmentsContext/AppoinmentsContext';
 
-const today = new Date();
 
 interface DayCellProps {
     date: Date;
     selectedDate: Date;
 
     onSelectDate: (date: Date) => void;
-    color: string
 }
 
 export default function DayCell({
     date,
     selectedDate,
-    onSelectDate,
-    color
+    onSelectDate
 }: DayCellProps) {
     const dayNumber = date.getDate();
-    const { isSameDay } = useDayUtilities(date);
+    const {
+        isPast,
+        isToday,
+        isSameDay,
+        getColor
+    } = useDayUtilities(date);
+
 
     const {
-        isToday,
-        isPast
-    } = useDayUtilities(
-        date
-    );
+        getAppointmentsForDay
+    } = useAppointmentsContext();
+
 
     const isSelected = isSameDay(date, selectedDate);
     const todayRing = isToday ? 'ring-2 ring-blue-600 ring-offset-2' : '';
 
+
+    const color = getColor(getAppointmentsForDay(date.getDate(), date.getMonth(), date.getFullYear()));
     const colorControl = () => {
         if (isSelected) {
             return "bg-blue-500 text-white";

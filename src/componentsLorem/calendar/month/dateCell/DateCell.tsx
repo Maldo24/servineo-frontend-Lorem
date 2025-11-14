@@ -1,22 +1,33 @@
 'use client';
 import React from 'react';
 
+import useDayUtilities from "@/hooks/useDayUtilities";
+import { useAppointmentsContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
+
 interface DateCellProps {
     date: Date;
-    isToday: boolean;
-    isPast: boolean;
-    color: string;
-    text: string;
 }
 
 export default function DateCell({
-    date,
-    isToday,
-    isPast,
-    color,
-    text
+    date
 }: DateCellProps) {
     const day = date.getDate();
+
+    const {
+        isPast,
+        isToday,
+        getColor,
+        getText
+    } = useDayUtilities(date);
+
+
+    const {
+        getAppointmentsForDay
+    } = useAppointmentsContext();
+
+
+    const color = getColor(getAppointmentsForDay(date.getDate(), date.getMonth(), date.getFullYear()));
+    const text = getText(getAppointmentsForDay(date.getDate(), date.getMonth(), date.getFullYear()));
 
     return (
         <div className="border border-[#b8bec6]">

@@ -9,6 +9,7 @@ import MobileList from "../../componentsLorem/list/MobileList";
 import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
 import CancelDaysAppointments from "../../componentsLorem/appointments/forms/CancelDaysAppointment";
 
+import useDailyConts from "@/utils/useDailyConts";
 import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
 import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterContext";
@@ -16,6 +17,8 @@ import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterC
 //const fixer_id = "68ef1993be38c7f1c3c2c777";
 const fixer_id = "68e87a9cdae3b73d8040102f";
 //const requester_id = "68ec99ddf39c7c140f42fcfa";
+
+//segundo
 const requester_id = "68f518e5ef03787169f81b22";
 
 function cancelAppointments() {
@@ -60,9 +63,10 @@ export default function CalendarPage() {
         setIsCancelModalOpen(false);
     }
 
-    const handleConfirmCancel = (selectedDays: string[]) => {
-        //por alguna razon que no se explicar mandamos la logica pero xd funcion tonta que no quiero refactorizar 
-    }
+    /*   Esto quedara como vestigio del lorem 
+     *   const handleConfirmCancel = (selectedDays: string[]) => {
+            //por alguna razon que no se explicar mandamos la logica pero xd funcion tonta que no quiero refactorizar 
+        }*/
 
     const {
         isHourBookedFixer,
@@ -72,14 +76,19 @@ export default function CalendarPage() {
         loading,
     } = useSixMonthsAppointments(fixer_id, today);
 
+    const {
+        getAppointmentsForDay
+    } = useDailyConts({ date: today, fixer_id });
+
+
     const providerValue = useMemo(() => ({
         isHourBookedFixer,
         isHourBooked,
         isEnabled,
         isCanceled,
+        getAppointmentsForDay,
         loading
-
-    }), [isHourBooked, isEnabled, isCanceled, loading]);
+    }), [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading]);
     return (
         <UserRoleProvider
             role={userRole}
@@ -91,6 +100,7 @@ export default function CalendarPage() {
                 isHourBooked={providerValue.isHourBooked}
                 isEnabled={providerValue.isEnabled}
                 isCanceled={providerValue.isCanceled}
+                getAppointmentsForDay={providerValue.getAppointmentsForDay}
                 loading={providerValue.loading}
             >
                 <AppointmentsStatusProvider
