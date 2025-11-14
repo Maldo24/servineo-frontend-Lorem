@@ -20,7 +20,7 @@ const DAY_MAP: { [key: number]: DayOfWeek } = {
 
 
 
-export default function useAppointmentsByDate(fixer_id: string, date: Date) {
+export default function useAppointmentsDisable(fixer_id: string, date: Date) {
     const [appointmentsDis, setAppointmentsDis] = useState<Days>({
         lunes: [],
         martes: [],

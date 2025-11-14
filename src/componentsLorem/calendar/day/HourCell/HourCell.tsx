@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useRef } from "react";
-import EditAppointmentForm, { EditAppointmentFormHandle, ExistingAppointment } from "@/components/appointments/forms/EditAppointmentForm";
+import EditAppointmentForm, { EditAppointmentFormHandle, ExistingAppointment } from "@/componentsLorem/appointments/forms/EditAppointmentForm";
 import { useUserRole } from "@/utils/contexts/UserRoleContext";
-import type { AppointmentFormHandle } from "@/components/appointments/forms/AppointmentForm";
-import AppointmentForm from "@/components/appointments/forms/AppointmentForm";
-import AppointmentDetailsForm, { EditAppointmentFormHandle as DetailsFormHandle } from "@/components/appointments/forms/AppointmentDetails";
+import type { AppointmentFormHandle } from "@/componentsLorem/appointments/forms/AppointmentForm";
+import AppointmentForm from "@/componentsLorem/appointments/forms/AppointmentForm";
+import AppointmentDetailsForm, { EditAppointmentFormHandle as DetailsFormHandle } from "@/componentsLorem/appointments/forms/AppointmentDetails";
 import { useAppointmentsContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
 const API_BASE = "https://servineo-backend-lorem.onrender.com";
 

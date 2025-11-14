@@ -1,4 +1,4 @@
-import { DisplayField } from "@/components/atoms/displayfield";
+import { DisplayField } from "@/componentsLorem/atoms/displayfield";
 
 interface DateTimeSectionProps {
   datetime: string;

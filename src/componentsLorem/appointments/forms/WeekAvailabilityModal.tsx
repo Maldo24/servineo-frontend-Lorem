@@ -8,7 +8,7 @@ import { AvailabilityHeader } from './modules/AvailabilityHeader';
 import { WeekDaysSection } from './modules/WeekDaysSection';
 
 import useMessage from '@/hooks/useMessage'; 
-import Message from '@/components/ui/Message';
+import Message from '@/componentsLorem/ui/Message';
 
 const API = process.env.NEXT_PUBLIC_BACKEND as string;
 

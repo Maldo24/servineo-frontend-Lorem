@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from 'next/navigation';
-import DesktopCalendar from "@/components/calendar/DesktopCalendar";
-import { UserRoleProvider } from "@/utils/contexts/UserRoleContext";
-import MobileCalendar from "@/components/calendar/mobile/MobileCalendar";
-import MobileList from "@/components/list/MobileList";
-import { ModeSelectionModal, ModeSelectionModalHandles } from '@/components/appointments/forms/ModeSelectionModal';
-import CancelDaysAppointments from "@/components/appointments/forms/CancelDaysAppointment";
+import DesktopCalendar from "../../componentsLorem/calendar/DesktopCalendar";
+import { UserRoleProvider } from "../../utils/contexts/UserRoleContext";
+import MobileCalendar from "../../componentsLorem/calendar/mobile/MobileCalendar";
+import MobileList from "../../componentsLorem/list/MobileList";
+import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
+import CancelDaysAppointments from "../../componentsLorem/appointments/forms/CancelDaysAppointment";
 
 import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";

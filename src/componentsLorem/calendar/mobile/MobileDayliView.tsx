@@ -5,20 +5,20 @@ import AppointmentForm from "../../appointments/forms/AppointmentForm";
 import type { AppointmentFormHandle } from "../../appointments/forms/AppointmentForm";
 import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
 import type { EditAppointmentFormHandle, ExistingAppointment } from "../../appointments/forms/EditAppointmentForm";
-import AppointmentDetailsForm, { EditAppointmentFormHandle as DetailsFormHandle } from "@/components/appointments/forms/AppointmentDetails";
-import DatePicker from "@/components/list/DatePicker/DatePicker";
+import AppointmentDetailsForm, { EditAppointmentFormHandle as DetailsFormHandle } from "@/componentsLorem/appointments/forms/AppointmentDetails";
+import DatePicker from "@/componentsLorem/list/DatePicker/DatePicker";
 import { useUserRole } from "@/utils/contexts/UserRoleContext";
 import { useAppointmentsContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
 
 const API_BASE = "https://servineo-backend-lorem.onrender.com";
 
 interface PropiedadesHorarioDia {
-  fixerId: string;
-  requesterId: string;
-  selectedDate: Date | string | null;
-  onDateChange?: (newDate: Date) => void;
-  pickerMode?: boolean;
-  onSlotSelect?: (iso: string) => void;
+    fixerId: string;
+    requesterId: string;
+    selectedDate: Date | string | null;
+    onDateChange?: (newDate: Date) => void;
+    pickerMode?: boolean;
+    onSlotSelect?: (iso: string) => void;
 }
 
 type Estado = "disponible" | "reservado" | "cancelado_fixer" | "cancelado_requester" | "no_disponible" | "ocupado" | "inhabilitado";
@@ -78,28 +78,28 @@ function esPasadoYMD(d: string) {
 function esHoraPasadaHoy(ymd: string, hora: number): boolean {
     const ahoraBolivia = obtenerAhoraBolivia();
     const hoyYMD = aYMDDeCualquiera(ahoraBolivia);
-    
+
     if (ymd !== hoyYMD) return false;
-    
+
     const horaActual = ahoraBolivia.getHours();
     const minutoActual = ahoraBolivia.getMinutes();
-    
+
     if (hora < horaActual) return true;
     if (hora === horaActual && minutoActual > 0) return true;
-    
+
     return false;
 }
 
 export default function HorarioDelDia({
-  fixerId,
-  requesterId,
-  selectedDate,
-  onDateChange,
-  pickerMode = false,
-  onSlotSelect,
+    fixerId,
+    requesterId,
+    selectedDate,
+    onDateChange,
+    pickerMode = false,
+    onSlotSelect,
 }: PropiedadesHorarioDia) {
     const { isFixer, isRequester } = useUserRole();
-    
+
     const {
         isHourBookedFixer,
         isEnabled,
@@ -175,7 +175,7 @@ export default function HorarioDelDia({
                 } else if (enabled) {
                     estadoHora = "disponible";
                 }
-            } 
+            }
             // VISTA FIXER 
             else if (isFixer) {
                 if (bookedFix) {
@@ -187,14 +187,14 @@ export default function HorarioDelDia({
                 } else if (enabled) {
                     estadoHora = "disponible";
                 }
-            } 
+            }
             // VISTA REQUESTER 
             else if (isRequester) {
                 if (booked === "self") {
-                    estadoHora = "reservado"; 
-                } else if (booked === "other" ) {
+                    estadoHora = "reservado";
+                } else if (booked === "other") {
                     estadoHora = "ocupado";
-                } else if ( canceled === "otherFixer") {
+                } else if (canceled === "otherFixer") {
                     estadoHora = "no_disponible";
                 } else if (canceled === "fixer") {
                     estadoHora = "cancelado_fixer";
@@ -262,11 +262,11 @@ export default function HorarioDelDia({
 
     async function cargarDetallesCita(item: HorarioItem) {
         if (formRef.current) {
-            const [y,m,d]=fecha.split("-").map(Number);
-            const [hh]=item.Hora_Inicio.split(":");
-            const horaLocal=parseInt(hh,10);
-            
-            const now = new Date(y,m-1,d,horaLocal,0,0,0);
+            const [y, m, d] = fecha.split("-").map(Number);
+            const [hh] = item.Hora_Inicio.split(":");
+            const horaLocal = parseInt(hh, 10);
+
+            const now = new Date(y, m - 1, d, horaLocal, 0, 0, 0);
             formRef.current.open(now);
         }
     }
@@ -304,7 +304,7 @@ export default function HorarioDelDia({
 
         // Determinar si el slot es clickeable según el modo y rol
         let clickeable = false;
-        
+
         if (pickerMode) {
             clickeable = item.estado_Horario === "disponible";
         } else if (isFixer) {
@@ -334,14 +334,14 @@ export default function HorarioDelDia({
 
         if (item.estado_Horario === "reservado" && isRequester) {
             cargarYEditarCita(item);
-        }else if(item.estado_Horario === "reservado" && isFixer){
+        } else if (item.estado_Horario === "reservado" && isFixer) {
             cargarDetallesCita(item);
         }
     };
 
     const noHayHorariosDisponibles = !!datos && (datos.horarios ?? []).every((it) => it.estado_Horario !== "disponible");
 
-    const esEstadoCancelado = (estado: Estado) => 
+    const esEstadoCancelado = (estado: Estado) =>
         estado === "cancelado_fixer" || estado === "cancelado_requester";
 
     return (
@@ -357,9 +357,9 @@ export default function HorarioDelDia({
 
             <div className="mb-3">
                 <label className="block text-sm mb-1">Fecha</label>
-                <DatePicker 
-                    selectedDate={selectedDate ? (typeof selectedDate === 'string' ? convertirYMDaFechaLocal(selectedDate) : selectedDate) : new Date()} 
-                    onDateChange={handleDatePickerChange} 
+                <DatePicker
+                    selectedDate={selectedDate ? (typeof selectedDate === 'string' ? convertirYMDaFechaLocal(selectedDate) : selectedDate) : new Date()}
+                    onDateChange={handleDatePickerChange}
                 />
             </div>
 
@@ -378,15 +378,15 @@ export default function HorarioDelDia({
 
                     <div className="space-y-2">
                         {datos.horarios && (() => {
-                            const horariosVisibles = pickerMode 
-                                ? datos.horarios.filter(h => h.estado_Horario === "disponible") 
+                            const horariosVisibles = pickerMode
+                                ? datos.horarios.filter(h => h.estado_Horario === "disponible")
                                 : datos.horarios;
 
                             return (
                                 <div className="space-y-2">
                                     {horariosVisibles.map((item, idx) => {
                                         const meta = etiquetaPorEstado(item.estado_Horario);
-                                        
+
                                         let clickeable = false;
                                         if (pickerMode) {
                                             clickeable = item.estado_Horario === "disponible";
