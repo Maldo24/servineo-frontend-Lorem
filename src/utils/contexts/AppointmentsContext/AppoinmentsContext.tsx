@@ -7,6 +7,7 @@ interface AppointmentsContextType {
     isHourBooked: (date: Date, hour: number, requester_id: string) => 'self' | 'other' | 'notBooked';
     isEnabled: (date: Date, hour: number) => boolean;
     isCanceled: (date: Date, hour: number, requester_id: string) => 'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel';
+    getAppointmentsForDay: (day: number, month: number, year: number) => 'full' | 'partial' | 'available' | 'disabled';
     loading: boolean;
 
 }
@@ -27,9 +28,12 @@ export function useAppointmentsContext() {
 interface AppointmentsProviderProps {
     children: ReactNode;
     isHourBookedFixer: (date: Date, hour: number) => boolean;
-    isHourBooked: (date: Date, hour: number, requester_id: string) => 'self' | 'other' | 'notBooked';
+    isHourBooked: (date: Date, hour: number, requester_id: string) =>
+        'self' | 'other' | 'notBooked';
     isEnabled: (date: Date, hour: number) => boolean;
-    isCanceled: (date: Date, hour: number, requester_id: string) => 'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel';
+    isCanceled: (date: Date, hour: number, requester_id: string) =>
+        'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel';
+    getAppointmentsForDay: (day: number, month: number, year: number) => 'full' | 'partial' | 'available' | 'disabled';
     loading: boolean;
 
 }
@@ -40,11 +44,12 @@ export function AppointmentsProvider({
     isHourBooked,
     isEnabled,
     isCanceled,
+    getAppointmentsForDay,
     loading
 }: AppointmentsProviderProps) {
     const value = useMemo(
-        () => ({ isHourBookedFixer, isHourBooked, isEnabled, isCanceled, loading }),  // ← AGREGAR
-        [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, loading]  // ← AGREGAR
+        () => ({ isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading }),  // ← AGREGAR
+        [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading]  // ← AGREGAR
     );
 
     return (
