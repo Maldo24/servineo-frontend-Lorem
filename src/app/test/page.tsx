@@ -16,34 +16,8 @@ export default function CalendarPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const {
-        getAppointmentsForDate,
-        count,
-        refetch
-    } = useDailyConts({ date: todidi, fixer_id });
 
 
-    /*    useEffect(() => {
-    
-            console.log(' fecheando');
-            refetch();
-        }, [refetch]);*/
-    useEffect(() => {
-        if (count) {
-            console.log('📊 Count completo recibido:', count);
-            console.log('📊 Claves disponibles:', Object.keys(count));
-
-            // Ver ambos formatos
-            console.log('📊 Formato 12-2025:', count["12-2025"]);
-            console.log('📊 Formato 2025-12:', count["2025-12"]);
-
-            // Ver resultado de la función
-            const resultado = getAppointmentsForDate(todi);
-            console.log('📊 Resultado getAppointmentsForDate:', resultado);
-        }
-    }, [count]);
-
-    console.log(getAppointmentsForDate(todi));
     const fetchAppointments = async () => {
         setLoading(true);
         setError(null);
