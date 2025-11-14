@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DatePicker from "@/components/list/DatePicker/DatePicker";
+import DatePicker from "@/componentsLorem/list/DatePicker/DatePicker";
 const API = process.env.NEXT_PUBLIC_BACKEND as string;
 
 import axios from 'axios';

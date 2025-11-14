@@ -42,7 +42,6 @@ export default function DesktopMonthView({
             getText
         } = useDayUtilities(date);
 
-        //      console.log(day, month, getColor(cont[day - 1]));
 
         days.push(
             <DateCell

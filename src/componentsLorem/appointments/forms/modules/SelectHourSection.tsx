@@ -1,4 +1,4 @@
-import {AvailabilityButton} from '@/components/appointments/forms/modules/AvailabilityButton'
+import {AvailabilityButton} from '@/componentsLorem/appointments/forms/modules/AvailabilityButton'
 
 interface SelectHourSectionProps{
   selectedHours: number[];

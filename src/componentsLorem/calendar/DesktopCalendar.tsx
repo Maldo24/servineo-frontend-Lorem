@@ -1,8 +1,9 @@
 
 'use client';
 import { useState, useMemo } from "react";
-import DesktopMonthView from "@/components/calendar/month/DesktopMonthView/DesktopMonthView";
-import HeaderDesktop from "@/components/calendar/Header/HeaderDesktop";
+import DesktopMonthView from "@/componentsLorem/calendar/month/DesktopMonthView/DesktopMonthView";
+import HeaderDesktop from "@/componentsLorem/calendar/Header/HeaderDesktop";
+import useAppointmentsByDate from "@/hooks/useDailyAppointments";
 import useCalendarView from "@/hooks/useCalendarView";
 import DesktopDailyView from "./day/DesktopDailyView";
 import DesktopWeekView from "./week/DesktopWeekView";

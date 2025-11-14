@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 export type FormType = 'create' | 'edit' | 'view'
 const MapView = dynamic(
-    () => import("@/components/maps/location/MapView"),
+    () => import("@/componentsLorem/maps/location/MapView"),
     {
         ssr: false,
         loading: () => (

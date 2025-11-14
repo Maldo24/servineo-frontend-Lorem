@@ -1,4 +1,4 @@
-import { Button } from "@/components/atoms/button";
+import { Button } from "@/componentsLorem/atoms/button";
 
 interface ModeSelectionActionsProps{
     fixerId: string;

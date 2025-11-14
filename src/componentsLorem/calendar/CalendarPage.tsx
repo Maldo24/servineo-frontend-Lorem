@@ -3,10 +3,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import DesktopCalendar from "@/components/calendar/DesktopCalendar";
+import DesktopCalendar from "@/componentsLorem/calendar/DesktopCalendar";
 
-import MobileCalendar from "@/components/calendar/mobile/MobileCalendar";
-import MobileList from "@/components/list/MobileList";
+import MobileCalendar from "@/componentsLorem/calendar/mobile/MobileCalendar";
+import MobileList from "@/componentsLorem/list/MobileList";
 import { AppointmentsStatusProvider } from "@/utils/contexts/DayliViewRequesterContext";
 
 

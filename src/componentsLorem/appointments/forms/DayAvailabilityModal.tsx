@@ -7,7 +7,7 @@ import { AvailabilityHeader } from './modules/AvailabilityHeader';
 import { SelectHourSection } from './modules/SelectHourSection';
 
 import useMessage from '@/hooks/useMessage'; 
-import Message from '@/components/ui/Message';
+import Message from '@/componentsLorem/ui/Message';
 
 const API = process.env.NEXT_PUBLIC_BACKEND as string;
 

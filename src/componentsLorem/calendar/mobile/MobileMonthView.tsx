@@ -12,17 +12,27 @@ interface MobileMonthViewProps {
     year: number;
     month: number;
     selectedDate: Date;
+
     onSelectDate: (date: Date) => void;
 }
+
 
 export default function MobileMonthView({
     year,
     month,
+
     selectedDate,
     onSelectDate,
 
 }: MobileMonthViewProps) {
     const { fixer_id } = useUserRole();
+
+    const {
+        getColor
+    } = useDayUtilities(
+        today
+    );
+
     const {
         getAppointmentsForDay,
     } = useDailyConts({ date: today, fixer_id });
@@ -34,14 +44,7 @@ export default function MobileMonthView({
 
     const days: React.ReactNode[] = [];
 
-    const {
-        isToday,
-        isPast,
-        isSameDay,
-        getColor
-    } = useDayUtilities(
-        selectedDate
-    );
+
 
 
     for (let i = 0; i < firstDay; i++) {
@@ -55,13 +58,12 @@ export default function MobileMonthView({
             <DayCell
                 key={day}
                 date={date}
-                isToday={isToday}
                 selectedDate={selectedDate}
                 onSelectDate={onSelectDate}
                 color={getColor(getAppointmentsForDay(day, month, year))}
-
             />
         );
+
     }
     return (
         <div className="p-4">
