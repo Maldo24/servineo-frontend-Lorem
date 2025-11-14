@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-import MobileDayliView from '@/components/calendar/mobile/MobileDayliView'
+import MobileDayliView from '../../componentsLorem/calendar/mobile/MobileDayliView'
 const fixer_id = "68e87a9cdae3b73d8040102f";
 const requester_id = "68ec99ddf39c7c140f42fcfa"
 
