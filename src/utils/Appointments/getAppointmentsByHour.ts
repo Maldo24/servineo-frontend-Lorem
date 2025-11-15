@@ -1,36 +1,44 @@
 
 import axios from 'axios';
-
 export interface Appointment {
     _id: string;
     id_fixer: string;
     id_requester: string;
+    selected_date: string;
     current_requester_name: string;
     appointment_type: string;
     appointment_description: string;
     link_id: string;
     current_requester_phone: string;
+    starting_time: string;
+    finishing_time: string;
+    schedule_state: string;
     display_name_location: string;
-    latitude: string;
-    longitude: string;
+    lat: string;
+    lon: string;
+    cancelled_fixer: boolean;
+    active: boolean;
+    reprogram_reason: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
-
 interface ApiResponse {
+    succeed: boolean;
     message: string;
     data: Appointment[];
 }
 
-export async function getSixMonthAppointments(fixerId: string, requesterId: string, date: string, hour: number): Promise<Appointment[]> {
+export async function getAppointmentsByHour(fixer_id: string, date: string, hour: number): Promise<Appointment[]> {
     try {
 
         const response = await axios.get<ApiResponse>(
-            'https://servineo-backend-lorem.onrender.com/api/crud_read/appointments/get_modal_form?fixer_id=68e87a9cdae3b73d8040102f&requester_id=68ec99ddf39c7c140f42fcfa&appointment_date=2025-11-16T00:00:00.000Z&start_hour=9',
+            'https://servineo-backend-lorem.onrender.com/api/crud_read/appointments/get_appointment_by_fixer_hour',
             {
                 params: {
-                    fixer_id: fixerId,
-                    requester_id: requesterId,
-                    date: date,
-                    hour: hour
+                    fixer_id,
+                    date,
+                    hour
                 }
             }
         );

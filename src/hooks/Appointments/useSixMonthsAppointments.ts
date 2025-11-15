@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Appointment } from '@/utils/getAppointmentsByDate';
 import { getSixMonthAppointments } from "@/utils/Appointments/getSixMonthAppointments";
-
+import { getAppointmentsByHour } from "@/utils/Appointments/getAppointmentsByHour";
 import { getAppointmentsDisable, Days } from "@/utils/getAppointmentsDisable";
 
 export type DayOfWeek = keyof Days;
@@ -79,6 +79,34 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const refetch = useCallback(() => {
         setRefreshTrigger(prev => prev + 1);
     }, []);
+
+
+    const refetchHour = useCallback(async (date: Date, hour: number) => {
+        try {
+            const dateString = date.toISOString().split('T')[0];
+            const hourAppointments = await getAppointmentsByHour(fixer_id, dateString, hour);
+
+            setAppointments(prevAppointments => {
+                const otherAppointments = prevAppointments.filter(apt => {
+                    const aptDate = new Date(apt.starting_time);
+                    return !(
+                        aptDate.getUTCFullYear() === date.getFullYear() &&
+                        aptDate.getUTCMonth() === date.getMonth() &&
+                        aptDate.getUTCDate() === date.getDate() &&
+                        aptDate.getUTCHours() === hour
+                    );
+                });
+
+                return [...otherAppointments, ...hourAppointments];
+            });
+
+            return hourAppointments;
+        } catch (err) {
+            console.error('Error en refetchHour:', err);
+            return [];
+        }
+    }, [fixer_id]);
+
 
     const isHourBookedFixer = useCallback((day: Date, hour: number): boolean => {
         return appointments.some((apt: Appointment) => {
@@ -170,6 +198,7 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         loading,
         isCanceled,
         error,
-        refetch
+        refetch,
+        refetchHour
     };
 }

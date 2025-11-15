@@ -9,6 +9,7 @@ interface AppointmentsContextType {
     getAppointmentsForDay: (day: number, month: number, year: number) => 'full' | 'partial' | 'available' | 'disabled';
     loading: boolean;
     refetchAll: () => void;
+    refetchHour: (date: Date, hour: number) => void;
 }
 
 const AppointmentsContext = createContext<AppointmentsContextType | null>(null);
@@ -32,6 +33,7 @@ interface AppointmentsProviderProps {
     getAppointmentsForDay: (day: number, month: number, year: number) => 'full' | 'partial' | 'available' | 'disabled';
     loading: boolean;
     refetchAll: () => void;
+    refetchHour: (date: Date, hour: number) => void;
 }
 
 export function AppointmentsProvider({
@@ -42,7 +44,8 @@ export function AppointmentsProvider({
     isCanceled,
     getAppointmentsForDay,
     loading,
-    refetchAll
+    refetchAll,
+    refetchHour
 }: AppointmentsProviderProps) {
     const value = useMemo(
         () => ({
@@ -52,9 +55,10 @@ export function AppointmentsProvider({
             isCanceled,
             getAppointmentsForDay,
             loading,
-            refetchAll
+            refetchAll,
+            refetchHour
         }),
-        [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading, refetchAll]
+        [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading, refetchAll, refetchHour]
     );
 
     return (
