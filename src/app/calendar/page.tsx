@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import DesktopCalendar from "../../componentsLorem/calendar/DesktopCalendar";
 import { UserRoleProvider } from "../../utils/contexts/UserRoleContext";
@@ -8,7 +8,7 @@ import MobileCalendar from "../../componentsLorem/calendar/mobile/MobileCalendar
 import MobileList from "../../componentsLorem/list/MobileList";
 import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
 import CancelDaysAppointments from "../../componentsLorem/appointments/forms/CancelDaysAppointment";
-
+import useHourAppointment from "@/hooks/Appointments/useHourAppointments";
 import useDailyConts from "@/utils/useDailyConts";
 import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
@@ -21,9 +21,7 @@ const fixer_id = "68e87a9cdae3b73d8040102f";
 //segundo
 const requester_id = "68f518e5ef03787169f81b22";
 
-function cancelAppointments() {
-    console.log("Citas canceladas");
-}
+
 
 export default function CalendarPage() {
     const router = useRouter();
@@ -73,12 +71,20 @@ export default function CalendarPage() {
         isHourBooked,
         isEnabled,
         isCanceled,
-        loading,
+        refetch: refetchSixMonths,
+        refetchHour,
+        loading
     } = useSixMonthsAppointments(fixer_id, today);
 
     const {
-        getAppointmentsForDay
+        getAppointmentsForDay,
+        refetch: refetchConts
     } = useDailyConts({ date: today, fixer_id });
+
+    const refetchAll = useCallback(() => {
+        refetchSixMonths();
+        refetchConts();
+    }, [refetchSixMonths, refetchConts]);
 
 
     const providerValue = useMemo(() => ({
@@ -87,8 +93,12 @@ export default function CalendarPage() {
         isEnabled,
         isCanceled,
         getAppointmentsForDay,
+        refetchAll,
+        refetchHour,
         loading
-    }), [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading]);
+    }), [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, refetchAll, refetchHour, getAppointmentsForDay, loading]);
+
+
     return (
         <UserRoleProvider
             role={userRole}
@@ -101,6 +111,8 @@ export default function CalendarPage() {
                 isEnabled={providerValue.isEnabled}
                 isCanceled={providerValue.isCanceled}
                 getAppointmentsForDay={providerValue.getAppointmentsForDay}
+                refetchAll={providerValue.refetchAll}
+                refetchHour={providerValue.refetchHour}
                 loading={providerValue.loading}
             >
                 <AppointmentsStatusProvider

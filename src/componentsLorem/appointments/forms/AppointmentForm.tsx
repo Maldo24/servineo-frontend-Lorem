@@ -42,20 +42,20 @@ const virtualSchema = baseSchema.extend({
 });
 
 const presentialSchema = baseSchema.extend({
-  modality: z.literal("presential"),
-  meetingLink: z.undefined().optional(),
-  location: z
-    .object({
-      lat: z.number(),
-      lon: z.number(),
-      address: z.string().nonempty("Seleccione una ubicación"),
-    })
-    .nullable()
-    .refine((val) => val !== null, { message: "Seleccione una ubicación" })
-    .refine(
-      (val) => val?.address !== "No se pudo obtener la dirección",
-      { message: "Seleccione una ubicación." }
-    ),
+    modality: z.literal("presential"),
+    meetingLink: z.undefined().optional(),
+    location: z
+        .object({
+            lat: z.number(),
+            lon: z.number(),
+            address: z.string().nonempty("Seleccione una ubicación"),
+        })
+        .nullable()
+        .refine((val) => val !== null, { message: "Seleccione una ubicación" })
+        .refine(
+            (val) => val?.address !== "No se pudo obtener la dirección",
+            { message: "Seleccione una ubicación." }
+        ),
 });
 
 const appointmentSchema = z.discriminatedUnion("modality", [virtualSchema, presentialSchema]);
@@ -131,9 +131,9 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         console.log("create.adjustedEnd", adjustedEnd.toISOString());
 
         return {
-        selected_date: adjustedStart.toISOString().split("T")[0],
-        starting_time: adjustedStart.toISOString(),
-        finishing_time: adjustedEnd.toISOString()
+            selected_date: adjustedStart.toISOString().split("T")[0],
+            starting_time: adjustedStart.toISOString(),
+            finishing_time: adjustedEnd.toISOString()
         };
     }
 
@@ -157,7 +157,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         };
 
         const validation = appointmentSchema.safeParse(formData);
-            if (!validation.success) {
+        if (!validation.success) {
             const fieldErrors: Record<string, string> = {};
             validation.error.issues.forEach(err => {
                 const key = err.path && err.path.length ? err.path.join('.') : 'general';
@@ -166,7 +166,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             });
             setErrors(fieldErrors);
             return;
-            }
+        }
 
         const { selected_date, starting_time, finishing_time } = parseDatetime(datetime);
 
@@ -200,7 +200,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
 
             const hourToShow = new Date(payload.starting_time).getUTCHours();
             let hourToShowString;
-            
+
             if (hourToShow < 10) {
                 hourToShowString = "0" + hourToShow.toString() + ":00";
             } else {
@@ -245,7 +245,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                     <div className="p-4 sm:p-6">
                         <div className="flex items-start justify-between">
                             <h3 id="appointment-title" className="text-lg font-semibold text-black">
-                                Agendar cita 
+                                Agendar cita
                             </h3>
                             <button
                                 aria-label="Cerrar"

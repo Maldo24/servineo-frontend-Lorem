@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Appointment } from '@/utils/getAppointmentsByDate';
 import { getSixMonthAppointments } from "@/utils/Appointments/getSixMonthAppointments";
-
+import { getAppointmentsByHour } from "@/utils/Appointments/getAppointmentsByHour";
 import { getAppointmentsDisable, Days } from "@/utils/getAppointmentsDisable";
 
 export type DayOfWeek = keyof Days;
@@ -14,12 +14,6 @@ const DAY_MAP: { [key: number]: DayOfWeek } = {
     5: 'viernes',
     6: 'sabado'
 };
-
-
-
-
-
-
 
 export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -36,8 +30,10 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const [error, setError] = useState<string | null>(null);
 
     const hasFetched = useRef(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
     useEffect(() => {
-        if (hasFetched.current) {
+        if (hasFetched.current && refreshTrigger === 0) {
             return;
         }
 
@@ -78,9 +74,38 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         }
 
         fetchData();
-    }, [fixer_id, date]);
+    }, [fixer_id, date, refreshTrigger]);
+
+    const refetch = useCallback(() => {
+        setRefreshTrigger(prev => prev + 1);
+    }, []);
 
 
+    const refetchHour = useCallback(async (date: Date, hour: number) => {
+        try {
+            const dateString = date.toISOString().split('T')[0];
+            const hourAppointments = await getAppointmentsByHour(fixer_id, dateString, hour);
+
+            setAppointments(prevAppointments => {
+                const otherAppointments = prevAppointments.filter(apt => {
+                    const aptDate = new Date(apt.starting_time);
+                    return !(
+                        aptDate.getUTCFullYear() === date.getFullYear() &&
+                        aptDate.getUTCMonth() === date.getMonth() &&
+                        aptDate.getUTCDate() === date.getDate() &&
+                        aptDate.getUTCHours() === hour
+                    );
+                });
+
+                return [...otherAppointments, ...hourAppointments];
+            });
+
+            return hourAppointments;
+        } catch (err) {
+            console.error('Error en refetchHour:', err);
+            return [];
+        }
+    }, [fixer_id]);
 
 
     const isHourBookedFixer = useCallback((day: Date, hour: number): boolean => {
@@ -97,8 +122,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
             );
         });
     }, [appointments]);
-
-
 
     const isHourBooked = useCallback((day: Date, hour: number, requester_id: string): 'self' | 'other' | 'notBooked' => {
         const appointment = appointments.find((apt: Appointment) => {
@@ -121,8 +144,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         return 'other';
     }, [appointments]);
 
-
-
     const isEnabled = useCallback((day: Date, hour: number): boolean => {
         const dayOfWeek = day.getDay();
         const dayName = DAY_MAP[dayOfWeek];
@@ -133,7 +154,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
 
         return appointmentsDis[dayName].includes(hour);
     }, [appointmentsDis]);
-
 
     const isCanceled = useCallback((day: Date, hour: number, requester_id: string): 'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel' => {
         const appointment = appointments.find((apt: Appointment) => {
@@ -171,14 +191,14 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
 
     }, [appointments]);
 
-
-
     return {
         isHourBookedFixer,
         isHourBooked,
         isEnabled,
         loading,
         isCanceled,
-        error
+        error,
+        refetch,
+        refetchHour
     };
 }

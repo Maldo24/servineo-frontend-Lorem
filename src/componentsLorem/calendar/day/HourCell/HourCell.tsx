@@ -78,7 +78,7 @@ export default function HourCell({
         if (estado === 'reservado' || estado === 'ocupado' || estado === 'reservadoOtro')
             return "bg-[#FFC857]";
         if (estado === 'cancelFixer' || estado === 'cancelOtherRequester' || estado === 'cancelRequester')
-            return "bg-[#FF3E17]"
+            return "bg-[#FF3E17] text-sm "
         if (estado === 'inhabilitado')
             return "bg-[#64748B]";
         if (isFixer) {
@@ -102,7 +102,7 @@ export default function HourCell({
                 return "Cancelado";
 
             if (estado === 'cancelOtherRequester' || estado === 'cancelRequester')
-                return "Cancelado por Requester"
+                return "Cancelado (Requester)"
 
             if (estado === 'reservado' || estado === 'ocupado' || estado === 'reservadoOtro')
                 return "Reservado";
@@ -231,7 +231,7 @@ export default function HourCell({
             <div className="w-full">
                 {showHourCell() && (
                     <div
-                        className={`mx-3 py-3 rounded-md text-center text-white ${getColor()} cursor-pointer`}
+                        className={`mx-2  rounded-md text-center text-white ${getColor()} py-3 cursor-pointer`}
                         onClick={handleClick}
                     >
                         <p>{getText()}</p>

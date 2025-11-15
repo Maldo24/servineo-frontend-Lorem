@@ -50,7 +50,7 @@ export default function DesktopCalendar({
 
         <div className="w-full flex flex-col items-center bg-white">
             <div className="w-full max-w-5xl">
-                <div className="bg-green-500 w-full p-1 flex items-center">
+                <div className="bg-blue-500 w-full p-1 flex items-center">
                     <HeaderDesktop
                         year={year}
                         month={month}
