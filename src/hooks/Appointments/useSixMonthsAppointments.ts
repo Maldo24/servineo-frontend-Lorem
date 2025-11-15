@@ -15,12 +15,6 @@ const DAY_MAP: { [key: number]: DayOfWeek } = {
     6: 'sabado'
 };
 
-
-
-
-
-
-
 export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [appointmentsDis, setAppointmentsDis] = useState<Days>({
@@ -36,8 +30,10 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     const [error, setError] = useState<string | null>(null);
 
     const hasFetched = useRef(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
     useEffect(() => {
-        if (hasFetched.current) {
+        if (hasFetched.current && refreshTrigger === 0) {
             return;
         }
 
@@ -78,10 +74,11 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         }
 
         fetchData();
-    }, [fixer_id, date]);
+    }, [fixer_id, date, refreshTrigger]);
 
-
-
+    const refetch = useCallback(() => {
+        setRefreshTrigger(prev => prev + 1);
+    }, []);
 
     const isHourBookedFixer = useCallback((day: Date, hour: number): boolean => {
         return appointments.some((apt: Appointment) => {
@@ -97,8 +94,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
             );
         });
     }, [appointments]);
-
-
 
     const isHourBooked = useCallback((day: Date, hour: number, requester_id: string): 'self' | 'other' | 'notBooked' => {
         const appointment = appointments.find((apt: Appointment) => {
@@ -121,8 +116,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         return 'other';
     }, [appointments]);
 
-
-
     const isEnabled = useCallback((day: Date, hour: number): boolean => {
         const dayOfWeek = day.getDay();
         const dayName = DAY_MAP[dayOfWeek];
@@ -133,7 +126,6 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
 
         return appointmentsDis[dayName].includes(hour);
     }, [appointmentsDis]);
-
 
     const isCanceled = useCallback((day: Date, hour: number, requester_id: string): 'fixer' | 'requester' | 'otherFixer' | 'otherRequester' | 'notCancel' => {
         const appointment = appointments.find((apt: Appointment) => {
@@ -171,14 +163,13 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
 
     }, [appointments]);
 
-
-
     return {
         isHourBookedFixer,
         isHourBooked,
         isEnabled,
         loading,
         isCanceled,
-        error
+        error,
+        refetch
     };
 }

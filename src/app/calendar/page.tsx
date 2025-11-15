@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import DesktopCalendar from "../../componentsLorem/calendar/DesktopCalendar";
 import { UserRoleProvider } from "../../utils/contexts/UserRoleContext";
@@ -73,12 +73,19 @@ export default function CalendarPage() {
         isHourBooked,
         isEnabled,
         isCanceled,
-        loading,
+        refetch: refetchSixMonths,
+        loading
     } = useSixMonthsAppointments(fixer_id, today);
 
     const {
-        getAppointmentsForDay
+        getAppointmentsForDay,
+        refetch: refetchConts
     } = useDailyConts({ date: today, fixer_id });
+
+    const refetchAll = useCallback(() => {
+        refetchSixMonths();
+        refetchConts();
+    }, [refetchSixMonths, refetchConts]);
 
 
     const providerValue = useMemo(() => ({
@@ -87,8 +94,9 @@ export default function CalendarPage() {
         isEnabled,
         isCanceled,
         getAppointmentsForDay,
+        refetchAll,
         loading
-    }), [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, getAppointmentsForDay, loading]);
+    }), [isHourBookedFixer, isHourBooked, isEnabled, isCanceled, refetchAll, getAppointmentsForDay, loading]);
     return (
         <UserRoleProvider
             role={userRole}
@@ -101,6 +109,7 @@ export default function CalendarPage() {
                 isEnabled={providerValue.isEnabled}
                 isCanceled={providerValue.isCanceled}
                 getAppointmentsForDay={providerValue.getAppointmentsForDay}
+                refetchAll={providerValue.refetchAll}
                 loading={providerValue.loading}
             >
                 <AppointmentsStatusProvider
