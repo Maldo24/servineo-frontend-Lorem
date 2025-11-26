@@ -1,13 +1,13 @@
 
 "use client";
-import HeroSection from "@/Components/Home/Hero-section";
-import ServicesSection from "@/Components/Home/Services-section";
-import HowItWorksSection from "@/Components/Home/HowItWorks-section";
-import CTASection from "@/Components/Home/CTA-section";
-import MapSection from "@/Components/Home/Map-section";
-import InspirationSection from "@/Components/Home/Inspiration-section";
-import RecentOffersSection from "@/Components/Home/RecentOffer-secction";
-import FooterSection from "@/Components/Home/Footer-section";
+import HeroSection from "@/componentsLumonis/Home/Hero-section";
+import ServicesSection from "@/componentsLumonis/Home/Services-section";
+import HowItWorksSection from "@/componentsLumonis/Home/HowItWorks-section";
+import CTASection from "@/componentsLumonis/Home/CTA-section";
+import MapSection from "@/componentsLumonis/Home/Map-section";
+import InspirationSection from "@/componentsLumonis/Home/Inspiration-section";
+import RecentOffersSection from "@/componentsLumonis/Home/RecentOffer-secction";
+import FooterSection from "@/componentsLumonis/Home/Footer-section";
 
 
 export default function Home() {
