@@ -23,7 +23,6 @@ export interface JobOffer {
 }
 
 export interface Fixer {
-<<<<<<< HEAD
   id: string
   name: string
   email?: string
@@ -69,22 +68,6 @@ export type JobOfferBackend = {
   fixerPhoto?: string
   rating?: number
   completedJobs?: number
-=======
-    id: string
-    name: string
-    email?: string
-    phone: string
-    photo?: string
-    city: string
-    rating?: number
-    completedJobs: number
-    services: string[]
-    bio?: string
-    joinDate: Date
-    jobOffers: JobOffer[]
-    paymentMethods: string[]
-    whatsapp?: string
->>>>>>> test/Integracion
 }
 
 // Mock de ubicación del usuario
@@ -110,7 +93,6 @@ export const availableServices = [
 
 // Mock de FIXER actual (simulando usuario logueado)
 export const currentFixer: Fixer = {
-<<<<<<< HEAD
   id: "fixer-001",
   name: "Juan Carlos Pérez",
   email: "juan.perez@example.com",
@@ -298,10 +280,8 @@ let _mockJobOffers: JobOffer[] = [
 
 // Mock de fixers
 // En src/app/lib/mock-data.ts
-export const mockFixers = [
+/*export const mockFixers = [
   {
-=======
->>>>>>> test/Integracion
     id: "fixer-001",
     name: "Juan Carlos Pérez",
     email: "juan.perez@example.com",
@@ -312,18 +292,12 @@ export const mockFixers = [
     rating: 4.8,
     completedJobs: 124,
     services: ["Plomería", "Electricidad", "Carpintería"],
-<<<<<<< HEAD
     bio: "Soy un técnico con más de 5 años de experiencia...",
     joinDate: "2022-01-15",
-=======
-    bio: "Soy un técnico con más de 5 años de experiencia en trabajos de electricidad y plomería. Me apasiona mi trabajo y siempre busco la satisfacción del cliente.",
-    joinDate: new Date("2022-01-15"),
-    jobOffers: [],
->>>>>>> test/Integracion
     paymentMethods: ["Efectivo", "Transferencia", "QR"],
-}
+}*/
 
-// Mock de ofertas de trabajo
+/*// Mock de ofertas de trabajo
 let _mockJobOffers: JobOffer[] = [
     {
         id: "offer-002",
@@ -490,7 +464,7 @@ let _mockJobOffers: JobOffer[] = [
 
 
     // Add more mock job offers as needed
-]
+]*/
 
 // Mock de fixers
 // En src/app/lib/mock-data.ts

@@ -19,7 +19,6 @@
     "@react-oauth/google": "^0.12.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@hookform/resolvers": "^5.2.2",
     "@mui/material": "^7.3.4",
     "@mui/x-date-pickers": "^8.14.0",
     "@reduxjs/toolkit": "^2.9.1",
