@@ -2,17 +2,10 @@
 
 // import type React from "react"
 
-<<<<<<< HEAD:src/Components/fixer/steps/Experience-step.tsx
 // import { useState } from "react"
 // import { Card } from "@/Components/Card"
 // import { Upload, ImageIcon, Video, Trash2, AlertCircle } from "lucide-react"
 // import Image from "next/image"
-=======
-import { useState } from "react"
-import { Card } from "@/componentsLumonis/Card"
-import { Upload, ImageIcon, Video, Trash2, AlertCircle } from "lucide-react"
-import Image from "next/image"
->>>>>>> test/Integracion:src/componentsLumonis/fixer/steps/Experience-step.tsx
 
 // export interface Experience {
 //   id: string

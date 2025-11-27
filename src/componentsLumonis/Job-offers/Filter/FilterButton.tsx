@@ -1,12 +1,12 @@
-import { Button } from '@/Components/ui/button';
+import { Button } from '../../../componentsLumonis/ui/button';
 import { SlidersHorizontal } from 'lucide-react';
 import React from 'react';
 
 export function FilterButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <Button
-      size="lg"
-      className="
+    return (
+        <Button
+            size="lg"
+            className="
         bg-[#f7f7f7] text-white hover:bg-[#ffffff] 
         shrink-0
         w-10
@@ -20,9 +20,9 @@ export function FilterButton(props: React.ButtonHTMLAttributes<HTMLButtonElement
         border border-black 
         transition-all duration-200
       "
-      {...props}
-    >
-      <SlidersHorizontal size={18} color="black" />
-    </Button>
-  );
+            {...props}
+        >
+            <SlidersHorizontal size={18} color="black" />
+        </Button>
+    );
 }

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { PillButton } from "../Pill-button"
 import { Plus, Edit2, Trash2, Building2, Calendar, Briefcase } from "lucide-react"
 import { IExperience } from "@/types/fixer-profile"
-import { Modal } from "@/Components/Modal"
+import { Modal } from "@/componentsLumonis/Modal"
 import { useForm } from "react-hook-form"
 
 const MOCK_EXP: IExperience[] = [

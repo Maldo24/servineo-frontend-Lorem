@@ -4,9 +4,9 @@ import { useState } from "react"
 import { PillButton } from "../Pill-button"
 import { Plus, Briefcase } from "lucide-react"
 import { IJobOffer } from "@/types/fixer-profile"
-import { Modal } from "@/Components/Modal"
+import { Modal } from "@/componentsLumonis/Modal"
 import { useForm } from "react-hook-form"
-import { JobOfferCard } from "@/Components/Job-offers/JobOfferCard"
+import { JobOfferCard } from "@/componentsLumonis/Job-offers/JobOfferCard"
 import type { JobOfferData } from "@/types/jobOffers"
 
 // Mock data for now

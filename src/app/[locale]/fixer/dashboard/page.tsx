@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { useAppSelector } from "@/app/redux/hooks"
-import { JobOffersSection } from "@/Components/fixer/dashboard/JobOffersSection"
-import { CertificationsSection } from "@/Components/fixer/dashboard/CertificationsSection"
-import { ExperienceSection } from "@/Components/fixer/dashboard/ExperienceSection"
-import { PortfolioSection } from "@/Components/fixer/dashboard/PortfolioSection"
+import { JobOffersSection } from "@/componentsLumonis/fixer/dashboard/JobOffersSection"
+import { CertificationsSection } from "@/componentsLumonis/fixer/dashboard/CertificationsSection"
+import { ExperienceSection } from "@/componentsLumonis/fixer/dashboard/ExperienceSection"
+import { PortfolioSection } from "@/componentsLumonis/fixer/dashboard/PortfolioSection"
 import { User, Briefcase, Award, Building2, Image as ImageIcon, MapPin, Phone, Mail } from "lucide-react"
 import Image from "next/image"
-import EstadisticasTrabajos from "@/Components/fixer/Fixer-statistics"
+import EstadisticasTrabajos from "@/componentsLumonis/fixer/Fixer-statistics"
 
 type Tab = "offers" | "certs" | "experience" | "portfolio" | "estadisticas"
 

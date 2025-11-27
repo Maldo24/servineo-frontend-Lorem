@@ -4,7 +4,7 @@ import { useState } from "react"
 import { PillButton } from "../Pill-button"
 import { Plus, Edit2, Trash2, Award, ExternalLink, Calendar, Building2 } from "lucide-react"
 import { ICertification } from "@/types/fixer-profile"
-import { Modal } from "@/Components/Modal"
+import { Modal } from "../../../componentsLumonis/Modal"
 import { useForm } from "react-hook-form"
 
 const MOCK_CERTS: ICertification[] = [
