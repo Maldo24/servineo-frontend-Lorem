@@ -33,8 +33,8 @@ const presentialSchema = baseSchema.extend({
   modality: z.literal("presential"),
   meetingLink: z.undefined().optional(),
   location: z.object({ lat: z.number(), lon: z.number(), address: z.string().nonempty("Seleccione una ubicación") })
-            .nullable()
-            .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
+    .nullable()
+    .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
 });
 
 const appointmentSchema = z.discriminatedUnion("modality", [virtualSchema, presentialSchema]);
@@ -130,7 +130,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
       setAppointmentId(appointmentData.id);
       setDatetime(appointmentData.datetime);
       setClient(appointmentData.client);
-      setContact(appointmentData.contact? appointmentData.contact : `${appointmentData.contact ?? ""}`);
+      setContact(appointmentData.contact ? appointmentData.contact : `${appointmentData.contact ?? ""}`);
       setModality(normalized);
       setDescription(appointmentData.description || "");
 
@@ -341,6 +341,21 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
               />
 
               {msg && <p className="text-sm text-red-600">{msg}</p>}
+
+              <div className="flex items-center">
+                <div className="w-32 flex-auto ...">
+                  <label className="block">
+                    <span className="text-sm font-medium">Tiempo de Recordatorio:</span>
+                  </label>
+                </div>
+                <div className="w-64 flex-auto ...">
+                  <input
+                    readOnly
+                    value={'30 Minutos Antes de la Cita'}
+                    className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center"
+                  />
+                </div>
+              </div>
 
               <EditAppointmentActions
                 loading={loading}
