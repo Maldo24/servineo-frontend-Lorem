@@ -299,14 +299,19 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                 motive: motivo || undefined,
             });
             setShowSummary(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
+            // Mensaje claro para el usuario + logging para debugging
             console.error("❌ Error en reprogramación:", err);
-            if (err?.response) {
-                console.error("axios.response.status:", err.response.status);
-                console.error("axios.response.data:", err.response.data);
-                setErrors({ general: err.response.data?.message || `Error servidor (${err.response.status})` });
-            } else {
+
+            // Si axios devolvió respuesta del servidor, muestra cuerpo y status
+            if (axios.isAxiosError(err)) {
+                console.error("axios.response.status:", err.response?.status);
+                console.error("axios.response.data:", err.response?.data);
+                setErrors({ general: err.response?.data?.message || `Error servidor (${err.response?.status})` });
+            } else if (err instanceof Error) {
                 setErrors({ general: err?.message || "No se pudo reprogramar" });
+            } else {
+                setErrors({ general: "Error desconocido al reprogramar" });
             }
         } finally {
             setLoading(false);
@@ -434,6 +439,20 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                                 </span>
                                 <span className="ml-1 text-red-500 text-xl">●</span>
                             </button>
+                            <div className="flex items-center">
+                                <div className="w-32 flex-auto ...">
+                                    <label className="block">
+                                        <span className="text-sm font-medium">Tiempo de Recordatorio:</span>
+                                    </label>
+                                </div>
+                                <div className="w-64 flex-auto ...">
+                                    <input
+                                        readOnly
+                                        value={'30 Minutos Antes de la Cita'}
+                                        className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center"
+                                    />
+                                </div>
+                            </div>
 
                             <div className="flex items-center justify-end gap-2 pt-2">
                                 <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-300 text-sm">
