@@ -199,16 +199,13 @@ export default function CalendarPage() {
                             </div>
                         </div>
 
-                        <div className="flex justify-center md:block hidden">
+                        <div className="flex justify-center md:block">
                             <DesktopCalendar
-                                fixer_id={fixer_id}
-                                requester_id={requester_id}
                             />
                         </div>
 
                         <div className="flex flex-col md:hidden justify-center gap-4" >
                             <MobileCalendar
-                                fixer_id={fixer_id}
                                 selectedDate={selectedDate}
                                 onSelectDate={handleDataChange}
                             />

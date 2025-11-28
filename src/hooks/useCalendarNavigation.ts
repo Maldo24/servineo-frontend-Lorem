@@ -45,8 +45,7 @@ export default function useCalendarNavigation({
 
         const dayOfWeek = current.getDay();
 
-        let diff: number;
-        diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
         const start = new Date(current);
         start.setDate(current.getDate() + diff);

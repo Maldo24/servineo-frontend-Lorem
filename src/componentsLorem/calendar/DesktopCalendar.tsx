@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import DesktopMonthView from "@/componentsLorem/calendar/month/DesktopMonthView/DesktopMonthView";
 import HeaderDesktop from "@/componentsLorem/calendar/Header/HeaderDesktop";
-import useAppointmentsByDate from "@/hooks/useDailyAppointments";
 import useCalendarView from "@/hooks/useCalendarView";
 import DesktopDailyView from "./day/DesktopDailyView";
 import DesktopWeekView from "./week/DesktopWeekView";
@@ -12,16 +11,10 @@ import DesktopWeekView from "./week/DesktopWeekView";
 
 
 
-interface DesktopCalendarProps {
-    fixer_id: string;
-    requester_id: string;
-}
 
 
-export default function DesktopCalendar({
-    fixer_id,
-    requester_id
-}: DesktopCalendarProps) {
+
+export default function DesktopCalendar() {
     const date = useMemo(() => {
         const d = new Date();
         d.setHours(0, 0, 0, 0);
@@ -39,7 +32,7 @@ export default function DesktopCalendar({
 
     const selectedDate = useMemo(() => {
         return new Date(year, month, day);
-    }, [year, month, day, view]);
+    }, [year, month, day]);
 
 
 
@@ -75,8 +68,6 @@ export default function DesktopCalendar({
 
                     {view === 'day' && <DesktopDailyView
                         date={selectedDate}
-                        fixer_id={fixer_id}
-                        requester_id={requester_id}
                     />}
                 </div>
             </div>
