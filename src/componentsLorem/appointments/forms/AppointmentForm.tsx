@@ -345,19 +345,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                 </label>
                             )}
 
-                            {/* Botón de Recordatorio */}
-                            <button
-                                type="button"
-                                onClick={() => setShowReminderModal(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
-                            >
-                                <span className="text-xl">🔔</span>
-                                <span className="text-sm font-medium text-gray-700">
-                                    Configurar Tiempo de Recordatorio
-                                </span>
-                                <span className="ml-1 text-red-500 text-xl">●</span>
-                            </button>
-
                             {errors.general && <p className="text-red-600 text-sm mt-1">{errors.general}</p>}
 
                             <div className="flex items-center">
@@ -374,6 +361,19 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                     />
                                 </div>
                             </div>
+
+                            {/* Botón de Recordatorio */}
+                            <button
+                                type="button"
+                                onClick={() => setShowReminderModal(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
+                            >
+                                <span className="text-xl">🔔</span>
+                                <span className="text-sm font-medium text-gray-700">
+                                    Configurar Tiempo de Recordatorio
+                                </span>
+                                <span className="ml-1 text-red-500 text-xl">●</span>
+                            </button>
 
                             <div className="flex items-center justify-end gap-2 pt-2">
                                 <button

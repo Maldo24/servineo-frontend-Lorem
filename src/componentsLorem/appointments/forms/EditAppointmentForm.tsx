@@ -338,19 +338,6 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 <MeetingLinkSection meetingLink={meetingLink} error={errors.meetingLink} onChange={setMeetingLink} />
               )}
 
-              {/* Botón de Recordatorio */}
-              <button
-                type="button"
-                onClick={() => setShowReminderModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
-              >
-                <span className="text-xl">🔔</span>
-                <span className="text-sm font-medium text-gray-700">
-                  Configurar Tiempo de Recordatorio
-                </span>
-                <span className="ml-1 text-red-500 text-xl">●</span>
-              </button>
-
               {msg && <p className="text-sm text-red-600">{msg}</p>}
 
               <div className="flex items-center">
@@ -367,6 +354,19 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                   />
                 </div>
               </div>
+
+              {/* Botón de Recordatorio */}
+              <button
+                type="button"
+                onClick={() => setShowReminderModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
+              >
+                <span className="text-xl">🔔</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Configurar Tiempo de Recordatorio
+                </span>
+                <span className="ml-1 text-red-500 text-xl">●</span>
+              </button>
 
               <EditAppointmentActions
                 loading={loading}
