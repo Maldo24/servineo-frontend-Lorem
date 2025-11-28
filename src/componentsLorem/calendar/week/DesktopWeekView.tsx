@@ -1,5 +1,4 @@
 'use client';
-import { useEffect } from "react";
 import DesktopDailyHours from "../day/DesktopDailyHours";
 import Hours from "../ui/Hours";
 

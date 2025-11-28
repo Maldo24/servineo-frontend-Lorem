@@ -2,7 +2,7 @@
 import { useUserRole } from '@/utils/contexts/UserRoleContext';
 
 export function useUserPermissions() {
-    const { role, isFixer, isRequester } = useUserRole();
+    const { isFixer, isRequester } = useUserRole();
 
     return {
 
