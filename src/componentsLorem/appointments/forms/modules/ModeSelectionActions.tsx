@@ -7,7 +7,6 @@ interface ModeSelectionActionsProps{
 }
 
 export const ModeSelectionActions = ({
-    fixerId,
     openWeek,
     openDaySelection  
 }: ModeSelectionActionsProps ) => {

@@ -1,6 +1,10 @@
 import React, {
-  useState, forwardRef, useImperativeHandle,
-  useRef, useEffect
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+  useMemo,
 } from "react";
 import LocationModal from "./LocationModal";
 import { z } from "zod";
@@ -16,28 +20,52 @@ import { EditAppointmentActions } from "./modules/EditAppointmentActions";
 import { JustificationPopup } from "../forms/popups/JustificationPopup";
 import RescheduleForm, { RescheduleFormHandle } from "./RescheduleForm";
 
+// --- Schemas ---
+
 const baseSchema = z.object({
-  client: z.string().regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, "Ingrese un nombre de cliente válido").nonempty("Ingrese un nombre de cliente").max(50),
-  contact: z.string().regex(/[67]\d{7}$/, "Ingrese un número de teléfono válido").nonempty("Ingrese un número de teléfono"),
+  client: z
+    .string()
+    .regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, "Ingrese un nombre de cliente válido")
+    .nonempty("Ingrese un nombre de cliente")
+    .max(50),
+  contact: z
+    .string()
+    .regex(/[67]\d{7}$/, "Ingrese un número de teléfono válido")
+    .nonempty("Ingrese un número de teléfono"),
   description: z.string().nonempty("Ingrese una descripción de trabajo").max(300),
 });
 
 const virtualSchema = baseSchema.extend({
   modality: z.literal("virtual"),
-  meetingLink: z.string().regex(/^(https?:\/\/)?(meet\.google\.com|zoom\.us)\/[^\s]+$/, "Ingrese un enlace válido de Meet o Zoom").nonempty("Ingrese un enlace de Meet o Zoom"),
+  meetingLink: z
+    .string()
+    .regex(
+      /^(https?:\/\/)?(meet\.google\.com|zoom\.us)\/[^\s]+$/,
+      "Ingrese un enlace válido de Meet o Zoom"
+    )
+    .nonempty("Ingrese un enlace de Meet o Zoom"),
   location: z.undefined().optional(),
 });
-
 
 const presentialSchema = baseSchema.extend({
   modality: z.literal("presential"),
   meetingLink: z.undefined().optional(),
-  location: z.object({ lat: z.number(), lon: z.number(), address: z.string().nonempty("Seleccione una ubicación") })
-            .nullable()
-            .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
+  location: z
+    .object({
+      lat: z.number(),
+      lon: z.number(),
+      address: z.string().nonempty("Seleccione una ubicación"),
+    })
+    .nullable()
+    .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
 });
 
-const appointmentSchema = z.discriminatedUnion("modality", [virtualSchema, presentialSchema]);
+const appointmentSchema = z.discriminatedUnion("modality", [
+  virtualSchema,
+  presentialSchema,
+]);
+
+// --- Types ---
 
 export type AppointmentPayload = {
   datetime: string;
@@ -51,20 +79,26 @@ export type AppointmentPayload = {
   lon?: number;
   address?: string;
 };
+
 export type ExistingAppointment = AppointmentPayload & {
   id: string;
   fixerId: string;
   requesterId: string;
 };
+
 export type EditAppointmentFormHandle = {
   open: (appointmentData: ExistingAppointment) => void;
   close: () => void;
 };
 
+// --- Helpers ---
+
 function genMeetingLink(datetimeISO: string) {
   const id = Math.random().toString(36).slice(2, 9);
   return `https://meet.example.com/${id}?t=${encodeURIComponent(datetimeISO)}`;
 }
+
+// --- Component ---
 
 const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) => {
   const [open, setOpen] = useState(false);
@@ -82,7 +116,9 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
   const [msg, setMsg] = useState<string | null>(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [originalAppointment, setOriginalAppointment] = useState<ExistingAppointment | null>(null);
+  const [originalAppointment, setOriginalAppointment] = useState<ExistingAppointment | null>(
+    null
+  );
 
   const [day, setDay] = useState<string>("");
   const [month, setMonth] = useState<string>("");
@@ -90,24 +126,29 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
-  const [changesDetected, setChangesDetected] = useState<boolean>(false);
 
   // Justificación + Reprogramación
   const [justifyOpen, setJustifyOpen] = useState(false);
   const [reprogReason, setReprogReason] = useState("");
   const rescheduleRef = useRef<RescheduleFormHandle>(null);
 
-  useEffect(() => {
-    if (!originalAppointment) { setChangesDetected(false); return; }
+  // Cálculo de cambios detectados (Derived State para evitar useEffect y deps issues)
+  const changesDetected = useMemo(() => {
+    if (!originalAppointment) return false;
+
     const originalDate = new Date(originalAppointment.datetime);
     const originalDay = originalDate.getDate().toString().padStart(2, "0");
     const originalMonth = (originalDate.getMonth() + 1).toString().padStart(2, "0");
     const originalHour = originalDate.getHours();
-    const hasDateTimeChanges = day !== originalDay || month !== originalMonth || hour !== originalHour;
+
+    const hasDateTimeChanges =
+      day !== originalDay || month !== originalMonth || hour !== originalHour;
     const hasClientChanges = client.trim() !== originalAppointment.client;
     const hasContactChanges = contact.trim() !== originalAppointment.contact;
-    const hasDescriptionChanges = (description || "").trim() !== (originalAppointment.description || "").trim();
+    const hasDescriptionChanges =
+      (description || "").trim() !== (originalAppointment.description || "").trim();
     const hasModalityChanges = modality !== originalAppointment.modality;
+
     let hasLocationOrLinkChanges = false;
     if (modality === "presencial") {
       hasLocationOrLinkChanges =
@@ -115,54 +156,34 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
         (lon ?? 0) !== (originalAppointment.lon ?? 0) ||
         (address || "") !== (originalAppointment.address || "");
     } else {
-      hasLocationOrLinkChanges = (meetingLink || "").trim() !== (originalAppointment.meetingLink || "").trim();
+      hasLocationOrLinkChanges =
+        (meetingLink || "").trim() !== (originalAppointment.meetingLink || "").trim();
     }
-    setChangesDetected(
-      hasDateTimeChanges || hasClientChanges || hasContactChanges || hasDescriptionChanges || hasModalityChanges || hasLocationOrLinkChanges
+
+    return (
+      hasDateTimeChanges ||
+      hasClientChanges ||
+      hasContactChanges ||
+      hasDescriptionChanges ||
+      hasModalityChanges ||
+      hasLocationOrLinkChanges
     );
-  }, [day, month, hour, client, contact, description, modality, lat, lon, address, meetingLink, originalAppointment]);
+  }, [
+    originalAppointment,
+    day,
+    month,
+    hour,
+    client,
+    contact,
+    description,
+    modality,
+    lat,
+    lon,
+    address,
+    meetingLink,
+  ]);
 
-  useImperativeHandle(ref, () => ({
-    open: (appointmentData: ExistingAppointment) => {
-      const normalized: "virtual" | "presencial" =
-        appointmentData.modality === "virtual" ? "virtual" : "presencial";
-
-      setAppointmentId(appointmentData.id);
-      setDatetime(appointmentData.datetime);
-      setClient(appointmentData.client);
-      setContact(appointmentData.contact? appointmentData.contact : `${appointmentData.contact ?? ""}`);
-      setModality(normalized);
-      setDescription(appointmentData.description || "");
-
-      const latNum = appointmentData.lat ?? undefined;
-      setLat(Number.isFinite(latNum as number) ? (latNum as number) : undefined);
-      const lonNum = appointmentData.lon ?? undefined;
-      setLon(Number.isFinite(lonNum as number) ? (lonNum as number) : undefined);
-
-      setAddress(appointmentData.address || "");
-      setMeetingLink(appointmentData.meetingLink || "");
-      setOriginalAppointment(appointmentData);
-
-      const dateObj = new Date(appointmentData.datetime);
-      setDay(dateObj.getDate().toString().padStart(2, "0"));
-      setMonth((dateObj.getMonth() + 1).toString().padStart(2, "0"));
-      setHour(dateObj.getHours());
-
-      setOpen(true);
-      setTimeout(() => firstFieldRef.current?.focus(), 40);
-    },
-    close: () => handleClose(),
-  }), []);
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape" && open) handleClose();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  function handleClose() {
+  const handleClose = () => {
     setOpen(false);
     setAppointmentId("");
     setClient("");
@@ -180,9 +201,57 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     setErrors({});
     setJustifyOpen(false);
     setReprogReason("");
-  }
+  };
 
-  const handleLocationConfirm = (locationData: { lat: number; lon: number; address: string }) => {
+  useImperativeHandle(
+    ref,
+    () => ({
+      open: (appointmentData: ExistingAppointment) => {
+        const normalized: "virtual" | "presencial" =
+          appointmentData.modality === "virtual" ? "virtual" : "presencial";
+
+        setAppointmentId(appointmentData.id);
+        setDatetime(appointmentData.datetime);
+        setClient(appointmentData.client);
+        setContact(appointmentData.contact || "");
+        setModality(normalized);
+        setDescription(appointmentData.description || "");
+
+        const latNum = appointmentData.lat ?? undefined;
+        setLat(Number.isFinite(latNum) ? latNum : undefined);
+        const lonNum = appointmentData.lon ?? undefined;
+        setLon(Number.isFinite(lonNum) ? lonNum : undefined);
+
+        setAddress(appointmentData.address || "");
+        setMeetingLink(appointmentData.meetingLink || "");
+        setOriginalAppointment(appointmentData);
+
+        const dateObj = new Date(appointmentData.datetime);
+        setDay(dateObj.getDate().toString().padStart(2, "0"));
+        setMonth((dateObj.getMonth() + 1).toString().padStart(2, "0"));
+        setHour(dateObj.getHours());
+
+        setOpen(true);
+        setTimeout(() => firstFieldRef.current?.focus(), 40);
+      },
+      close: () => handleClose(),
+    }),
+    []
+  );
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) handleClose();
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const handleLocationConfirm = (locationData: {
+    lat: number;
+    lon: number;
+    address: string;
+  }) => {
     setLat(locationData.lat);
     setLon(locationData.lon);
     setAddress(locationData.address);
@@ -195,16 +264,27 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     setMsg(null);
     setErrors({});
 
-    if (!day || !month || day.length !== 2 || month.length !== 2) { setMsg("Ingrese día y mes válidos (DD/MM)"); return; }
-    const dayNum = parseInt(day); const monthNum = parseInt(month);
-    if (dayNum < 1 || dayNum > 31 || monthNum < 1 || monthNum > 12) { setMsg("Ingrese una fecha válida (DD: 1-31, MM: 1-12)"); return; }
+    if (!day || !month || day.length !== 2 || month.length !== 2) {
+      setMsg("Ingrese día y mes válidos (DD/MM)");
+      return;
+    }
+    const dayNum = parseInt(day, 10);
+    const monthNum = parseInt(month, 10);
+    if (dayNum < 1 || dayNum > 31 || monthNum < 1 || monthNum > 12) {
+      setMsg("Ingrese una fecha válida (DD: 1-31, MM: 1-12)");
+      return;
+    }
 
     const originalDate = new Date(originalAppointment?.datetime || datetime);
     const currentYear = originalDate.getFullYear();
     const newDatetime = new Date(currentYear, monthNum - 1, dayNum, hour, 0);
-    if (newDatetime <= new Date()) { setMsg("La cita debe ser en una fecha y hora futura"); return; }
+    if (newDatetime <= new Date()) {
+      setMsg("La cita debe ser en una fecha y hora futura");
+      return;
+    }
 
-    const formData: any = {
+    // Usamos Record<string, unknown> en lugar de any
+    const formData: Record<string, unknown> = {
       client: client.trim(),
       contact: contact.trim(),
       description: description.trim(),
@@ -213,7 +293,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
 
     if (modality === "presencial") {
       formData.location =
-        lat !== undefined && lon !== undefined && Number.isFinite(lat) && Number.isFinite(lon) && address
+        lat !== undefined &&
+        lon !== undefined &&
+        Number.isFinite(lat) &&
+        Number.isFinite(lon) &&
+        address
           ? { lat, lon, address: address.trim() }
           : null;
     } else {
@@ -224,50 +308,100 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     if (!validation.success) {
       const fieldErrors: Record<string, string> = {};
       validation.error.issues.forEach((err) => {
-        const key = Array.isArray(err.path) && err.path.length ? (err.path[0] as string) : "general";
+        const key =
+          Array.isArray(err.path) && err.path.length
+            ? (err.path[0] as string)
+            : "general";
         fieldErrors[key] = err.message;
       });
       setErrors(fieldErrors);
       return;
     }
 
-    const payload: any = {};
-    if (!originalAppointment) return setMsg("Error: datos originales no disponibles");
+    // Payload tipado
+    const payload: Record<string, string | number> = {};
+    if (!originalAppointment) {
+      setMsg("Error: datos originales no disponibles");
+      return;
+    }
 
-    if (client.trim() !== originalAppointment.client) payload.current_requester_name = client.trim();
-    if (contact.trim() !== originalAppointment.contact) payload.current_requester_phone = contact.trim();
-    if ((description || "") !== (originalAppointment.description || "")) payload.appointment_description = description.trim();
-    if (modality !== originalAppointment.modality) payload.appointment_type = modality === "presencial" ? "presential" : "virtual";
+    if (client.trim() !== originalAppointment.client) {
+      payload.current_requester_name = client.trim();
+    }
+    if (contact.trim() !== originalAppointment.contact) {
+      payload.current_requester_phone = contact.trim();
+    }
+    if ((description || "") !== (originalAppointment.description || "")) {
+      payload.appointment_description = description.trim();
+    }
+    if (modality !== originalAppointment.modality) {
+      payload.appointment_type =
+        modality === "presencial" ? "presential" : "virtual";
+    }
 
     if (modality === "presencial") {
-      if (!address) return setMsg("Selecciona una ubicación.");
-      if (lat !== undefined && lat !== (originalAppointment.lat ?? undefined)) payload.lat = String(lat);
-      if (lon !== undefined && lon !== (originalAppointment.lon ?? undefined)) payload.lon = String(lon);
-      if (address !== (originalAppointment.address ?? "")) payload.display_name_location = address;
+      if (!address) {
+        setMsg("Selecciona una ubicación.");
+        return;
+      }
+      if (lat !== undefined && lat !== (originalAppointment.lat ?? undefined)) {
+        payload.lat = String(lat);
+      }
+      if (lon !== undefined && lon !== (originalAppointment.lon ?? undefined)) {
+        payload.lon = String(lon);
+      }
+      if (address !== (originalAppointment.address ?? "")) {
+        payload.display_name_location = address;
+      }
     } else {
       const linkToUse = meetingLink.trim() || genMeetingLink(datetime);
       if (meetingLink.trim()) {
-        const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
-        if (!urlRegex.test(meetingLink.trim())) return setMsg("Ingrese un enlace válido.");
+        const urlRegex =
+          /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
+        if (!urlRegex.test(meetingLink.trim())) {
+          setMsg("Ingrese un enlace válido.");
+          return;
+        }
       }
-      if ((meetingLink || "") !== (originalAppointment.meetingLink || "")) payload.link_id = linkToUse;
+      if ((meetingLink || "") !== (originalAppointment.meetingLink || "")) {
+        payload.link_id = linkToUse;
+      }
     }
 
-    if (Object.keys(payload).length === 0) { setMsg("No hay cambios para guardar."); return; }
+    if (Object.keys(payload).length === 0) {
+      setMsg("No hay cambios para guardar.");
+      return;
+    }
 
     try {
       setLoading(true);
       const API = process.env.NEXT_PUBLIC_BACKEND as string;
-      const res = await fetch(`${API}/api/crud_update/appointments/update_by_id?id=${appointmentId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${API}/api/crud_update/appointments/update_by_id?id=${appointmentId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) { setMsg(data?.error || data?.message || "Error al actualizar"); setLoading(false); return; }
+      
+      if (!res.ok) {
+        setMsg(
+          (data as { error?: string; message?: string })?.error ||
+            (data as { error?: string; message?: string })?.message ||
+            "Error al actualizar"
+        );
+        setLoading(false);
+        return;
+      }
 
       setMsg("¡Cita actualizada!");
-      setTimeout(() => { setLoading(false); handleClose(); }, 700);
+      setTimeout(() => {
+        setLoading(false);
+        handleClose();
+      }, 700);
     } catch (err) {
       console.error(err);
       setMsg("Error en la conexión.");
@@ -279,6 +413,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
   const handleAskJustification = () => {
     if (!justifyOpen) setJustifyOpen(true);
   };
+
   const handleSubmitJustification = (reason: string) => {
     setReprogReason(reason);
     setJustifyOpen(false);
@@ -291,7 +426,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-black/50" onClick={handleClose} aria-hidden="true" />
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={handleClose}
+          aria-hidden="true"
+        />
         <div
           ref={dialogRef}
           role="dialog"
@@ -304,7 +443,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
             <EditAppointmentHeader onClose={handleClose} />
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-black">
-              <DateTimeSection datetime={datetime} modality={modality} onModalityChange={setModality} />
+              <DateTimeSection
+                datetime={datetime}
+                modality={modality}
+                onModalityChange={setModality}
+              />
 
               <ClientSection
                 client={client}
@@ -316,7 +459,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 readonly={false}
               />
 
-              <DescriptionSection description={description} error={errors.description} onChange={setDescription} />
+              <DescriptionSection
+                description={description}
+                error={errors.description}
+                onChange={setDescription}
+              />
 
               {modality === "presencial" ? (
                 <LocationSection
@@ -326,7 +473,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                   formtype="edit"
                 />
               ) : (
-                <MeetingLinkSection meetingLink={meetingLink} error={errors.meetingLink} onChange={setMeetingLink} />
+                <MeetingLinkSection
+                  meetingLink={meetingLink}
+                  error={errors.meetingLink}
+                  onChange={setMeetingLink}
+                />
               )}
 
               <LocationModal
@@ -334,7 +485,10 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 onClose={() => setShowLocationModal(false)}
                 onConfirm={handleLocationConfirm}
                 initialCoords={
-                  Number.isFinite(lat as number) && Number.isFinite(lon as number) && lat !== undefined && lon !== undefined
+                  Number.isFinite(lat) &&
+                  Number.isFinite(lon) &&
+                  lat !== undefined &&
+                  lon !== undefined
                     ? { lat: lat as number, lon: lon as number, address }
                     : undefined
                 }
@@ -346,9 +500,13 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 loading={loading}
                 changesDetected={changesDetected}
                 onCancel={handleClose}
-                appointmentStart={originalAppointment ? new Date(originalAppointment.datetime) : undefined}
+                appointmentStart={
+                  originalAppointment
+                    ? new Date(originalAppointment.datetime)
+                    : undefined
+                }
                 submitDisabled={modality === "presencial" && !address}
-                onRequestReprogram={handleAskJustification} // ← el hijo pide al padre abrir Justificación
+                onRequestReprogram={handleAskJustification}
               />
             </form>
           </div>
@@ -374,5 +532,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     </>
   );
 });
+
+EditAppointmentForm.displayName = "EditAppointmentForm";
 
 export default EditAppointmentForm;

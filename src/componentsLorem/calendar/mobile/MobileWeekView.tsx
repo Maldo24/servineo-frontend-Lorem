@@ -62,7 +62,7 @@ function getNextFourWeeks(): { startDate: Date; endDate: Date; days: Date[] }[] 
     const today = new Date();
 
     // Si es fin de semana (sábado = 6, domingo = 0), empezar desde la próxima semana
-    let startDate = new Date(today);
+    const startDate = new Date(today);
     if (today.getDay() === 0 || today.getDay() === 6) {
         startDate.setDate(today.getDate() + (7 - today.getDay()));
     }
@@ -199,7 +199,7 @@ export default function MobileWeekView({ fixerId, requesterId, selectedDate, onC
 
     useEffect(() => {
         fetchWeekSchedule();
-    }, [month, fixerId]);
+    });
 
     const weeks = getNextFourWeeks();
 

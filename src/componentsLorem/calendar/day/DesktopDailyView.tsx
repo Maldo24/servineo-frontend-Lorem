@@ -4,10 +4,7 @@ import DesktopDailyHours from "./DesktopDailyHours";
 import Hours from "../ui/Hours";
 
 interface DesktopDailyViewProps {
-
     date: Date;
-    fixer_id: string;
-    requester_id: string;
 }
 function getDayName(dayNumber: number): string {
     const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -15,8 +12,6 @@ function getDayName(dayNumber: number): string {
 }
 export default function DesktopDailyView({
     date,
-    fixer_id,
-    requester_id
 }: DesktopDailyViewProps) {
 
     return (

@@ -8,7 +8,6 @@ import MobileCalendar from "../../componentsLorem/calendar/mobile/MobileCalendar
 import MobileList from "../../componentsLorem/list/MobileList";
 import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
 import CancelDaysAppointments from "../../componentsLorem/appointments/forms/CancelDaysAppointment";
-import useHourAppointment from "@/hooks/Appointments/useHourAppointments";
 import useDailyConts from "@/utils/useDailyConts";
 import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
@@ -200,16 +199,13 @@ export default function CalendarPage() {
                             </div>
                         </div>
 
-                        <div className="flex justify-center md:block hidden">
+                        <div className="flex justify-center md:block">
                             <DesktopCalendar
-                                fixer_id={fixer_id}
-                                requester_id={requester_id}
                             />
                         </div>
 
                         <div className="flex flex-col md:hidden justify-center gap-4" >
                             <MobileCalendar
-                                fixer_id={fixer_id}
                                 selectedDate={selectedDate}
                                 onSelectDate={handleDataChange}
                             />

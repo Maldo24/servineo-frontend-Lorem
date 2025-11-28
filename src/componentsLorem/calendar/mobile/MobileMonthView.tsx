@@ -3,7 +3,6 @@ import React from "react";
 import DayCell from "./DayCell/DayCell"
 
 
-const today = new Date();
 interface MobileMonthViewProps {
     year: number;
     month: number;

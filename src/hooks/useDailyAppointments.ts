@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getAppointmentsByDate, Appointment } from '@/utils/getAppointmentsByDate';
 import { getAppointmentsDisable, Days } from "@/utils/getAppointmentsDisable";
 

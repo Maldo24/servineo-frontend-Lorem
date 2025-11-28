@@ -5,19 +5,9 @@ import CancelDaysAppointments from '../../componentsLorem/appointments/forms/Can
 
 export default function TestPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
-    const handleConfirmCancel = async (selectedDays: string[]) => {
-        setLoading(true);
-        console.log('Días seleccionados para cancelar:', selectedDays);
-
-        // Simular llamada API
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        setLoading(false);
-        setIsModalOpen(false);
-        alert(`Se cancelarán citas en ${selectedDays.length} días`);
-    };
+ 
 
     return (
         <div className="p-8">

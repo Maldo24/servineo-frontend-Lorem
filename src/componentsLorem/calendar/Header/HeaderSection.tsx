@@ -1,7 +1,6 @@
 import React from "react";
 import ButtonCalendar from "../ui/ButtonCalendar";
 
-ButtonCalendar
 interface HeaderSectionProps {
     buttons: { label: string; onClick: () => void; disabled: boolean }[];
 }

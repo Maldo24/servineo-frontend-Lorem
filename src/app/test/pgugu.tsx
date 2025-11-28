@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState} from "react";
 
 import MobileDayliView from '../../componentsLorem/calendar/mobile/MobileDayliView'
 const fixer_id = "68e87a9cdae3b73d8040102f";

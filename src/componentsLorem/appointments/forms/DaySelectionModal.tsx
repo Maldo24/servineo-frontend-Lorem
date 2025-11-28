@@ -49,7 +49,7 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
         loadPreviousConfiguration();
       },
       close: () => handleClose()
-    }), []);
+    }));
 
     const loadPreviousConfiguration = async () => {
       try {

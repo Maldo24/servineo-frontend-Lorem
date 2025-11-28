@@ -6,12 +6,10 @@ import MobileMonthView from "./MobileMonthView";
 
 
 interface MobileCalendarProps {
-    fixer_id: string;
     selectedDate: Date;
     onSelectDate: (dato: Date) => void;
 }
 export default function MobileCalendar({
-    fixer_id,
     selectedDate,
     onSelectDate,
 }: MobileCalendarProps) {
@@ -20,6 +18,7 @@ export default function MobileCalendar({
     const [month, setMonth] = useState(today.getMonth());
     const [date, setDate] = useState(today.getDate());
     const [message, setMessage] = useState("");
+
 
     useEffect(() => {
         if (selectedDate) {
@@ -41,9 +40,9 @@ export default function MobileCalendar({
     return (
         <div className="bg-white rounded-2xl shadow p-4 max-w-md mx-auto">
             <MobileHeader
-                month={today.getMonth()}
-                year={today.getFullYear()}
-                date={today.getDate()}
+                month={month}
+                year={year}
+                date={date}
                 onChangeMonth={setMonth}
                 onChangeYear={setYear}
                 onChangeDate={setDate}

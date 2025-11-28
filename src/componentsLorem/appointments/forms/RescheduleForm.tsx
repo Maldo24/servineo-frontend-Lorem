@@ -1,5 +1,5 @@
 "use client";
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import axios from "axios";
 import { z } from "zod";
 import LocationModal from "./LocationModal";
@@ -293,18 +293,10 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                 motive: motivo || undefined,
             });
             setShowSummary(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Mensaje claro para el usuario + logging para debugging
             console.error("❌ Error en reprogramación:", err);
-
-            // Si axios devolvió respuesta del servidor, muestra cuerpo y status
-            if (err?.response) {
-                console.error("axios.response.status:", err.response.status);
-                console.error("axios.response.data:", err.response.data);
-                setErrors({ general: err.response.data?.message || `Error servidor (${err.response.status})` });
-            } else {
-                setErrors({ general: err?.message || "No se pudo reprogramar" });
-            }
+           
         } finally {
             setLoading(false);
         }

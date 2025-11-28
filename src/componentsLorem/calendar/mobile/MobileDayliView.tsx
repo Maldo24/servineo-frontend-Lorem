@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState, useMemo } from "react";
-import axios from "axios";
 import AppointmentForm from "../../appointments/forms/AppointmentForm";
 import type { AppointmentFormHandle } from "../../appointments/forms/AppointmentForm";
 import EditAppointmentForm from "../../appointments/forms/EditAppointmentForm";
@@ -108,9 +107,9 @@ export default function HorarioDelDia({
         loading: fixerLoading,
     } = useAppointmentsContext();
 
-    const fechaFormateadaInicial = selectedDate ? aYMDDeCualquiera(selectedDate as any) : "";
+    const fechaFormateadaInicial = selectedDate ? aYMDDeCualquiera(selectedDate) : "";
     const [fecha, setFecha] = useState<string>(fechaFormateadaInicial);
-    const [error, setError] = useState<string>("");
+    const [error] = useState<string>("");
 
     const refFormularioCita = useRef<AppointmentFormHandle | null>(null);
     const refFormularioEditarCita = useRef<EditAppointmentFormHandle | null>(null);
@@ -123,7 +122,7 @@ export default function HorarioDelDia({
 
     useEffect(() => {
         if (selectedDate) {
-            const d = aYMDDeCualquiera(selectedDate as any);
+            const d = aYMDDeCualquiera(selectedDate);
             setFecha(d);
         }
     }, [selectedDate]);

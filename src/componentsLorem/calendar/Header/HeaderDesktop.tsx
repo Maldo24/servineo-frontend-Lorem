@@ -1,7 +1,6 @@
 'use client';
 
 import React from "react";
-import { useState, useEffect } from "react";
 import useCalendarNavigation from "@/hooks/useCalendarNavigation";
 import HeaderSection from "./HeaderSection";
 

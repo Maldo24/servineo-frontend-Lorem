@@ -9,6 +9,7 @@ interface Appointment {
     selected_date: string;
     client_name?: string;
     service_type?: string;
+    cancelled_fixer?: boolean;
 }
 
 interface DayWithAppointments {
@@ -27,6 +28,7 @@ interface CancelDaysAppointmentsProps {
     loading?: boolean;
     fixer_id?: string;
 }
+
 
 export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
     isOpen,
@@ -72,8 +74,9 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
                 normalizedDate: `${year}-${month}-${day}`,
                 localDate: localDate
             };
-        } catch (error) {
+        } catch (error: unknown) {
             const fallbackDate = new Date(dateString.split('T')[0]);
+            console.error('Error normalizando la fecha:', error);
             return {
                 normalizedDate: dateString.split('T')[0],
                 localDate: fallbackDate
@@ -101,7 +104,7 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
             if (response.data && response.data.appointments && Array.isArray(response.data.appointments)) {
                 const appointmentsByDay: { [key: string]: { count: number, ids: string[], localDate: Date, appointments: Appointment[] } } = {};
 
-                response.data.appointments.forEach((appointment: any) => {
+                response.data.appointments.forEach((appointment: Appointment) => {
                     if (appointment && appointment.selected_date && !appointment.cancelled_fixer) {
                         try {
                             const { normalizedDate, localDate } = normalizeDate(appointment.selected_date);
@@ -145,7 +148,8 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
                 return [];
             }
 
-        } catch (error: any) {
+        } catch (error: unknown) {
+            console.error('Error fetching appointments:', error);
             setError('Error al cargar las citas');
             return [];
         } finally {
@@ -176,8 +180,8 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
                 } else {
                     failedCount++;
                 }
-            } catch (error: any) {
-                console.log('Error details:', error.response?.data);
+            } catch (error: unknown) {
+                console.error('Error canceling appointment ID:', appointmentId, error);
                 failedCount++;
             }
         }
@@ -236,9 +240,10 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
                 setShowConfirmPopup(false);
             }
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             setError('Error al cancelar las citas');
             setShowConfirmPopup(false);
+            console.error('Error during cancellation process:', error);
         } finally {
             setCancelLoading(false);
         }
@@ -257,7 +262,7 @@ export const CancelDaysAppointments: React.FC<CancelDaysAppointmentsProps> = ({
         };
 
         loadData();
-    }, [isOpen, currentMonth, currentYear]);
+    }, );
 
     const toggleDaySelection = (date: string) => {
         setSelectedDays(prev => {
