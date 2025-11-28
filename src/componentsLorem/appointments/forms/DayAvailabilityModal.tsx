@@ -31,7 +31,7 @@ export const DayAvailabilityModal = forwardRef<DayAvailabilityModalHandles, DayA
         const [selectedHours, setSelectedHours] = useState<number[]>([]);
         const [loading, setLoading] = useState(false);
         const [error, setError] = useState<string | null>(null);
-        const { showMessage, hideMessage, messageState } = useMessage();
+        const { showMessage, messageState } = useMessage();
 
 
         const { refetchAll } = useAppointmentsContext();
@@ -45,7 +45,7 @@ export const DayAvailabilityModal = forwardRef<DayAvailabilityModalHandles, DayA
                 setIsOpen(true);
             },
             close: () => handleClose()
-        }), []);
+        }));
 
         const toggleHour = (hours: number[]) => {
             setSelectedHours(hours);

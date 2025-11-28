@@ -19,20 +19,9 @@ interface AppointmentSummaryModalProps {
 
 
 const AppointmentSummaryModal: React.FC<AppointmentSummaryModalProps> = ({ open, onClose, data }) => {
+    const { refetchAll } = useAppointmentsContext();
+    
     if (!open) return null;
-
-    const { refetchAll, refetchHour } = useAppointmentsContext();
-
-    const handleAccept = () => {
-        const [month, day, year] = data.date.split('/').map(Number);
-        const dateObject = new Date(year, month - 1, day);
-        const hour = parseInt(data.time.split(':')[0], 10);
-
-        console.log('Refrescando - Fecha:', dateObject, 'Hora:', hour);
-
-        refetchHour(dateObject, hour);
-        onClose();
-    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">

@@ -220,7 +220,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 });
                 setShowSummary(true);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
             setErrors({ general: "Error: No se pudo crear la cita" });
         } finally {
@@ -388,5 +388,5 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         </>
     );
 });
-
+AppointmentForm.displayName = "AppointmentForm";
 export default AppointmentForm;

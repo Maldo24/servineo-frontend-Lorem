@@ -10,7 +10,7 @@ import { useAppointmentsContext } from '@/utils/contexts/AppointmentsContext/App
 
 import useMessage from '@/hooks/useMessage';
 import Message from '@/componentsLorem/ui/Message';
-import { useAmp } from 'next/amp';
+
 
 const API = process.env.NEXT_PUBLIC_BACKEND as string;
 
@@ -43,7 +43,7 @@ export const WeekAvailabilityModal = forwardRef<WeekAvailabilityModalHandles, We
         const [selectedDays, setSelectedDays] = useState<string[]>([]);
         const [loading, setLoading] = useState(false);
         const [error, setError] = useState<string | null>(null);
-        const { showMessage, hideMessage, messageState } = useMessage();
+        const { showMessage, messageState } = useMessage();
 
 
         const { refetchAll } = useAppointmentsContext();
@@ -53,7 +53,7 @@ export const WeekAvailabilityModal = forwardRef<WeekAvailabilityModalHandles, We
                 loadPreviousConfiguration();
             },
             close: () => handleClose()
-        }), []);
+        }));
 
         const loadPreviousConfiguration = async () => {
             try {
@@ -67,8 +67,8 @@ export const WeekAvailabilityModal = forwardRef<WeekAvailabilityModalHandles, We
                 const availability = response.data.availability;
 
                 const daysWithAvailability = Object.entries(availability)
-                    .filter(([_, hours]) => hours.length > 0)
-                    .map(([day, _]) => day);
+                    .filter(([hours]) => hours.length > 0)
+                    .map(([day]) => day);
 
                 const abbreviatedDays = daysWithAvailability.map((day: string) => {
                     switch (day.toLowerCase()) {

@@ -8,7 +8,6 @@ import MobileCalendar from "../../componentsLorem/calendar/mobile/MobileCalendar
 import MobileList from "../../componentsLorem/list/MobileList";
 import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
 import CancelDaysAppointments from "../../componentsLorem/appointments/forms/CancelDaysAppointment";
-import useHourAppointment from "@/hooks/Appointments/useHourAppointments";
 import useDailyConts from "@/utils/useDailyConts";
 import useSixMonthsAppointments from '@/hooks/Appointments/useSixMonthsAppointments';
 import { AppointmentsProvider } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";

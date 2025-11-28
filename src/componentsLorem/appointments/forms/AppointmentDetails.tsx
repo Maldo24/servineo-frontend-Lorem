@@ -1,19 +1,16 @@
 // components/appointments/forms/EditAppointmentForm.tsx
 import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from "react";
 import LocationModal from "./LocationModal";
-import { set, z } from "zod";
-import { parseUrl } from "next/dist/shared/lib/router/utils/parse-url";
 import { useUserRole } from "@/utils/contexts/UserRoleContext";
 // Import modules
 import { EditAppointmentHeader } from './modules/EditAppointmentHeader';
 import { DateTimeDisplaySection } from './modules/DateTimeDisplaySection';
-import { DateTimeSection } from './modules/DateTimeSection';
 import { ClientSection } from './modules/ClientSection';
 import { DescriptionSection } from './modules/DescriptionSection';
 import { LocationSection } from './modules/LocationSection';
 import { MeetingLinkSection } from './modules/MeetingLinkSection';
 import { EditAppointmentActions } from './modules/EditAppointmentActions';
-import axios from "axios";
+
 
 export type AppointmentPayload = {
     datetime: string;
@@ -37,10 +34,6 @@ export type EditAppointmentFormHandle = {
     close: () => void;
 };
 
-function genMeetingLink(datetimeISO: string) {
-    const id = Math.random().toString(36).slice(2, 9);
-    return `https://meet.example.com/${id}?t=${encodeURIComponent(datetimeISO)}`;
-}
 
 const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) => {
     const [open, setOpen] = useState(false);
@@ -54,7 +47,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     const [lon, setLon] = useState<number>();
     const [address, setAddress] = useState<string>("");
     const [meetingLink, setMeetingLink] = useState<string>("");
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [msg, setMsg] = useState<string | null>(null);
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -112,7 +105,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
 
             const res = await fetch(url);
             if (!res.ok) {
-                let errorText = await res.text();
+                const errorText = await res.text();
                 console.error('Respuesta no OK:', res.status, errorText);
                 throw new Error(`No se encuentra este dato: ${res.status} - ${errorText}`);
             }
@@ -149,7 +142,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
             setTimeout(() => firstFieldRef.current?.focus(), 40);
         },
         close: () => handleClose()
-    }), []);
+    }));
 
     useEffect(() => {
         function onKey(e: KeyboardEvent) {
@@ -178,18 +171,8 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     }
     async function handleDeleteAppointment() {
         try {
-            const API = process.env.NEXT_PUBLIC_BACKEND as string;
             //const url = `${API}/api/crud_update/appointments/update_cancell_appointment_fixer`;
             console.log('Eliminando cita con ID:', appointmentId);
-            const response = await axios.put(
-                `${API}/api/crud_update/appointments/update_cancell_appointment_fixer?appointment_id=${appointmentId}`,
-                {},
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
         } catch (error) {
             console.error('Error al eliminar la cita:', error);
         }
@@ -197,6 +180,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     }
 
     const handleLocationConfirm = (locationData: { lat: number; lon: number; address: string }) => {
+        console.log('Datos de ubicación confirmados:', locationData);
     };
 
 
@@ -284,5 +268,5 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
         </>
     );
 });
-
+EditAppointmentForm.displayName = 'EditAppointmentForm';
 export default EditAppointmentForm;

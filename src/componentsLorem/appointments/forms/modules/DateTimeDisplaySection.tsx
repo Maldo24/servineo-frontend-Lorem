@@ -6,7 +6,7 @@ interface DateTimeSectionProps {
   onModalityChange: (value: "virtual" | "presencial") => void;
 }
 
-export const DateTimeDisplaySection = ({ datetime, modality, onModalityChange }: DateTimeSectionProps) => {
+export const DateTimeDisplaySection = ({ datetime, modality }: DateTimeSectionProps) => {
   return (
     <div className="flex gap-4 p-3 rounded items-start">
       <label className="block">

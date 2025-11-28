@@ -1,4 +1,3 @@
-import { boolean } from 'zod';
 import { TextArea } from '../../../atoms/textArea';
 
 interface DescriptionSectionProps {

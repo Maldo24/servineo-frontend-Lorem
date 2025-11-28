@@ -2,7 +2,6 @@
 
 import { WeekAvailabilityModal, WeekAvailabilityModalHandles } from '../../componentsLorem/appointments/forms/WeekAvailabilityModal';
 import { DaySelectionModal, DaySelectionModalHandles } from '../../componentsLorem/appointments/forms/DaySelectionModal';
-import { DayAvailabilityModal, DayAvailabilityModalHandles } from '../../componentsLorem/appointments/forms/DayAvailabilityModal';
 import { ModeSelectionModal, ModeSelectionModalHandles } from '../../componentsLorem/appointments/forms/ModeSelectionModal';
 import { UserRoleProvider } from "@/utils/contexts/UserRoleContext";
 
