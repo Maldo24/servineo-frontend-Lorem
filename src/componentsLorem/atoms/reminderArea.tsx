@@ -2,14 +2,14 @@ import React from "react"
 
 interface ReminderAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label: string;
-    value: string;
+    time: string;
     className?: string;
     labelWidth?: string;
     inputWidth?: string;
 }
 
 export const ReminderArea = React.forwardRef<HTMLInputElement, ReminderAreaProps>(
-    ({ label, value, className = '', labelWidth = 'w-32', inputWidth = 'w-64' }, ref) => {
+    ({ label, time, className = '', labelWidth = 'w-32', inputWidth = 'w-64' }, ref) => {
         return (
             <div className={`flex items-center ${className}`}>
             { label && (
@@ -23,7 +23,7 @@ export const ReminderArea = React.forwardRef<HTMLInputElement, ReminderAreaProps
                 <input
                     ref={ref}
                     readOnly
-                    value={`${value} Antes de la Cita`}
+                    value={`${time} Antes de la Cita`}
                     className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center text-gray-600 cursor-not-allowed"
                 />
             </div>

@@ -14,6 +14,7 @@ import { MeetingLinkSection } from "./modules/MeetingLinkSection";
 import { EditAppointmentActions } from "./modules/EditAppointmentActions";
 import { JustificationPopup } from "../forms/popups/JustificationPopup";
 import RescheduleForm, { RescheduleFormHandle } from "./RescheduleForm";
+import { ReminderArea } from "../../atoms/reminderArea";
 
 const baseSchema = z.object({
   client: z.string().regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, "Ingrese un nombre de cliente válido").nonempty("Ingrese un nombre de cliente").max(50),
@@ -340,19 +341,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
 
               {msg && <p className="text-sm text-red-600">{msg}</p>}
 
-              <div className="flex items-center">
-                <div className="w-32 flex-auto ...">
-                  <label className="block">
-                    <span className="text-sm font-medium">Tiempo de Recordatorio:</span>
-                  </label>
-                </div>
-                <div className="w-64 flex-auto ...">
-                  <input
-                    readOnly
-                    value={'30 Minutos Antes de la Cita'}
-                    className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center"
-                  />
-                </div>
+              <div>
+                <ReminderArea
+                  label="Tiempo de Recordatorio:"
+                  time="30 Minutos"
+                />
               </div>
 
               {/* Botón de Recordatorio */}

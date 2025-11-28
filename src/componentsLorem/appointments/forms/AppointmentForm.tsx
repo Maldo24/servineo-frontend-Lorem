@@ -351,7 +351,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                             <div>
                                 <ReminderArea
                                     label="Tiempo de Recordatorio:"
-                                    value="30 Minutos"
+                                    time="30 Minutos"
                                 />
                             </div>
 

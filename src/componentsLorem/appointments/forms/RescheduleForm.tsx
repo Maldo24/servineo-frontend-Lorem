@@ -7,6 +7,7 @@ import AppointmentSummaryModal from "./AppointmentSummaryModal";
 import ReminderModal from "./ReminderModal";
 import MobileDayliView from "@/componentsLorem/calendar/mobile/MobileDayliView";
 import { useAppointmentsContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
+import { ReminderArea } from "../../atoms/reminderArea";
 
 export type RescheduleFormHandle = {
     open: (newSlotISO?: string) => void;
@@ -427,19 +428,11 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                                 </label>
                             )}
 
-                            <div className="flex items-center">
-                                <div className="w-32 flex-auto ...">
-                                    <label className="block">
-                                        <span className="text-sm font-medium">Tiempo de Recordatorio:</span>
-                                    </label>
-                                </div>
-                                <div className="w-64 flex-auto ...">
-                                    <input
-                                        readOnly
-                                        value={'30 Minutos Antes de la Cita'}
-                                        className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center"
-                                    />
-                                </div>
+                            <div>
+                                <ReminderArea
+                                    label="Tiempo de Recordatorio:"
+                                    time="30 Minutos"
+                                />
                             </div>
 
                             {/* Botón de Recordatorio */}
