@@ -68,7 +68,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
     if (unit === "hours") multiplier = 60;
     if (unit === "days") multiplier = 60 * 24;
 
-    const reminderTime = amount * multiplier;
+    const reminderTime = amount * multiplier; 
     onConfirm(reminderTime);
     onClose();
   };
