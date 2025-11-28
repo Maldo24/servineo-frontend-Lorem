@@ -4,6 +4,7 @@ import { z } from "zod";
 import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
 import ReminderModal from "./ReminderModal";
+import { ReminderArea } from "../../atoms/reminderArea";
 
 export type AppointmentFormHandle = {
     open: (datetimeISO: string) => void;
@@ -347,19 +348,11 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
 
                             {errors.general && <p className="text-red-600 text-sm mt-1">{errors.general}</p>}
 
-                            <div className="flex items-center">
-                                <div className="w-32 flex-auto ...">
-                                    <label className="block">
-                                        <span className="text-sm font-medium">Tiempo de Recordatorio:</span>
-                                    </label>
-                                </div>
-                                <div className="w-64 flex-auto ...">
-                                    <input
-                                        readOnly
-                                        value={'30 Minutos Antes de la Cita'}
-                                        className="mt-1 block w-full bg-gray-100 border border-gray-200 rounded px-3 py-2 text-sm text-center"
-                                    />
-                                </div>
+                            <div>
+                                <ReminderArea
+                                    label="Tiempo de Recordatorio:"
+                                    value="30 Minutos"
+                                />
                             </div>
 
                             {/* Botón de Recordatorio */}
