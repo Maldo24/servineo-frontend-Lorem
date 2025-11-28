@@ -220,7 +220,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 });
                 setShowSummary(true);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
             setErrors({ general: "Error: No se pudo crear la cita" });
         } finally {
@@ -407,7 +407,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 open={showReminderModal}
                 onClose={() => setShowReminderModal(false)}
                 onConfirm={handleReminderConfirm}
-                initialTime={30}
             />
 
             {summaryData && (
