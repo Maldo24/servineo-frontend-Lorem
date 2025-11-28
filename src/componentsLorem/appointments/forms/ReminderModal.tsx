@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 interface ReminderModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (reminderTime: number) => void;
+  onConfirm: (reminderTime: number) => void; // minutos
 }
 
 const ReminderModal: React.FC<ReminderModalProps> = ({
@@ -14,8 +14,8 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const amountBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  const [amount, setAmount] = useState<number>(12);
-  const [unit, setUnit] = useState<"minutes" | "hours" | "days">("hours");
+  const [amount, setAmount] = useState<number>(30);
+  const [unit, setUnit] = useState<"minutes" | "hours" | "days">("minutes");
   const [amountOpen, setAmountOpen] = useState(false);
   const [dropdownDirection, setDropdownDirection] = useState<"up" | "down">(
     "down"
@@ -68,7 +68,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
     if (unit === "hours") multiplier = 60;
     if (unit === "days") multiplier = 60 * 24;
 
-    const reminderTime = amount * multiplier; 
+    const reminderTime = amount * multiplier; // minutos totales
     onConfirm(reminderTime);
     onClose();
   };

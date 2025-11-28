@@ -91,7 +91,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             description?: string;
         } | null>(null);
 
-    
+        // ⏰ Estado de recordatorio
         const [reminderMinutes, setReminderMinutes] = useState<number>(30);
         const [reminderLabel, setReminderLabel] = useState<string>("30 Minutos");
 
@@ -134,14 +134,9 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         }
 
         function parseDatetime(datetimeISO: string) {
-            console.log("create.parsingDatetime", { inputISO: datetimeISO });
-
             const originalDate = new Date(datetimeISO);
             const adjustedStart = new Date(originalDate.getTime() - 4 * 60 * 60 * 1000);
             const adjustedEnd = new Date(adjustedStart.getTime() + 60 * 60 * 1000);
-
-            console.log("create.adjustedStart", adjustedStart.toISOString());
-            console.log("create.adjustedEnd", adjustedEnd.toISOString());
 
             return {
                 selected_date: adjustedStart.toISOString().split("T")[0],
@@ -156,6 +151,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             setShowLocationModal(false);
         };
 
+        // Convierte minutos a texto amigable
         function formatReminderLabel(totalMinutes: number): string {
             const minutesInDay = 60 * 24;
 
@@ -220,6 +216,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 display_name_location: modality === "presential" ? place : "",
                 lat: modality === "presential" ? location?.lat : null,
                 lon: modality === "presential" ? location?.lon : null,
+                // reminder_minutes: reminderMinutes, // si luego tu backend lo soporta
             };
 
             setLoading(true);
@@ -237,13 +234,8 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 }
 
                 const hourToShow = new Date(payload.starting_time).getUTCHours();
-                let hourToShowString;
-
-                if (hourToShow < 10) {
-                    hourToShowString = "0" + hourToShow.toString() + ":00";
-                } else {
-                    hourToShowString = hourToShow.toString() + ":00";
-                }
+                const hourToShowString =
+                    (hourToShow < 10 ? "0" : "") + hourToShow.toString() + ":00";
 
                 if (data.success) {
                     setSummaryData({
@@ -417,12 +409,16 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                 {errors.general && (
                                     <p className="text-red-600 text-sm mt-1">{errors.general}</p>
                                 )}
+
+                                {/* Área que muestra el tiempo de recordatorio actual */}
                                 <div>
                                     <ReminderArea
                                         label="Tiempo de Recordatorio:"
-                                        value={reminderLabel}
+                                        time={reminderLabel}
                                     />
                                 </div>
+
+                                {/* Botón de Recordatorio */}
                                 <button
                                     type="button"
                                     onClick={() => setShowReminderModal(true)}
