@@ -1,9 +1,9 @@
-// components/appointments/forms/AppointmentForm.tsx
 import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from "react";
 import axios from "axios";
 import { z } from "zod";
 import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
+import ReminderModal from "./ReminderModal";
 
 export type AppointmentFormHandle = {
     open: (datetimeISO: string) => void;
@@ -11,10 +11,8 @@ export type AppointmentFormHandle = {
 };
 
 interface AppointmentFormProps {
-    //    mode: 'create' | 'edit' | 'view' | 'reschedule';
     fixerId: string;
     requesterId: string;
-
 }
 
 // Zod esquema de validacion
@@ -74,6 +72,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const [showLocationModal, setShowLocationModal] = useState(false);
+    const [showReminderModal, setShowReminderModal] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
     const [summaryData, setSummaryData] = useState<{
         title: string,
@@ -120,10 +119,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
     function parseDatetime(datetimeISO: string) {
         console.log("create.parsingDatetime", { inputISO: datetimeISO });
 
-        // Parsear la fecha que llega (UTC)
         const originalDate = new Date(datetimeISO);
-
-        // Restar 4 horas para el backend
         const adjustedStart = new Date(originalDate.getTime() - 4 * 60 * 60 * 1000);
         const adjustedEnd = new Date(adjustedStart.getTime() + 60 * 60 * 1000);
 
@@ -141,6 +137,11 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         setLocation(locationData);
         setPlace(locationData.address);
         setShowLocationModal(false);
+    };
+
+    const handleReminderConfirm = () => {
+        // Por ahora no hace nada, solo cierra el modal
+        setShowReminderModal(false);
     };
 
     async function handleSubmit(e: React.FormEvent) {
@@ -213,7 +214,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                     name: client,
                     date: new Date(payload.starting_time).toLocaleDateString(),
                     time: hourToShowString,
-                    //time: new Date(payload.starting_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), para futuro
                     modality,
                     locationOrLink: modality === "virtual" ? meetingLink : place,
                     description,
@@ -345,6 +345,19 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                 </label>
                             )}
 
+                            {/* Botón de Recordatorio */}
+                            <button
+                                type="button"
+                                onClick={() => setShowReminderModal(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
+                            >
+                                <span className="text-xl">🔔</span>
+                                <span className="text-sm font-medium text-gray-700">
+                                    Configurar Tiempo de Recordatorio
+                                </span>
+                                <span className="ml-1 text-red-500 text-xl">●</span>
+                            </button>
+
                             {errors.general && <p className="text-red-600 text-sm mt-1">{errors.general}</p>}
 
                             <div className="flex items-center justify-end gap-2 pt-2">
@@ -373,6 +386,13 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 onClose={() => setShowLocationModal(false)}
                 onConfirm={handleLocationConfirm}
                 initialCoords={location}
+            />
+
+            <ReminderModal
+                open={showReminderModal}
+                onClose={() => setShowReminderModal(false)}
+                onConfirm={handleReminderConfirm}
+                initialTime={30}
             />
 
             {summaryData && (

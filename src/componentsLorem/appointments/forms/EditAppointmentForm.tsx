@@ -4,7 +4,7 @@ import React, {
 } from "react";
 import LocationModal from "./LocationModal";
 import { z } from "zod";
-
+import ReminderModal from "./ReminderModal";
 import { EditAppointmentHeader } from "./modules/EditAppointmentHeader";
 import { DateTimeSection } from "./modules/DateTimeSection";
 import { ClientSection } from "./modules/ClientSection";
@@ -12,7 +12,6 @@ import { DescriptionSection } from "./modules/DescriptionSection";
 import { LocationSection } from "./modules/LocationSection";
 import { MeetingLinkSection } from "./modules/MeetingLinkSection";
 import { EditAppointmentActions } from "./modules/EditAppointmentActions";
-
 import { JustificationPopup } from "../forms/popups/JustificationPopup";
 import RescheduleForm, { RescheduleFormHandle } from "./RescheduleForm";
 
@@ -28,13 +27,12 @@ const virtualSchema = baseSchema.extend({
   location: z.undefined().optional(),
 });
 
-
 const presentialSchema = baseSchema.extend({
   modality: z.literal("presential"),
   meetingLink: z.undefined().optional(),
   location: z.object({ lat: z.number(), lon: z.number(), address: z.string().nonempty("Seleccione una ubicación") })
-            .nullable()
-            .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
+    .nullable()
+    .refine((val) => val !== null, { message: "Seleccione una ubicación" }),
 });
 
 const appointmentSchema = z.discriminatedUnion("modality", [virtualSchema, presentialSchema]);
@@ -51,11 +49,13 @@ export type AppointmentPayload = {
   lon?: number;
   address?: string;
 };
+
 export type ExistingAppointment = AppointmentPayload & {
   id: string;
   fixerId: string;
   requesterId: string;
 };
+
 export type EditAppointmentFormHandle = {
   open: (appointmentData: ExistingAppointment) => void;
   close: () => void;
@@ -81,9 +81,9 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showReminderModal, setShowReminderModal] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [originalAppointment, setOriginalAppointment] = useState<ExistingAppointment | null>(null);
-
   const [day, setDay] = useState<string>("");
   const [month, setMonth] = useState<string>("");
   const [hour, setHour] = useState<number>(0);
@@ -103,11 +103,13 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     const originalDay = originalDate.getDate().toString().padStart(2, "0");
     const originalMonth = (originalDate.getMonth() + 1).toString().padStart(2, "0");
     const originalHour = originalDate.getHours();
+
     const hasDateTimeChanges = day !== originalDay || month !== originalMonth || hour !== originalHour;
     const hasClientChanges = client.trim() !== originalAppointment.client;
     const hasContactChanges = contact.trim() !== originalAppointment.contact;
     const hasDescriptionChanges = (description || "").trim() !== (originalAppointment.description || "").trim();
     const hasModalityChanges = modality !== originalAppointment.modality;
+
     let hasLocationOrLinkChanges = false;
     if (modality === "presencial") {
       hasLocationOrLinkChanges =
@@ -117,6 +119,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     } else {
       hasLocationOrLinkChanges = (meetingLink || "").trim() !== (originalAppointment.meetingLink || "").trim();
     }
+
     setChangesDetected(
       hasDateTimeChanges || hasClientChanges || hasContactChanges || hasDescriptionChanges || hasModalityChanges || hasLocationOrLinkChanges
     );
@@ -130,7 +133,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
       setAppointmentId(appointmentData.id);
       setDatetime(appointmentData.datetime);
       setClient(appointmentData.client);
-      setContact(appointmentData.contact? appointmentData.contact : `${appointmentData.contact ?? ""}`);
+      setContact(appointmentData.contact ? appointmentData.contact : `${appointmentData.contact ?? ""}`);
       setModality(normalized);
       setDescription(appointmentData.description || "");
 
@@ -138,7 +141,6 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
       setLat(Number.isFinite(latNum as number) ? (latNum as number) : undefined);
       const lonNum = appointmentData.lon ?? undefined;
       setLon(Number.isFinite(lonNum as number) ? (lonNum as number) : undefined);
-
       setAddress(appointmentData.address || "");
       setMeetingLink(appointmentData.meetingLink || "");
       setOriginalAppointment(appointmentData);
@@ -187,6 +189,11 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
     setLon(locationData.lon);
     setAddress(locationData.address);
     setShowLocationModal(false);
+  };
+
+  const handleReminderConfirm = () => {
+    // Por ahora no hace nada, solo cierra el modal
+    setShowReminderModal(false);
   };
 
   // Guardar cambios normales del formulario
@@ -264,6 +271,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
+
       if (!res.ok) { setMsg(data?.error || data?.message || "Error al actualizar"); setLoading(false); return; }
 
       setMsg("¡Cita actualizada!");
@@ -279,6 +287,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
   const handleAskJustification = () => {
     if (!justifyOpen) setJustifyOpen(true);
   };
+
   const handleSubmitJustification = (reason: string) => {
     setReprogReason(reason);
     setJustifyOpen(false);
@@ -329,16 +338,18 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 <MeetingLinkSection meetingLink={meetingLink} error={errors.meetingLink} onChange={setMeetingLink} />
               )}
 
-              <LocationModal
-                open={showLocationModal}
-                onClose={() => setShowLocationModal(false)}
-                onConfirm={handleLocationConfirm}
-                initialCoords={
-                  Number.isFinite(lat as number) && Number.isFinite(lon as number) && lat !== undefined && lon !== undefined
-                    ? { lat: lat as number, lon: lon as number, address }
-                    : undefined
-                }
-              />
+              {/* Botón de Recordatorio */}
+              <button
+                type="button"
+                onClick={() => setShowReminderModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
+              >
+                <span className="text-xl">🔔</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Configurar Tiempo de Recordatorio
+                </span>
+                <span className="ml-1 text-red-500 text-xl">●</span>
+              </button>
 
               {msg && <p className="text-sm text-red-600">{msg}</p>}
 
@@ -348,12 +359,29 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 onCancel={handleClose}
                 appointmentStart={originalAppointment ? new Date(originalAppointment.datetime) : undefined}
                 submitDisabled={modality === "presencial" && !address}
-                onRequestReprogram={handleAskJustification} // ← el hijo pide al padre abrir Justificación
+                onRequestReprogram={handleAskJustification}
               />
             </form>
           </div>
         </div>
       </div>
+
+      <LocationModal
+        open={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onConfirm={handleLocationConfirm}
+        initialCoords={
+          Number.isFinite(lat as number) && Number.isFinite(lon as number) && lat !== undefined && lon !== undefined
+            ? { lat: lat as number, lon: lon as number, address }
+            : undefined
+        }
+      />
+
+      <ReminderModal
+        open={showReminderModal}
+        onClose={() => setShowReminderModal(false)}
+        onConfirm={handleReminderConfirm}
+      />
 
       {/* ÚNICO modal de justificación */}
       <JustificationPopup

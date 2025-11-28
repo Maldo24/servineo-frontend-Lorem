@@ -4,16 +4,14 @@ import axios from "axios";
 import { z } from "zod";
 import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
+import ReminderModal from "./ReminderModal";
 import MobileDayliView from "@/componentsLorem/calendar/mobile/MobileDayliView";
 import { useAppointmentsContext } from "@/utils/contexts/AppointmentsContext/AppoinmentsContext";
-
 
 export type RescheduleFormHandle = {
     open: (newSlotISO?: string) => void;
     close: () => void;
 };
-
-
 
 interface RescheduleFormProps {
     fixerId: string;
@@ -23,17 +21,18 @@ interface RescheduleFormProps {
     onSuccess?: () => void;
 }
 
-
 const baseSchema = z.object({
     client: z.string().regex(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, "Ingrese un nombre de cliente válido").nonempty("Ingrese un nombre de cliente").max(50),
     contact: z.string().regex(/^[67]\d{7}$/, "Ingrese un número de teléfono válido (8 dígitos)").nonempty("Ingrese un número de teléfono"),
     description: z.string().nonempty("Ingrese una descripción de trabajo").max(300),
 });
+
 const virtualSchema = baseSchema.extend({
     modality: z.literal("virtual"),
     meetingLink: z.string().regex(/^(https?:\/\/)?(meet\.google\.com|zoom\.us)\/[^\s]+$/, "Ingrese un enlace válido de Meet o Zoom").nonempty("Ingrese un enlace de Meet o Zoom"),
     location: z.undefined().optional(),
 });
+
 const presentialSchema = baseSchema.extend({
     modality: z.literal("presential"),
     meetingLink: z.undefined().optional(),
@@ -50,6 +49,7 @@ const presentialSchema = baseSchema.extend({
             { message: "Seleccione una ubicación." }
         ),
 });
+
 const appointmentSchema = z.discriminatedUnion("modality", [virtualSchema, presentialSchema]);
 
 const API_BASE = process.env.NEXT_PUBLIC_BACKEND || "https://servineo-backend-lorem.onrender.com";
@@ -59,6 +59,7 @@ function ymd(iso: string) {
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
+
 function startHour(iso: string) { return new Date(iso).getHours(); }
 
 export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function RescheduleForm(
@@ -80,7 +81,9 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
     const [showLocationModal, setShowLocationModal] = useState(false);
+    const [showReminderModal, setShowReminderModal] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [pickerSelectedDate, setPickerSelectedDate] = useState<Date>(new Date());
 
@@ -109,7 +112,6 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
     }));
 
     const { refetchAll } = useAppointmentsContext();
-
 
     function handleClose() {
         setOpen(false);
@@ -151,6 +153,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
             setClient(ap.current_requester_name || "");
             setContact(ap.current_requester_phone || "");
             setDescription(ap.appointment_description || "");
+
             const isPresential = ap.appointment_type === "presential";
             setModality(isPresential ? "presential" : "virtual");
 
@@ -171,10 +174,13 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
         }
     }
 
-
     function handleLocationConfirm(loc: { lat: number; lon: number; address: string }) {
         setLocation(loc); setPlace(loc.address); setShowLocationModal(false);
     }
+
+    const handleReminderConfirm = () => {
+        setShowReminderModal(false);
+    };
 
     function handleDatePickerOpen() {
         setPickerSelectedDate(new Date());
@@ -199,6 +205,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
             meetingLink: modality === "virtual" ? meetingLink : undefined,
             location: modality === "presential" ? location : undefined,
         };
+
         const validation = appointmentSchema.safeParse(formData);
         if (!validation.success) {
             const fieldErrors: Record<string, string> = {};
@@ -241,7 +248,6 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
             }
 
             console.log("Cita original cancelada");
-
 
             //  --- CREAR LA NUEVA CITA ---
             const { selected_date, starting_time, finishing_time } = parseNewTimes(newDatetime);
@@ -294,10 +300,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
             });
             setShowSummary(true);
         } catch (err: any) {
-            // Mensaje claro para el usuario + logging para debugging
             console.error("❌ Error en reprogramación:", err);
-
-            // Si axios devolvió respuesta del servidor, muestra cuerpo y status
             if (err?.response) {
                 console.error("axios.response.status:", err.response.status);
                 console.error("axios.response.data:", err.response.data);
@@ -309,6 +312,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
             setLoading(false);
         }
     }
+
     if (!open) return null;
 
     return (
@@ -418,6 +422,19 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                                 </label>
                             )}
 
+                            {/* Botón de Recordatorio */}
+                            <button
+                                type="button"
+                                onClick={() => setShowReminderModal(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg border border-gray-300 transition-colors w-fit"
+                            >
+                                <span className="text-xl">🔔</span>
+                                <span className="text-sm font-medium text-gray-700">
+                                    Configurar Tiempo de Recordatorio
+                                </span>
+                                <span className="ml-1 text-red-500 text-xl">●</span>
+                            </button>
+
                             <div className="flex items-center justify-end gap-2 pt-2">
                                 <button type="button" onClick={handleClose} className="px-4 py-2 rounded bg-gray-300 text-sm">
                                     Volver
@@ -442,6 +459,12 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                 initialCoords={location}
             />
 
+            <ReminderModal
+                open={showReminderModal}
+                onClose={() => setShowReminderModal(false)}
+                onConfirm={handleReminderConfirm}
+            />
+
             {/* Modal de selección de fecha/hora con calendario */}
             {showDatePicker && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
@@ -463,9 +486,8 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(function Re
                                 fixerId={fixerId}
                                 requesterId={requesterId}
                                 onDateChange={handleDatePickerDateChange}
-                                pickerMode={true}         // <--- activar modo "picker"
+                                pickerMode={true}
                                 onSlotSelect={(iso: string) => {
-                                    // recibe la ISO desde MobileDayliView y la procesa como antes
                                     handleDateTimeSelect(iso);
                                 }}
                             />
