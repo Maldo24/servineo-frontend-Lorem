@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 
 interface ReminderModalProps {
   open: boolean;
@@ -22,7 +22,17 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
   );
   const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number>(96);
 
-  const timeOptions = Array.from({ length: 300 }, (_, i) => i + 1);
+  const timeOptions = useMemo(() => {
+    if (unit === "minutes") return [5, 10, 15, 30, 45];
+    if (unit === "hours") return [1, 2, 3, 6, 12];
+    return [1];
+  }, [unit]);
+
+  useEffect(() => {
+    if (!timeOptions.includes(amount)) {
+      setAmount(timeOptions[0]);
+    }
+  }, [unit, timeOptions, amount]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -93,13 +103,13 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
                 ref={amountBtnRef}
                 type="button"
                 onClick={() => setAmountOpen((prev) => !prev)}
-                className="w-20 h-10 border border-gray-300 rounded overflow-hidden text-sm text-gray-800 focus:outline-none"
+                className="w-20 h-10 border border-gray-300 rounded overflow-hidden text-sm text-black focus:outline-none"
               >
                 <div className="flex w-full h-full">
-                  <span className="flex-1 flex items-center justify-center bg-white">
+                  <span className="flex-1 flex items-center justify-center bg-white text-black">
                     {amount}
                   </span>
-                  <span className="w-6 flex items-center justify-center bg-gray-200 text-xs text-gray-800">
+                  <span className="w-6 flex items-center justify-center bg-gray-200 text-xs text-black">
                     ▾
                   </span>
                 </div>
@@ -107,7 +117,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
 
               {amountOpen && (
                 <div
-                  className={`absolute left-0 w-20 border border-gray-300 rounded bg-white shadow-lg overflow-y-auto text-sm z-20 ${
+                  className={`absolute left-0 w-20 border border-gray-300 rounded bg-white shadow-lg overflow-y-auto text-sm text-black z-20 ${
                     dropdownDirection === "down"
                       ? "mt-1 top-full"
                       : "mb-1 bottom-full"
@@ -122,7 +132,7 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
                         setAmount(n);
                         setAmountOpen(false);
                       }}
-                      className="w-full text-left px-2 py-1 hover:bg-gray-100"
+                      className="w-full text-left px-2 py-1 hover:bg-gray-100 text-black"
                     >
                       {n}
                     </button>
@@ -137,13 +147,13 @@ const ReminderModal: React.FC<ReminderModalProps> = ({
                 onChange={(e) =>
                   setUnit(e.target.value as "minutes" | "hours" | "days")
                 }
-                className="h-10 pl-3 pr-8 border border-gray-300 rounded bg-gray-100 text-sm text-gray-800 focus:outline-none appearance-none"
+                className="h-10 pl-3 pr-8 border border-gray-300 rounded bg-gray-100 text-sm text-black focus:outline-none appearance-none"
               >
                 <option value="hours">Horas</option>
                 <option value="minutes">Minutos</option>
                 <option value="days">Días</option>
               </select>
-              <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-500 text-xs">
+              <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-black text-xs">
                 ▾
               </span>
             </div>
