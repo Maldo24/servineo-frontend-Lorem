@@ -28,6 +28,14 @@ const baseSchema = z.object({
         .regex(/^[67]\d{7}$/, "Ingrese un número de teléfono válido")
         .nonempty("Ingrese un número de teléfono"),
 
+    mail: z.string()
+        .email("Ingrese un correo electrónico válido")
+        .refine((email) => email.endsWith('@gmail.com'), {
+            message: "El correo debe ser de Gmail (@gmail.com)"
+        })
+        .optional()
+        .or(z.literal('')), // Permite campo vacío
+
     description: z.string()
         .nonempty("Ingrese una descripción de trabajo")
         .max(300, "La descripción no puede tener más de 300 caracteres"),
@@ -65,6 +73,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
     const [datetime, setDatetime] = useState<string>("");
     const [client, setClient] = useState<string>("");
     const [contact, setContact] = useState<string>("");
+    const [mail, setMail] = useState<string>("");
     const [modality, setModality] = useState<"virtual" | "presential">("virtual");
     const [description, setDescription] = useState<string>("");
     const [place, setPlace] = useState<string>("");
@@ -109,6 +118,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         setOpen(false);
         setClient("");
         setContact("");
+        setMail("");
         setDescription("");
         setModality("virtual");
         setPlace("");
@@ -150,6 +160,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
         const formData = {
             client,
             contact,
+            mail: mail.trim(),
             description,
             modality,
             meetingLink: modality === "virtual" ? meetingLink : undefined,
@@ -181,6 +192,7 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             appointment_description: description,
             current_requester_name: client,
             current_requester_phone: contact,
+            mail: mail.trim() ? [mail.trim()] : null, 
             link_id: modality === "virtual" ? meetingLink : "",
             display_name_location: modality === "presential" ? place : "",
             lat: modality === "presential" ? location?.lat : null,
@@ -302,6 +314,23 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                         className="mt-1 block w-full border rounded px-3 py-2 bg-white"
                                     />
                                     {errors.contact && <p className="text-red-600 text-sm mt-1">{errors.contact}</p>}
+                                </label>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-3">
+                                <label className="block">
+                                    <span className="text-sm font-medium">Correo electrónico (Opcional)</span>
+                                    <input
+                                        type="email"
+                                        value={mail}
+                                        onChange={(e) => setMail(e.target.value)}
+                                        placeholder="usuario@gmail.com"
+                                        className="mt-1 block w-full border rounded px-3 py-2 bg-white"
+                                    />
+                                    {errors.mail && <p className="text-red-600 text-sm mt-1">{errors.mail}</p>}
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Solo se aceptan correos de Gmail
+                                    </p>
                                 </label>
                             </div>
 
