@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 export type FormType = 'create' | 'edit' | 'view';
 const MapView = dynamic(() => import('@/Components/maps/location/MapView'), {
-    ssr: false,
-    loading: () => (
-        <div
-            style={{ height: 400, width: '100%' }}
-            className="flex items-center justify-center bg-gray-100"
-        >
-            <p>Cargando mapa...</p>
-        </div>
-    ),
+  ssr: false,
+  loading: () => (
+    <div
+      style={{ height: 400, width: '100%' }}
+      className='flex items-center justify-center bg-gray-100'
+    >
+      <p>Cargando mapa...</p>
+    </div>
+  ),
 });
 
 interface LocationModalProps {

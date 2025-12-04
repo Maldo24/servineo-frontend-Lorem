@@ -38,19 +38,19 @@ export default function DesktopWeekView({ date }: DesktopWeekViewProps) {
   const weekDays = getWeekDays(date);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex">
+    <div className='flex flex-col'>
+      <div className='flex'>
         <div>
-          <div className="text-white">
+          <div className='text-white'>
             <p>--</p>
           </div>
           <Hours />
         </div>
-        <div className="border-[#b8bec6] w-full h-full">
-          <div className="flex-1 grid grid-cols-7">
+        <div className='border-[#b8bec6] w-full h-full'>
+          <div className='flex-1 grid grid-cols-7'>
             {weekDays.map((day) => (
               <div key={day.toISOString()}>
-                <div className="flex items-center justify-center border-r border-b bg-gray-300 text-black">
+                <div className='flex items-center justify-center border-r border-b bg-gray-300 text-black'>
                   {getDayName(day.getDay())} {day.getDate()}
                 </div>
                 <DesktopDailyHours date={day} view={'week'} />

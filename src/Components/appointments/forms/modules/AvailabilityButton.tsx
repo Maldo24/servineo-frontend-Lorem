@@ -48,7 +48,7 @@ export const AvailabilityButton: React.FC<DayButtonProps> = ({
 
   return (
     <button
-      type="button"
+      type='button'
       onClick={disabled ? undefined : onToggle}
       disabled={disabled}
       className={`
@@ -77,14 +77,14 @@ export const AvailabilityButton: React.FC<DayButtonProps> = ({
       >
         {selected && !disabled && (
           <svg
-            width="10"
-            height="10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#2B6AE0"
-            strokeWidth="3"
+            width='10'
+            height='10'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='#2B6AE0'
+            strokeWidth='3'
           >
-            <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d='M20 6L9 17l-5-5' strokeLinecap='round' strokeLinejoin='round' />
           </svg>
         )}
       </div>

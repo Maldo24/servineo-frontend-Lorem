@@ -1,17 +1,20 @@
 export interface IJobOffer {
-  _id?: string;
+  _id: string;
   fixerId: string;
   fixerName: string;
-  fixerWhatsapp: string;
+  title: string;
   description: string;
-  titulo?: string;
-  city: string;
+  category: string;
+  tags?: string[];
   price: number;
-  categories: string[];
-  images: string[];
+  city: string;
+  contactPhone: string;
+  photos: string[];
+  rating?: number;
+  status?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  photos?: string[];
+  __v?: number;
 }
 
 export interface ICertification {
@@ -20,9 +23,9 @@ export interface ICertification {
   name: string;
   institution: string;
   issueDate: string;
-  expiryDate: string;
-  credentialId: string;
-  credentialUrl: string;
+  expiryDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }

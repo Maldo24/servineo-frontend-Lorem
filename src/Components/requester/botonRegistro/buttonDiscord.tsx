@@ -10,9 +10,11 @@ interface DiscordButtonProps {
     title: string;
     message: string;
   }) => void;
+
+  captchaValid: boolean;
 }
 
-export default function DiscordButton({ onNotify }: DiscordButtonProps) {
+export default function DiscordButton({ onNotify, captchaValid }: DiscordButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { setUser } = useAuth();
@@ -20,6 +22,15 @@ export default function DiscordButton({ onNotify }: DiscordButtonProps) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleDiscord = () => {
+    if (!captchaValid) {
+      onNotify?.({
+        type: 'warning',
+        title: 'Completa la verificación',
+        message: 'Debes completar el captcha antes de continuar.',
+      });
+      return;
+    }
+
     setLoading(true);
 
     const popup = window.open(`${API_URL}/auth/discord`, 'DiscordLogin', 'width=600,height=700');
@@ -57,7 +68,6 @@ export default function DiscordButton({ onNotify }: DiscordButtonProps) {
         window.removeEventListener('message', handleMessage);
         setLoading(false);
 
-        // redirecciones
         setTimeout(() => {
           if (data.isFirstTime) {
             router.push('/signUp/registrar/registroUbicacion');
@@ -90,7 +100,9 @@ export default function DiscordButton({ onNotify }: DiscordButtonProps) {
     <button
       onClick={handleDiscord}
       disabled={loading}
-      className="flex items-center gap-2 bg-[#5865F2] text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition"
+      className={`flex items-center gap-2 bg-[#5865F2] text-white font-semibold py-2 px-4 rounded-lg transition
+        ${!captchaValid ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'}
+      `}
     >
       <FaDiscord size={20} />
       {loading ? 'Cargando...' : 'Continuar con Discord'}

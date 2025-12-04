@@ -56,34 +56,34 @@ export const JustificationPopup: React.FC<JustificationPopupProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="bg-transparent shadow-none p-0">
-        <div className="overflow-hidden rounded-2xl w-full max-w-md bg-white text-black">
+      <DialogContent className='bg-transparent shadow-none p-0'>
+        <div className='overflow-hidden rounded-2xl w-full max-w-md bg-white text-black'>
           {/* Header */}
-          <div className="bg-indigo-700 text-white px-4 py-3 flex items-center justify-between">
-            <span className="font-semibold">{title}</span>
+          <div className='bg-indigo-700 text-white px-4 py-3 flex items-center justify-between'>
+            <span className='font-semibold'>{title}</span>
             <button
               onClick={onClose}
-              className="opacity-90 hover:opacity-100 transition"
-              aria-label="Cerrar"
+              className='opacity-90 hover:opacity-100 transition'
+              aria-label='Cerrar'
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
+                xmlns='http://www.w3.org/2000/svg'
+                className='h-5 w-5'
+                viewBox='0 0 24 24'
                 strokeWidth={2}
-                stroke="currentColor"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                stroke='currentColor'
+                fill='none'
+                strokeLinecap='round'
+                strokeLinejoin='round'
               >
-                <path d="M18 6L6 18M6 6l12 12" />
+                <path d='M18 6L6 18M6 6l12 12' />
               </svg>
             </button>
           </div>
 
           {/* Body */}
-          <div className="p-5">
-            <p className="text-sm text-gray-700 mb-3">
+          <div className='p-5'>
+            <p className='text-sm text-gray-700 mb-3'>
               Indique el motivo por el cual desea reprogramar la cita.
             </p>
 
@@ -94,20 +94,20 @@ export const JustificationPopup: React.FC<JustificationPopupProps> = ({
               rows={5}
               maxLength={maxLength}
               placeholder={placeholder}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className='w-full rounded-md border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500'
             />
 
-            <div className="mt-1 text-right text-xs text-gray-500">
+            <div className='mt-1 text-right text-xs text-gray-500'>
               {reason.trim().length}/{maxLength}
             </div>
 
-            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+            {error && <p className='mt-2 text-sm text-red-600'>{error}</p>}
 
-            <div className="mt-5 flex justify-between gap-3">
-              <Button variant="secondary" onClick={onClose} className="rounded-full px-6">
+            <div className='mt-5 flex justify-between gap-3'>
+              <Button variant='secondary' onClick={onClose} className='rounded-full px-6'>
                 {cancelLabel}
               </Button>
-              <Button onClick={handleConfirm} className="rounded-full px-6">
+              <Button onClick={handleConfirm} className='rounded-full px-6'>
                 {confirmLabel}
               </Button>
             </div>

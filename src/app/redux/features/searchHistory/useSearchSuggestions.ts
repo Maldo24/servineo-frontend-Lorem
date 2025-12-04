@@ -1,12 +1,17 @@
 // src/app/redux/features/searchHistory/useSearchSuggestions.ts
 import { useState, useEffect, useRef } from 'react';
 import { useLazyGetSearchSuggestionsQuery } from '@/app/redux/services/searchHistoryApi';
+import {
+  translateSuggestions,
+  translateWithDictionary,
+} from '@/app/lib/utils/translate/dictionary';
 
 interface UseSearchSuggestionsOptions {
   enabled?: boolean;
   minLength?: number;
   debounceMs?: number;
   maxResults?: number;
+  language?: string;
 }
 
 interface UseSearchSuggestionsReturn {
@@ -19,7 +24,13 @@ export function useSearchSuggestions(
   query: string,
   options: UseSearchSuggestionsOptions = {},
 ): UseSearchSuggestionsReturn {
-  const { enabled = true, minLength = 1, debounceMs = 300, maxResults = 6 } = options;
+  const {
+    enabled = true,
+    minLength = 1,
+    debounceMs = 300,
+    maxResults = 6,
+    language = 'es',
+  } = options;
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -55,10 +66,19 @@ export function useSearchSuggestions(
 
     // Configurar nuevo timer con debounce
     debounceTimerRef.current = setTimeout(() => {
-      trigger({ query: trimmed, limit: maxResults })
+      let queryToSearch = trimmed;
+      if (language === 'en') {
+        queryToSearch = translateWithDictionary(trimmed, 'es');
+      }
+      trigger({ query: queryToSearch, limit: maxResults })
         .unwrap()
         .then((results) => {
-          setSuggestions(results.slice(0, maxResults));
+          let processedResults = results;
+          if (language === 'en' && results.length > 0) {
+            console.log('✅ Translating suggestions to English');
+            processedResults = translateSuggestions(results, 'en');
+          }
+          setSuggestions(processedResults.slice(0, maxResults));
           setLocalError(null);
         })
         .catch((err) => {
@@ -74,14 +94,18 @@ export function useSearchSuggestions(
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [query, enabled, minLength, debounceMs, maxResults, trigger]);
+  }, [query, enabled, minLength, debounceMs, maxResults, trigger, language]);
 
   // Actualizar sugerencias cuando cambian los datos
   useEffect(() => {
     if (data) {
-      setSuggestions(data.slice(0, maxResults));
+      let processedData = data;
+      if (language === 'en' && data.length > 0) {
+        processedData = translateSuggestions(data, 'en');
+      }
+      setSuggestions(processedData.slice(0, maxResults));
     }
-  }, [data, maxResults]);
+  }, [data, maxResults, language]);
 
   return {
     suggestions,

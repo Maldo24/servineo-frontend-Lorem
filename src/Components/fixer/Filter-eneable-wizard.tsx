@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+//import Image from 'next/image';
 import { StepIndicator } from './Step-indicator';
 import { Card } from '../Card';
 import { PillButton } from './Pill-button';
@@ -19,6 +20,7 @@ import { IUser } from '@/types/user';
 import { fixerProfileSchema, type FixerProfileData } from '@/app/lib/validations/fixer-schemas';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { SerializedError } from '@reduxjs/toolkit';
+import NotificationModal from '../Modal-notifications';
 
 const DEFAULT_SERVICES: Service[] = [
   { id: 'svc-plumbing', name: 'Plomería' },
@@ -59,11 +61,19 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
   const total = 7; // 0 to 6
   const [success, setSuccess] = useState(false);
 
+  // Estados para el modal de notificación
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: 'success' as 'success' | 'error' | 'info' | 'warning',
+    title: '',
+    message: '',
+  });
+
   const methods = useForm<FixerProfileData>({
     resolver: zodResolver(fixerProfileSchema),
     defaultValues: {
       ci: '',
-      workLocation: { lat: -16.5, lng: -68.15 }, // Default location (La Paz approx)
+      workLocation: { lat: -16.5, lng: -68.15 },
       servicios: [],
       metodoPago: {
         hasEfectivo: false,
@@ -87,11 +97,9 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
     trigger,
     watch,
     setValue,
-    //control,
     formState: { isSubmitting, errors },
   } = methods;
 
-  // Watch values for conditional rendering or passing to steps
   const url_photo = watch('url_photo');
   const ci = watch('ci');
   const workLocation = watch('workLocation');
@@ -101,9 +109,6 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
   const vehiculo = watch('vehiculo');
   const acceptTerms = watch('acceptTerms');
 
-  // Helper to manage services state which is a bit complex for simple watch
-  // We'll keep the list of available services in local state if they can be added/removed dynamically
-  // But the selected IDs are in the form.
   const [availableServices, setAvailableServices] = useState<Service[]>(
     DEFAULT_SERVICES.map((s) => ({ id: s.id, name: s.name })),
   );
@@ -150,7 +155,6 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
     setStep((s) => Math.max(0, s - 1));
   };
 
-  // Service handlers
   const handleToggleService = (id: string) => {
     const current = servicios || [];
     const updated = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
@@ -178,7 +182,6 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
     );
   };
 
-  // Payment handlers
   const handleTogglePayment = (method: 'cash' | 'qr' | 'card') => {
     const current = { ...metodoPago };
     if (method === 'cash') current.hasEfectivo = !current.hasEfectivo;
@@ -188,7 +191,6 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
     setValue('metodoPago', current, { shouldValidate: true });
   };
 
-  // Helper to convert object to array for the step component
   const getPaymentArray = () => {
     const arr: ('cash' | 'qr' | 'card')[] = [];
     if (metodoPago?.hasEfectivo) arr.push('cash');
@@ -200,31 +202,32 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
   const onSubmit: SubmitHandler<FixerProfileData> = async (data) => {
     try {
       if (!user._id) {
-        console.error('User ID is missing');
+        setModalState({
+          isOpen: true,
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudo identificar al usuario. Por favor, intenta nuevamente.',
+        });
         return;
       }
 
       const payload = {
-        id: user._id?.toString(), // ← por si acaso es ObjectId
+        id: user._id?.toString(),
         profile: {
           telefono: user.telefono,
           ci: data.ci.trim(),
-
-          // Solo servicios oficiales (los que empiezan con "svc-")
           services: data.servicios
             .filter((id): id is string => id.startsWith('svc-'))
             .map((id) => {
               const service = DEFAULT_SERVICES.find((s) => s.id === id);
               return { name: service?.name ?? 'Servicio desconocido' };
             }),
-
           vehicle: data.vehiculo.hasVehiculo
             ? {
                 hasVehiculo: true,
                 tipoVehiculo: data.vehiculo.tipoVehiculo || undefined,
               }
             : { hasVehiculo: false },
-
           paymentMethods: (() => {
             const methods: { type: string }[] = [];
             if (data.metodoPago.hasEfectivo) methods.push({ type: 'efectivo' });
@@ -232,53 +235,62 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
             if (data.metodoPago.tarjetaCredito) methods.push({ type: 'tarjeta' });
             return methods;
           })(),
-
           location: {
             lat: Number(data.workLocation.lat),
             lng: Number(data.workLocation.lng),
             direccion: data.workLocation.direccion?.trim() || '',
-            // NO enviamos departamento ni pais → rompe el backend
           },
-
           terms: {
             accepted: data.acceptTerms,
           },
         },
       };
 
-      console.log('Submitting user profile data:', payload);
       await convertToFixer(payload).unwrap();
       setSuccess(true);
+      setModalState({
+        isOpen: true,
+        type: 'success',
+        title: '¡Registro Exitoso!',
+        message: `${user.name}, tu perfil de FIXER ha sido creado exitosamente. Tu cuenta está en revisión y pronto podrás comenzar a recibir solicitudes.`,
+      });
     } catch (error) {
       console.error('Error registering fixer:', error);
 
-      // Manejo tipado de errores
+      let errorMessage = 'Ocurrió un error al registrar tu perfil. Por favor, intenta nuevamente.';
+
       if (isErrorWithData(error)) {
-        console.error('API Error Data:', error.data);
+        const data = error.data;
+        errorMessage = data.message || data.error || errorMessage;
       } else if (isFetchBaseQueryError(error)) {
-        console.error('Fetch Error:', error);
+        errorMessage = `Error de conexión (${error.status}). Verifica tu conexión a internet.`;
       } else if (isSerializedError(error)) {
-        console.error('Serialized Error:', error.message);
-      } else {
-        console.error('Unknown error type');
+        errorMessage = error.message || errorMessage;
       }
+
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        title: 'Error al Registrar',
+        message: errorMessage,
+      });
     }
   };
 
   return (
     <FormProvider {...methods}>
-      <div className="mx-auto w-full max-w-3xl animate-fade-in">
+      <div className='mx-auto w-full max-w-3xl animate-fade-in'>
         <StepIndicator step={step} total={total} />
         {success ? (
-          <Card title="¡Listo!">
-            <div className="space-y-4 text-center">
-              <div className="flex justify-center">
-                <CheckCircle2 className="h-16 w-16 text-green-600 animate-scale-in" />
+          <Card title='¡Listo!'>
+            <div className='space-y-4 text-center'>
+              <div className='flex justify-center'>
+                <CheckCircle2 className='h-16 w-16 text-green-600 animate-scale-in' />
               </div>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className='text-lg font-semibold text-gray-900'>
                 {user.name} ahora está habilitado como FIXER.
               </p>
-              <div className="text-sm text-gray-600 space-y-1">
+              <div className='text-sm text-gray-600 space-y-1'>
                 <p>CI: {ci}</p>
                 <p>
                   Ubicación: {workLocation?.lat.toFixed(5)}, {workLocation?.lng.toFixed(5)}
@@ -286,12 +298,12 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
                 <p>Servicios: {servicios?.length}</p>
                 <p>Métodos de pago: {getPaymentArray().join(', ')}</p>
                 <p>Vehículo: {vehiculo?.hasVehiculo ? `Sí (${vehiculo.tipoVehiculo})` : 'No'}</p>
-                <p className="text-xs text-gray-500 mt-4">Estado: En revisión (pending)</p>
+                <p className='text-xs text-gray-500 mt-4'>Estado: En revisión (pending)</p>
               </div>
             </div>
           </Card>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             {step === 0 && (
               <ProfilePhotoStep
                 photoUrl={url_photo}
@@ -336,7 +348,7 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
                 onAccountInfoChange={(val) =>
                   setValue('accountInfo', val, { shouldValidate: true })
                 }
-                paymentsError={errors.metodoPago?.root?.message} // Check where error lands
+                paymentsError={errors.metodoPago?.root?.message}
                 accountError={errors.accountInfo?.message}
               />
             )}
@@ -367,43 +379,54 @@ export function FixerEnableWizard({ user }: FixerEnableWizardProps) {
             )}
 
             {errors.root && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+              <div className='bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm'>
                 {errors.root.message}
               </div>
             )}
 
-            <div className="flex items-center justify-between">
+            <div className='flex items-center justify-between'>
               <PillButton
-                type="button"
+                type='button'
                 disabled={step === 0}
                 onClick={goPrev}
-                className="bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-50 flex items-center gap-2"
+                className='bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-50 flex items-center gap-2'
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className='h-4 w-4' />
                 Atrás
               </PillButton>
               {step < total - 1 ? (
                 <PillButton
-                  type="button"
+                  type='button'
                   onClick={goNext}
-                  className="bg-primary text-white hover:bg-blue-800 flex items-center gap-2"
+                  className='bg-primary text-white hover:bg-blue-800 flex items-center gap-2'
                 >
                   Siguiente
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className='h-4 w-4' />
                 </PillButton>
               ) : (
                 <PillButton
-                  type="submit"
+                  type='submit'
                   disabled={isSubmitting || !acceptTerms}
-                  className="bg-primary text-white hover:bg-blue-800 disabled:opacity-50 flex items-center gap-2"
+                  className='bg-primary text-white hover:bg-blue-800 disabled:opacity-50 flex items-center gap-2'
                 >
                   {isSubmitting ? 'Registrando...' : 'Registrar'}
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className='h-4 w-4' />
                 </PillButton>
               )}
             </div>
           </form>
         )}
+
+        {/* Modal de Notificaciones */}
+        <NotificationModal
+          isOpen={modalState.isOpen}
+          onClose={() => setModalState((prev) => ({ ...prev, isOpen: false }))}
+          type={modalState.type}
+          title={modalState.title}
+          message={modalState.message}
+          autoClose={modalState.type === 'success'}
+          autoCloseDelay={4000}
+        />
       </div>
     </FormProvider>
   );

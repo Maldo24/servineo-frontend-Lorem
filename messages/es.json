@@ -3,7 +3,11 @@
     "title": "Encuentra el profesional perfecto",
     "subtitle": "Conectamos tu hogar con expertos verificados en tu ciudad",
     "placeholder": "¿Que servicio necesitas?",
-    "search": "Buscar"
+    "search": "Buscar",
+    "a": "Búsquedas populares:",
+    "professional": "profesionales",
+    "Projects completed": "Trabajos completados",
+    "Overall grade": "Calificación Promedio"
   },
   "Categories": {
     "Todos": "Todos",
@@ -32,6 +36,7 @@
     "available": "disponibles",
     "backToHome": "Inicio",
     "loading": "Cargando ofertas...",
+    "error": "Ocurrió un error al cargar las ofertas",
     "viewModes": {
       "list": "Lista",
       "map": "Mapa",
@@ -195,7 +200,8 @@
       "step8": "Seleccionar fecha de publicación: más recientes, más antiguos o fecha específica mediante el calendario.",
       "step9": "Seleccionar rango de calificación (1-5 estrellas). Al hacer click en una estrella muestra subrangos (1-9).",
       "step10": "Hacer click en \"Aplicar búsqueda\" para mostrar resultados con todos los filtros seleccionados.",
-      "step11": "Usar el botón \"Limpiar datos\" para borrar todos los filtros y volver al estado inicial."
+      "step11": "Usar el botón \"Limpiar datos\" para borrar todos los filtros y volver al estado inicial.",
+      "step12": "Puedes salir de la búsqueda avanzada en cualquier momento presionando la tecla \"ESC\"."
     }
   },
   "resultsAdvSearch": {
@@ -286,7 +292,7 @@
   },
   "navigation": {
     "home": "Inicio",
-    "jobOffers": "Ofertas de trabajo",
+    "jobOffers": "Ofertas de Trabajo",
     "login": "Iniciar Sesión",
     "register": "Regístrate",
     "logo": "LOGO"
@@ -329,6 +335,831 @@
   },
   "Services": {
     "serTitle": "Nuestros Servicios",
-    "serDescription": "Encuentra el servicio perfecto para tus necesidades"
+    "serDescription": "Encuentra el servicio perfecto para tus necesidades",
+    "name services": "Plomería",
+    "Description": "Reparaciones e instalaciones de fontanería"
+  },
+  "becomeFixer": {
+    "title": "Conviértete en un Fixer",
+    "description": "Completa tu registro y habilita tu cuenta como FIXER",
+    "InputData": "Datos iniciales",
+    "button1": "Continuar",
+    "completeName": "Nombre completo",
+    "eMail": "Correo Electrónico",
+    "phone": "Teléfono",
+    "digits": "dígitos",
+    "fields": {
+      "name": {
+        "label": "Nombre completo",
+        "placeholder": "Ingrese su nombre completo"
+      },
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "correo@ejemplo.com"
+      },
+      "phone": {
+        "label": "Teléfono",
+        "placeholder": "+591 70123456"
+      }
+    },
+    "buttons": {
+      "submit": "Registrar",
+      "submitting": "Registrando..."
+    }
+  },
+  "myOffers": {
+    "newOffer": "Nueva Oferta",
+    "noOffers": {
+      "title": "No tienes ofertas publicadas",
+      "description": "Crea tu primera oferta de trabajo para que los clientes puedan encontrarte y contactarte",
+      "createFirst": "Crear Primera Oferta"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "saveChanges": "Guardar Cambios",
+      "publishOffer": "Publicar Oferta"
+    },
+    "notifications": {
+      "offerDeleted": {
+        "title": "Oferta eliminada",
+        "message": "La oferta se eliminó correctamente"
+      },
+      "offerUpdated": {
+        "title": "Oferta actualizada",
+        "message": "La oferta se actualizó correctamente"
+      },
+      "offerCreated": {
+        "title": "Oferta creada",
+        "message": "La oferta se creó correctamente"
+      },
+      "error": {
+        "title": "Error",
+        "deleteMessage": "No se pudo eliminar la oferta. Por favor, intenta de nuevo.",
+        "formMessage": "Hubo un error al procesar el formulario. Por favor, intenta de nuevo."
+      }
+    },
+    "confirmDelete": {
+      "title": "¿Eliminar oferta?",
+      "message": "Esta acción no se puede deshacer. ¿Estás seguro de que quieres eliminar esta oferta?",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  },
+  "fixerProfile": {
+    "tabs": {
+      "home": "Inicio",
+      "services": "Servicios",
+      "reviews": "Reseñas",
+      "gallery": "Galería"
+    },
+    "actions": {
+      "contact": "Contactar",
+      "writeReview": "Escribir reseña",
+      "viewAll": "Ver todos"
+    },
+    "about": {
+      "title": "Acerca de",
+      "noDescription": "Este profesional aún no ha agregado una descripción.",
+      "experience": "Experiencia",
+      "years": "años",
+      "completedJobs": "trabajos realizados"
+    },
+    "services": {
+      "title": "Servicios",
+      "myServices": "Mis Servicios",
+      "description": "Servicio profesional especializado en"
+    },
+    "recentJobs": {
+      "title": "Trabajos Recientes"
+    },
+    "reviews": {
+      "title": "Reseñas",
+      "new": "Nuevo",
+      "satisfied": "Cliente Satisfecho",
+      "ago": "Hace",
+      "week": "semana",
+      "weeks": "semanas",
+      "sampleReview": "Excelente servicio, muy profesional y puntual. El trabajo quedó impecable."
+    },
+    "gallery": {
+      "title": "Galería de Trabajos",
+      "noPhotos": {
+        "title": "Aún no hay fotos",
+        "description": "Este profesional aún no ha compartido fotos de sus trabajos."
+      },
+      "workLabel": "Trabajo"
+    },
+    "profile": {
+      "edit": "Editar perfil",
+      "title2": "Estadisticas de trabajo",
+      "save": "Guardar",
+      "contactWhatsApp": "Contactar por WhatsApp",
+      "completedJobs": "trabajos realizados",
+      "new": "Nuevo",
+      "aboutMe": {
+        "title": "Acerca de mí",
+        "placeholder": "Cuéntanos sobre ti y tus servicios...",
+        "noDescription": "Este profesional aún no ha agregado una descripción."
+      },
+      "contactInfo": {
+        "title": "Información de contacto",
+        "phonePlaceholder": "Número de teléfono",
+        "whatsappPlaceholder": "WhatsApp (opcional)"
+      },
+      "myServices": {
+        "title": "Mis Servicios",
+        "manage": "Gestionar",
+        "noServices": "Aún no se han agregado servicios"
+      },
+      "paymentMethods": {
+        "title": "Métodos de pago"
+      }
+    }
+  },
+  "statistics": {
+    "jobs": {
+      "title": "Estadísticas de trabajos",
+      "loading": "Cargando estadísticas...",
+      "error": "Error al cargar datos o datos no disponibles.",
+      "noLogs": "No se encontraron logs de estado de trabajos.",
+      "status": {
+        "completed": "Completados",
+        "inProgress": "En proceso",
+        "pending": "Pendientes"
+      },
+      "jobs": "trabajos",
+      "total": "Total"
+    }
+  },
+  "jobOfferModal": {
+    "closeModal": "Cerrar modal",
+    "description": "Descripción",
+    "servicesOffered": "Servicios Ofrecidos",
+    "gallery": "Galería de Trabajos",
+    "photo": "Foto",
+    "contactInfo": "Información de Contacto",
+    "whatsapp": "WhatsApp",
+    "city": "Ciudad",
+    "contactButton": "Contactar por WhatsApp"
+  },
+  "navbar": {
+    "logo": "Logo",
+    "jobOffers": "Ofertas de Trabajo",
+    "becomeFixer": "Convertirse en Fixer",
+    "myOffers": "Mis Ofertas",
+    "a": "fixers por trabajo"
+  },
+  "Mock_Fixer": {
+    "role": "Plomero Profesional",
+    "about": "Especialista en plomería residencial y comercial con más de 10 años de experiencia. Garantizo un trabajo limpio y duradero.",
+    "reviews": "124 reseñas",
+    "featuredOffers": "Ofertas Destacadas",
+    "tabs": {
+      "summary": "Resumen",
+      "offers": "Ofertas",
+      "experience": "Experiencia",
+      "certifications": "Certificaciones",
+      "portfolio": "Portafolio",
+      "statistics": "Estadísticas"
+    }
+  },
+  "Login": {
+    "title": "Iniciar sesión",
+    "mode": "Modo solicitante",
+    "separator": "o",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Ingrese su correo electrónico"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingrese su contraseña"
+      }
+    },
+    "links": {
+      "forgotPassword": "¿Olvidó su contraseña?",
+      "noAccount": "¿No tiene una cuenta?",
+      "register": "Regístrate"
+    },
+    "buttons": {
+      "login": "Iniciar Sesión",
+      "loading": "Iniciando sesión..."
+    },
+    "aria": {
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
+    },
+    "errors": {
+      "invalidEmail": "Por favor ingrese un correo electrónico válido",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "invalidCredentials": "Credenciales inválidas o error del servidor",
+      "loginError": "Error de inicio de sesión",
+      "connectionError": "No se pudo conectar al servidor",
+      "connectionErrorTitle": "Error de conexión",
+      "googleError": "Error de Google"
+    },
+    "success": {
+      "title": "Inicio de sesión exitoso",
+      "welcome": "¡Bienvenido, {name}!"
+    }
+  },
+  "SignUp": {
+    "title": "Crear cuenta",
+    "subtitle": "Únete a nuestra comunidad",
+    "form": {
+      "name": {
+        "label": "Nombre completo",
+        "placeholder": "Ingrese su nombre completo"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Ingrese su correo"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingrese su contraseña"
+      },
+      "confirmPassword": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Confirme su contraseña"
+      },
+      "terms": {
+        "text": "Acepto los",
+        "link": "términos y condiciones"
+      }
+    },
+    "buttons": {
+      "register": "Crear cuenta",
+      "loading": "Creando cuenta..."
+    },
+    "links": {
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión"
+    },
+    "errors": {
+      "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+      "invalidEmail": "Debe ingresar un correo válido",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "passwordsMatch": "Las contraseñas no coinciden",
+      "termsRequired": "Debes aceptar los términos y condiciones",
+      "registrationError": "Error en el registro",
+      "connectionError": "No se pudo conectar con el servidor"
+    },
+    "success": {
+      "title": "Registro exitoso",
+      "message": "Tu cuenta ha sido creada exitosamente"
+    }
+  },
+  "Calendar": {
+    "fixer": "Fixer",
+    "viewCalendar": "Ver Calendario",
+    "profileInfo": "Información de Perfil",
+    "previousExperience": "Experiencia Previa",
+    "experienceDescription": "Información sobre experiencias y trabajos anteriores...",
+    "reviews": "Reseñas",
+    "reviewsDescription": "Reseñas y comentarios de clientes..."
+  },
+  "AdvSearch": {
+    "pageTitle": "Resultados de Búsqueda",
+    "noResults": "No se encontraron resultados",
+    "loading": "Cargando...",
+    "loadingFallback": "Cargando resultados de búsqueda..."
+  },
+  "VincularCorreo": {
+    "title": "Correo y contraseña",
+    "subtitle": "Vincula tu cuenta con credenciales",
+    "form": {
+      "email": {
+        "placeholder": "Correo electrónico"
+      },
+      "password": {
+        "placeholder": "Contraseña"
+      },
+      "repeatPassword": {
+        "placeholder": "Repetir contraseña"
+      }
+    },
+    "buttons": {
+      "link": "Vincular",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar Vinculación",
+      "linking": "Vinculando..."
+    },
+    "errors": {
+      "invalidEmail": "Debe ser un correo electrónico válido.",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordUppercase": "Debe contener al menos una letra mayúscula.",
+      "passwordLowercase": "Debe contener al menos una letra minúscula.",
+      "passwordNumber": "Debe contener al menos un número.",
+      "passwordSymbol": "Debe contener al menos un símbolo.",
+      "passwordsMatch": "Las contraseñas no coinciden."
+    },
+    "toasts": {
+      "formErrors": "Por favor, corrige los errores del formulario."
+    },
+    "success": {
+      "message": "Vinculación exitosa."
+    }
+  },
+  "VincularDiscord": {
+    "title": "Discord",
+    "subtitle": "Vincula tu cuenta de Discord",
+    "buttons": {
+      "link": "Vincular",
+      "linking": "Vinculando..."
+    }
+  },
+  "VincularGithub": {
+    "title": "GitHub",
+    "subtitle": "Vincula tu cuenta de GitHub",
+    "buttons": {
+      "link": "Vincular",
+      "linking": "Vinculando..."
+    },
+    "errors": {
+      "noSession": "No hay sesión activa para vincular cuenta"
+    },
+    "success": {
+      "message": "Cuenta de GitHub vinculada con éxito"
+    }
+  },
+  "VincularGoogle": {
+    "title": "Google",
+    "subtitle": "Vincula tu cuenta de Google",
+    "buttons": {
+      "link": "Vincular",
+      "linking": "Vinculando..."
+    },
+    "errors": {
+      "emptyToken": "Token de Google vacío",
+      "noSession": "No hay sesión activa para vincular cuenta",
+      "loginError": "Error al iniciar sesión con Google"
+    }
+  },
+  "AccountLoginSettings": {
+    "title": "Configuración de Cuentas Vinculadas",
+    "linkedAccounts": {
+      "title": "Cuentas Vinculadas ({count})"
+    },
+    "availableMethods": {
+      "title": "Métodos Disponibles ({count})",
+      "allLinked": "Todos los métodos están actualmente vinculados."
+    },
+    "status": {
+      "active": "Activo"
+    },
+    "buttons": {
+      "unlink": "Desvincular"
+    },
+    "confirmUnlink": "¿Desvincular {provider}?",
+    "errors": {
+      "loadMethods": "Error al cargar métodos",
+      "minimumMethods": "Debes tener al menos un método activo.",
+      "linkError": "Error al vincular el método {provider}: {error}",
+      "unlinkError": "Error al desvincular método {provider}: {error}",
+      "unknown": "Desconocido"
+    }
+  },
+  "ConfiguracionPage": {
+    "title": "Configuración",
+    "loading": {
+      "profile": "Cargando datos del perfil..."
+    },
+    "errors": {
+      "loadTitle": "Error de Carga",
+      "loadMessage": "No se pudo cargar el perfil: {error}",
+      "loadProfile": "Error al cargar los datos del perfil."
+    },
+    "buttons": {
+      "retry": "Reintentar Carga"
+    },
+    "sections": {
+      "editProfile": "Editar Perfil",
+      "changePassword": "Cambiar Contraseña",
+      "security": "Seguridad"
+    },
+    "security": {
+      "description": "Opciones y recomendaciones que te ayudan a proteger tu cuenta",
+      "changePassword": "Cambiar contraseña",
+      "linkedDevices": "Dispositivos vinculados"
+    },
+    "welcome": {
+      "profilePhoto": "Foto de perfil",
+      "title": "Te damos la bienvenida, {name}",
+      "defaultName": "Usuario",
+      "description": "Gestiona tu información, privacidad y seguridad para mejorar tu experiencia en Servineo.",
+      "loginRequired": "Inicia sesión para ver tus configuraciones."
+    },
+    "navigation": {
+      "editProfile": "Editar Perfil",
+      "security": "Seguridad",
+      "linkedAccounts": "Cuentas vinculadas"
+    }
+  },
+  "RegistroGoogle": {
+    "errors": {
+      "noToken": {
+        "title": "Token no recibido",
+        "message": "No se recibió el token de Google."
+      },
+      "authError": {
+        "title": "Error",
+        "defaultMessage": "Error al autenticar con Google."
+      },
+      "connection": {
+        "title": "Error de conexión",
+        "defaultMessage": "No se pudo conectar con el servidor. Intenta nuevamente."
+      }
+    },
+    "welcome": {
+      "title": "Bienvenido",
+      "message": "Primera vez en Servineo. Completa tu perfil para continuar."
+    },
+    "success": {
+      "loginTitle": "Inicio de sesión exitoso",
+      "loginMessage": "Bienvenido nuevamente, {name}",
+      "defaultName": "usuario"
+    }
+  },
+  "CalendarPage": {
+    "closeButton": "Cerrar",
+    "titles": {
+      "myCalendar": "Mi Calendario",
+      "fixerCalendar": "Calendario de {fixerName}"
+    },
+    "buttons": {
+      "modifyAvailability": "Modificar Disponibilidad",
+      "cancelAppointments": "Cancelar Citas"
+    }
+  },
+  "CloseSessionPage": {
+    "backButton": "Volver",
+    "title": "Gestión de Sesiones",
+    "description": "Administra tus dispositivos conectados y cierra sesiones en otros dispositivos para mantener tu cuenta segura.",
+    "loading": "Cargando dispositivos...",
+    "important": "Importante",
+    "warnings": {
+      "deviceLimit": "Has alcanzado el límite de 3 dispositivos conectados.",
+      "closeSessionsWarning": "Al cerrar sesiones, se desconectarán todos los dispositivos excepto el actual. Deberás volver a iniciar sesión en los demás dispositivos."
+    },
+    "stats": {
+      "activeSessions": "Sesiones activas",
+      "otherDevices": "Otros dispositivos",
+      "currentDevice": "Dispositivo actual"
+    },
+    "buttons": {
+      "closeOtherSessions": "Cerrar sesiones en otros dispositivos",
+      "closingSessions": "Cerrando sesiones..."
+    },
+    "noOtherSessions": "No hay otras sesiones activas. Solo este dispositivo está conectado.",
+    "activeSessions": {
+      "title": "Sesiones Activas ({count})",
+      "noDevices": "No hay dispositivos conectados.",
+      "thisDevice": "Este dispositivo"
+    },
+    "confirmation": {
+      "title": "¿Cerrar sesiones?",
+      "message": "Esta acción cerrará todas las sesiones activas en otros dispositivos ({count} {sessions}).",
+      "sessionSingular": "sesión",
+      "sessionPlural": "sesiones",
+      "cancel": "Cancelar",
+      "closing": "Cerrando...",
+      "confirm": "Sí, cerrar sesiones"
+    }
+  },
+  "SignUpRegister": {
+    "title": "Regístrate",
+    "mode": "Modo requester",
+    "separator": "o continúa con",
+    "terms": {
+      "text": "Al registrarte aceptas los",
+      "link": "términos de uso"
+    },
+    "login": {
+      "text": "¿Ya tienes cuenta?",
+      "link": "Inicia sesión"
+    }
+  },
+  "CertificationsSection": {
+    "titles": {
+      "certifications": "Certificaciones",
+      "myCertifications": "Mis Certificaciones"
+    },
+    "buttons": {
+      "addCertification": "Agregar Certificación",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "card": {
+      "issued": "Emitido",
+      "expires": "Vence",
+      "viewCredential": "Ver credencial"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "modal": {
+      "editTitle": "Editar Certificación",
+      "newTitle": "Nueva Certificación"
+    },
+    "form": {
+      "name": {
+        "label": "Nombre de la Certificación",
+        "placeholder": "Ej: Técnico Electricista",
+        "required": "El nombre es requerido"
+      },
+      "institution": {
+        "label": "Institución Emisora",
+        "placeholder": "Ej: INFOCAL",
+        "required": "La institución es requerida"
+      },
+      "issueDate": {
+        "label": "Fecha de Emisión"
+      },
+      "expiryDate": {
+        "label": "Fecha de Vencimiento"
+      },
+      "credentialId": {
+        "label": "ID de la Credencial",
+        "placeholder": "Opcional",
+        "label2": "URL de la credencial"
+      },
+      "credentialUrl": {
+        "label": "URL Credencial",
+        "placeholder": "https://..."
+      }
+    },
+    "deleteConfirmation": "¿Estás seguro de eliminar esta certificación?"
+  },
+  "ExperienceSection": {
+    "titles": {
+      "experience": "Experiencia Laboral",
+      "myExperience": "Mi Experiencia Laboral"
+    },
+    "buttons": {
+      "addExperience": "Agregar Experiencia",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "card": {
+      "present": "Presente"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "modal": {
+      "editTitle": "Editar Experiencia",
+      "newTitle": "Nueva Experiencia"
+    },
+    "form": {
+      "jobTitle": {
+        "label": "Cargo / Título",
+        "placeholder": "Ej: Plomero Senior",
+        "required": "El cargo es requerido"
+      },
+      "organization": {
+        "label": "Empresa / Organización",
+        "placeholder": "Ej: Servicios Generales S.A.",
+        "required": "La empresa es requerida"
+      },
+      "jobType": {
+        "label": "Tipo de Empleo",
+        "options": {
+          "fullTime": "Tiempo completo",
+          "partTime": "Medio tiempo",
+          "contract": "Contrato",
+          "freelance": "Freelance"
+        }
+      },
+      "isCurrent": {
+        "label": "Actualmente trabajo aquí"
+      },
+      "startDate": {
+        "label": "Fecha de Inicio"
+      },
+      "endDate": {
+        "label": "Fecha de Fin"
+      }
+    },
+    "deleteConfirmation": "¿Estás seguro de eliminar esta experiencia?"
+  },
+  "JobOffersSection": {
+    "titles": {
+      "jobOffers": "Ofertas de Trabajo",
+      "myJobOffers": "Mis Ofertas de Trabajo"
+    },
+    "buttons": {
+      "newOffer": "Nueva Oferta",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "card": {
+      "defaultTitle": "Sin título",
+      "defaultCategory": "General"
+    },
+    "modal": {
+      "editTitle": "Editar Oferta",
+      "newTitle": "Nueva Oferta"
+    },
+    "form": {
+      "defaultCity": "Cochabamba",
+      "category": {
+        "label": "Categoría",
+        "select": "Seleccionar...",
+        "required": "Selecciona una categoría",
+        "options": {
+          "plumbing": "Plomería",
+          "electricity": "Electricidad",
+          "carpentry": "Carpintería",
+          "painting": "Pintura"
+        }
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Describe tu servicio...",
+        "required": "La descripción es requerida"
+      },
+      "price": {
+        "label": "Precio (Bs.)"
+      },
+      "city": {
+        "label": "Ciudad"
+      }
+    },
+    "deleteConfirmation": "¿Estás seguro de eliminar esta oferta?"
+  },
+  "PortfolioSection": {
+    "titles": {
+      "portfolio": "Portafolio",
+      "myPortfolio": "Mi Portafolio"
+    },
+    "buttons": {
+      "video": "Video",
+      "image": "Imagen",
+      "cancel": "Cancelar",
+      "save": "Guardar"
+    },
+    "image": {
+      "alt": "Elemento del portafolio",
+      "placeholder": "https://placehold.co/300x300?text=Sin+Imagen"
+    },
+    "tooltips": {
+      "delete": "Eliminar"
+    },
+    "modal": {
+      "addImage": "Agregar Imagen",
+      "addVideo": "Agregar Video"
+    },
+    "form": {
+      "imageUrl": {
+        "label": "URL de la Imagen",
+        "placeholder": "https://...",
+        "required": "La URL es requerida"
+      },
+      "youtubeUrl": {
+        "label": "URL de YouTube",
+        "placeholder": "https://www.youtube.com/watch?v=...",
+        "required": "La URL es requerida"
+      },
+      "thumbnailUrl": {
+        "label": "URL de Miniatura (Opcional)",
+        "placeholder": "Se intentará extraer automáticamente"
+      }
+    },
+    "deleteConfirmation": "¿Estás seguro de eliminar este elemento?"
+  },
+  "RegistroForm": {
+    "fields": {
+      "nombre": {
+        "label": "Nombre",
+        "placeholder": "Ingresa tu nombre"
+      },
+      "apellido": {
+        "label": "Apellido",
+        "placeholder": "Ingresa tu apellido"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "nombre@dominio.com"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingresa tu contraseña"
+      },
+      "confirmarPassword": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Confirma tu contraseña"
+      }
+    },
+    "validation": {
+      "nombre": {
+        "min": "El nombre debe tener al menos 3 caracteres",
+        "max": "El nombre no puede tener más de 50 caracteres",
+        "regex": "Solo se permiten letras y espacios"
+      },
+      "apellido": {
+        "min": "El apellido debe tener al menos 3 caracteres",
+        "max": "El apellido no puede tener más de 50 caracteres",
+        "regex": "Solo se permiten letras y espacios"
+      },
+      "email": {
+        "invalid": "Correo electrónico inválido"
+      },
+      "password": {
+        "min": "Debe tener al menos 8 caracteres"
+      },
+      "confirmarPassword": {
+        "match": "Las contraseñas no coinciden"
+      }
+    },
+    "buttons": {
+      "generatePassword": "Generar contraseña segura",
+      "submit": "Únete",
+      "submitting": "Registrando..."
+    },
+    "aria": {
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
+    },
+    "tooltips": {
+      "passwordCopy": "Se copiará automáticamente al portapapeles"
+    },
+    "notifications": {
+      "passwordGenerated": {
+        "title": "Contraseña generada",
+        "message": "La contraseña segura ha sido generada y copiada al portapapeles."
+      },
+      "validationError": {
+        "title": "Datos incompletos o incorrectos",
+        "message": "Revisa los campos marcados para continuar."
+      },
+      "success": {
+        "title": "Registro exitoso",
+        "message": "Bienvenido, {name}. Tu cuenta ha sido creada correctamente.",
+        "toast": "¡Cuenta creada exitosamente! Bienvenido, {name}."
+      },
+      "error": {
+        "title": "Error en el registro",
+        "message": "No fue posible completar el registro."
+      }
+    }
+  },
+  "TerminosPage": {
+    "title": "Términos y Condiciones de Uso de Servero",
+    "section1": {
+      "title": "1. ACEPTACIÓN DE TÉRMINOS",
+      "content": "Al acceder y utilizar la aplicación Servero, el usuario acepta cumplir con los presentes Términos y Condiciones. Si no está de acuerdo con ellos, deberá abstenerse de usar la plataforma."
+    },
+    "section2": {
+      "title": "2. USO DEL SERVICIO",
+      "content1": "Servineo es una plataforma digital que conecta a usuarios con proveedores independientes de servicios (ejemplo: electricistas, plomeros, albañiles, pintores, entre otros). El usuario reconoce que Servero no presta directamente los servicios, sino que actúa únicamente como intermediario digital.",
+      "content2": "Cada usuario es responsable de la veracidad de la información que proporciona. Queda prohibido usar la plataforma para fines ilícitos, fraudulentos o contrarios al orden público."
+    },
+    "section3": {
+      "title": "3. PRIVACIDAD",
+      "content": "La información personal proporcionada por el usuario será tratada conforme a la Política de Privacidad de Servero. Los datos serán utilizados únicamente para el funcionamiento de la aplicación, la gestión de cuentas y la conexión entre requesters y fixers. Servero se compromete a proteger la información del usuario, pero no se responsabiliza por accesos no autorizados derivados de negligencia del propio usuario (ejemplo: compartir contraseñas)."
+    },
+    "section4": {
+      "title": "4. PROPIEDAD INTELECTUAL",
+      "content": "Todos los derechos sobre el nombre Servero, logotipos, diseño, interfaz y contenidos de la aplicación pertenecen a los titulares de Servero. El usuario no podrá copiar, modificar, distribuir ni usar con fines comerciales ningún elemento de la plataforma sin autorización expresa."
+    },
+    "section5": {
+      "title": "5. LIMITACIÓN DE RESPONSABILIDAD",
+      "content": "Servineo no garantiza la calidad, cumplimiento o idoneidad de los servicios ofrecidos por los proveedores registrados en la plataforma. La responsabilidad por la ejecución de los trabajos recae exclusivamente en los proveedores y los usuarios que los contraten. Servero no se hace responsable por daños, pérdidas o conflictos que puedan surgir entre usuarios y proveedores."
+    },
+    "section6": {
+      "title": "6. TERMINACIÓN",
+      "content": "Servero se reserva el derecho de suspender o cancelar la cuenta de cualquier usuario que incumpla estos Términos y Condiciones o que haga un uso indebido de la aplicación."
+    },
+    "section7": {
+      "title": "7. LEY APLICABLE",
+      "content": "Estos Términos y Condiciones se rigen por las leyes vigentes en el Estado Plurinacional de Bolivia. En caso de controversia, las partes se someten a la jurisdicción de los tribunales competentes en dicho país."
+    },
+    "section8": {
+      "title": "8. CONTACTO",
+      "content": "Para consultas, reclamos o sugerencias, los usuarios pueden comunicarse con el equipo de Servero a través del correo electrónico:"
+    }
+  },
+  "TopMenu": {
+    "nav": {
+      "home": "Inicio",
+      "jobOffers": "Ofertas de trabajo",
+      "help": "Ayuda"
+    },
+    "buttons": {
+      "login": "Iniciar Sesión",
+      "register": "Regístrate",
+      "myAccount": "Mi cuenta",
+      "becomeFixer": "Convertir a Fixer",
+      "fixerProfile": "Perfil de Fixer"
+    },
+    "dropdown": {
+      "editProfile": "Editar perfil",
+      "logout": "Cerrar sesión"
+    }
   }
 }

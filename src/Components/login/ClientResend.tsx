@@ -117,17 +117,17 @@ export default function ClientResend({ email: emailProp }: { email?: string; tok
   };
 
   return (
-    <div className="p-8">
-      <p className="text-sm text-muted-foreground">
+    <div className='p-8'>
+      <p className='text-sm text-muted-foreground'>
         Te enviamos un enlace para ingresar sin contraseña. Por seguridad, el enlace caduca en
-        <span className="font-medium"> 5 minutos</span>.
+        <span className='font-medium'> 5 minutos</span>.
       </p>
 
-      <div className="mt-5 flex flex-col items-center gap-2" aria-live="polite">
-        <p className="text-sm text-muted-foreground">Tiempo restante para usar el enlace:</p>
+      <div className='mt-5 flex flex-col items-center gap-2' aria-live='polite'>
+        <p className='text-sm text-muted-foreground'>Tiempo restante para usar el enlace:</p>
         <div
-          className="px-6 py-2 rounded-full bg-muted ring-1 ring-border text-3xl font-semibold text-foreground tracking-widest tabular-nums shadow-sm"
-          title="Tiempo restante"
+          className='px-6 py-2 rounded-full bg-muted ring-1 ring-border text-3xl font-semibold text-foreground tracking-widest tabular-nums shadow-sm'
+          title='Tiempo restante'
         >
           {String(minutos).padStart(2, '0')}:{String(segundos).padStart(2, '0')}
         </div>
@@ -135,15 +135,15 @@ export default function ClientResend({ email: emailProp }: { email?: string; tok
 
       {info && (
         <div
-          role="status"
-          aria-live="polite"
-          className="mt-4 rounded-xl bg-accent/20 border border-accent/40 text-foreground p-3 text-sm"
+          role='status'
+          aria-live='polite'
+          className='mt-4 rounded-xl bg-accent/20 border border-accent/40 text-foreground p-3 text-sm'
         >
           {info}
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className='mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3'>
         <button
           onClick={handleResend}
           disabled={loading || !email}
@@ -159,22 +159,22 @@ export default function ClientResend({ email: emailProp }: { email?: string; tok
         </button>
 
         <Link
-          href="/login"
-          className="text-center rounded-xl p-3.5 font-semibold transition
-                     bg-background text-foreground ring-1 ring-border hover:bg-muted"
+          href='/login'
+          className='text-center rounded-xl p-3.5 font-semibold transition
+                     bg-background text-foreground ring-1 ring-border hover:bg-muted'
         >
           Volver a inicio de sesión
         </Link>
       </div>
 
-      <div className="mt-6 text-xs text-muted-foreground space-y-1">
+      <div className='mt-6 text-xs text-muted-foreground space-y-1'>
         <p>
-          • Revisa la carpeta de <span className="font-medium">Spam</span> o{' '}
-          <span className="font-medium">Promociones</span> si no ves el correo.
+          • Revisa la carpeta de <span className='font-medium'>Spam</span> o{' '}
+          <span className='font-medium'>Promociones</span> si no ves el correo.
         </p>
         <p>
           • Al generar un nuevo enlace, los anteriores quedan{' '}
-          <span className="font-medium">inválidos</span>.
+          <span className='font-medium'>inválidos</span>.
         </p>
       </div>
     </div>

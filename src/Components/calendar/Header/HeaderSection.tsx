@@ -7,7 +7,7 @@ interface HeaderSectionProps {
 
 export default function HeaderSection({ buttons }: HeaderSectionProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className='flex items-center gap-2'>
       {buttons.map((b, idx) => (
         <ButtonCalendar key={idx} onClick={b.onClick} disable={b.disabled}>
           {b.label}

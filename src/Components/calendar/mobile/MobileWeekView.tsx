@@ -210,43 +210,43 @@ export default function MobileWeekView({
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-sm p-4 bg-white">
-        <div className="flex justify-center items-center h-32">
-          <p className="text-black">Cargando horarios...</p>
+      <div className='mx-auto max-w-sm p-4 bg-white'>
+        <div className='flex justify-center items-center h-32'>
+          <p className='text-black'>Cargando horarios...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-sm p-4 bg-white min-h-screen">
-      <h1 className="text-2xl font-semibold mb-3 text-black">Calendario de usuario</h1>
-      <div className="mb-3">
-        <label className="block text-sm mb-1 text-black">Fecha</label>
+    <div className='mx-auto max-w-sm p-4 bg-white min-h-screen'>
+      <h1 className='text-2xl font-semibold mb-3 text-black'>Calendario de usuario</h1>
+      <div className='mb-3'>
+        <label className='block text-sm mb-1 text-black'>Fecha</label>
         <DatePicker selectedDate={selectedDate} onDateChange={onChangeDate} />
       </div>
 
       {/* Renderizado de las semanas */}
-      <div className="space-y-6">
+      <div className='space-y-6'>
         {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="bg-gray-50 rounded-lg border border-gray-200 p-4">
+          <div key={weekIndex} className='bg-gray-50 rounded-lg border border-gray-200 p-4'>
             {/* Título de la semana */}
-            <h3 className="text-lg font-semibold mb-3 text-center text-black">
+            <h3 className='text-lg font-semibold mb-3 text-center text-black'>
               {formatDate(week.startDate)} - {formatDate(week.endDate)}
             </h3>
 
             {/* Días de la semana */}
-            <div className="space-y-2">
+            <div className='space-y-2'>
               {week.days.map((day, dayIndex) => {
                 const dayStatus = getDayStatus(day);
                 return (
                   <div
                     key={dayIndex}
-                    className="flex justify-between items-center p-2 border-b border-gray-200 bg-white rounded-lg"
+                    className='flex justify-between items-center p-2 border-b border-gray-200 bg-white rounded-lg'
                   >
-                    <div className="flex flex-col">
-                      <span className="font-medium capitalize text-black">{getDayName(day)}</span>
-                      <span className="text-sm text-gray-700">{formatDate(day)}</span>
+                    <div className='flex flex-col'>
+                      <span className='font-medium capitalize text-black'>{getDayName(day)}</span>
+                      <span className='text-sm text-gray-700'>{formatDate(day)}</span>
                     </div>
 
                     {dayStatus.available ? (

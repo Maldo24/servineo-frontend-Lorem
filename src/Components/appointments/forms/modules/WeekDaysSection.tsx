@@ -17,8 +17,8 @@ export const WeekDaysSection = ({ selectedDays, onDaysChange }: WeekDaysSectionP
   const days = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
   return (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-4">
+    <div className='mb-6'>
+      <div className='flex justify-between items-center mb-4'>
         {days.map((day) => (
           <CircularDayButton
             key={day}

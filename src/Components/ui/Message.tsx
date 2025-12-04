@@ -54,18 +54,18 @@ export default function Message({ isOpen, onClose, title, message, type = 'info'
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+    <div className='fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4'>
       <div
         className={`bg-white rounded-lg shadow-xl max-w-sm w-full p-6 border-l-4 ${styles.border}`}
       >
-        <div className="flex items-center mb-4">
+        <div className='flex items-center mb-4'>
           <div className={`rounded-full p-2 mr-3 ${styles.bgIcon}`}>{styles.icon}</div>
-          <h3 className="text-lg font-semibold text-gray-900">{title || getDefaultTitle()}</h3>
+          <h3 className='text-lg font-semibold text-gray-900'>{title || getDefaultTitle()}</h3>
         </div>
 
-        <p className="text-gray-700 mb-6">{message}</p>
+        <p className='text-gray-700 mb-6'>{message}</p>
 
-        <div className="flex justify-end">
+        <div className='flex justify-end'>
           <button
             onClick={onClose}
             className={`px-4 py-2 rounded-md font-medium transition-colors ${styles.button}`}

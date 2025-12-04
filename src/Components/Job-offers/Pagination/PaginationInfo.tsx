@@ -17,7 +17,7 @@ const PaginationInfo: React.FC<PaginationInfoProps> = ({
 
   if (totalRegistros === 0) {
     return (
-      <div className="text-sm text-gray-600 mt-3">
+      <div className='text-sm text-gray-600 mt-3'>
         {t('showingResults', { start: 0, end: 0, total: 0 })}
       </div>
     );
@@ -27,7 +27,7 @@ const PaginationInfo: React.FC<PaginationInfoProps> = ({
   const finRegistro = Math.min(paginaActual * registrosPorPagina, totalRegistros);
 
   return (
-    <div className="text-sm text-gray-600 mt-3">
+    <div className='text-sm text-gray-600 mt-3'>
       {t('showingResults', { start: inicioRegistro, end: finRegistro, total: totalRegistros })}
     </div>
   );

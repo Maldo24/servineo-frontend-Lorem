@@ -7,6 +7,15 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+/**
+ * Helper: Convierte cualquier tipo de error (unknown) a un string seguro.
+ * Esto evita usar 'any' dentro de la clase y maneja casos donde el error no es una instancia de Error.
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 class ApiClient {
   private baseUrl: string;
   private timeout: number;
@@ -30,11 +39,20 @@ class ApiClient {
         },
       });
 
+      // Intentamos parsear la respuesta
       const data = await response.json();
-      return { success: response.ok, data, message: data.message };
-    } catch (error: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return { success: false, error: error.message };
+
+      return {
+        success: response.ok,
+        data,
+        message: data.message,
+        // Si la respuesta no es OK, intentamos capturar el mensaje de error del backend
+        error: !response.ok ? data.message || 'Error en la petición' : undefined,
+      };
+    } catch (error) {
+      // 1. El 'catch' recibe el error (TS infiere unknown)
+      // 2. 'getErrorMessage' lo transforma a string limpio inmediatamente
+      return { success: false, error: getErrorMessage(error) };
     } finally {
       clearTimeout(id);
     }
@@ -43,8 +61,8 @@ class ApiClient {
   get<T>(url: string) {
     return this.request<T>(url, { method: 'GET' });
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post<T>(url: string, body: any) {
+
+  post<T>(url: string, body: unknown) {
     return this.request<T>(url, {
       method: 'POST',
       body: JSON.stringify(body),

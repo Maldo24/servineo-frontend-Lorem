@@ -1,0 +1,36 @@
+:root {
+  --background: #f9fafb;
+  --foreground: #111827;
+
+  --surface-card: #ffffff;
+  --surface-border: #d1d5db;
+  --text-muted: #64748b;
+
+  --primary-light: #1aa7ed;
+  --primary: #2b31e0;
+  --primary-medium: #2b6ae0;
+
+  --accent: #2bdde0;
+  --accent-hover: #5e2be0;
+  --highlight: #fbbf24;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.transition-height {
+  transition: max-height 0.3s ease-in-out;
+}
+
+.error-box {
+  border: 1px solid var(--error);
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+}

@@ -80,31 +80,31 @@ export default function RecuperacionCorreoPage() {
   const emailValid = !errors.email && !!email;
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center px-6 text-foreground">
+    <main className='relative min-h-screen flex items-center justify-center px-6 text-foreground'>
       {/* Fondo ultra sutil */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-transparent" />
+      <div className='pointer-events-none absolute inset-0 -z-10'>
+        <div className='absolute inset-0 bg-background' />
+        <div className='absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-transparent' />
         <div className="absolute inset-0 opacity-[0.015] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDIwdjIwSDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgMGgyMHYyMEgweiIgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjA1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=')]" />
       </div>
 
-      <div className="w-full max-w-sm bg-card/95 backdrop-blur-sm rounded-3xl shadow-lg p-8 border border-border/70">
-        <h1 className="text-2xl font-semibold mb-2 bg-gradient-to-r from-primary/80 to-primary/60 bg-clip-text text-transparent">
+      <div className='w-full max-w-sm bg-card/95 backdrop-blur-sm rounded-3xl shadow-lg p-8 border border-border/70'>
+        <h1 className='text-2xl font-semibold mb-2 bg-gradient-to-r from-primary/80 to-primary/60 bg-clip-text text-transparent'>
           Recuperación de acceso
         </h1>
-        <p className="text-sm text-muted-foreground mb-6">
+        <p className='text-sm text-muted-foreground mb-6'>
           Te enviaremos un correo electrónico con un enlace para ingresar a tu cuenta.
         </p>
 
         {/* ✅ Form con React Hook Form */}
-        <form onSubmit={handleSubmit(handleEnviar)} className="flex flex-col gap-4">
-          <label htmlFor="email" className="text-sm font-medium text-foreground/80">
+        <form onSubmit={handleSubmit(handleEnviar)} className='flex flex-col gap-4'>
+          <label htmlFor='email' className='text-sm font-medium text-foreground/80'>
             Correo electrónico
           </label>
           <input
-            id="email"
-            type="email"
-            placeholder="Ingresa tu correo"
+            id='email'
+            type='email'
+            placeholder='Ingresa tu correo'
             {...register('email')}
             className={`w-full rounded-xl p-3.5 text-foreground bg-background border ${
               errors.email || serverError
@@ -113,16 +113,16 @@ export default function RecuperacionCorreoPage() {
             } focus:outline-none focus:ring-2 transition`}
             aria-invalid={!!errors.email || !!serverError}
             aria-describedby={errors.email ? 'email-error' : undefined}
-            autoComplete="email"
+            autoComplete='email'
           />
 
           {/* Errores de validación */}
           {errors.email && (
             <p
-              id="email-error"
-              role="status"
-              aria-live="polite"
-              className="text-sm text-destructive"
+              id='email-error'
+              role='status'
+              aria-live='polite'
+              className='text-sm text-destructive'
             >
               {errors.email.message}
             </p>
@@ -131,17 +131,17 @@ export default function RecuperacionCorreoPage() {
           {/* Errores del servidor */}
           {serverError && !errors.email && (
             <p
-              id="server-error"
-              role="status"
-              aria-live="polite"
-              className="text-sm text-destructive"
+              id='server-error'
+              role='status'
+              aria-live='polite'
+              className='text-sm text-destructive'
             >
               {serverError}
             </p>
           )}
 
           <button
-            type="submit"
+            type='submit'
             disabled={!emailValid || loading}
             className={`w-full font-semibold rounded-xl p-3.5 mt-2 transition-all duration-300
               ${
@@ -154,8 +154,8 @@ export default function RecuperacionCorreoPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <Link href="/login" className="text-primary hover:underline font-medium">
+        <div className='mt-6 text-center text-sm text-muted-foreground'>
+          <Link href='/login' className='text-primary hover:underline font-medium'>
             Volver al inicio de sesión
           </Link>
         </div>

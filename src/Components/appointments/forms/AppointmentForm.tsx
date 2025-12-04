@@ -5,7 +5,6 @@ import React, {
     useRef,
     useEffect,
 } from "react";
-import axios from "axios";
 import { z } from "zod";
 import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
@@ -20,6 +19,12 @@ export type AppointmentFormHandle = {
 interface AppointmentFormProps {
     fixerId: string;
     requesterId: string;
+}
+
+interface ApiResponse {
+    success?: boolean;
+    message?: string;
+    [key: string]: unknown;
 }
 
 const baseSchema = z.object({
@@ -38,7 +43,7 @@ const baseSchema = z.object({
             message: "El correo debe ser de Gmail (@gmail.com)"
         })
         .optional()
-        .or(z.literal('')), // Permite campo vacío
+        .or(z.literal('')),
 
     description: z.string()
         .nonempty("Ingrese una descripción de trabajo")
@@ -100,7 +105,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             description?: string;
         } | null>(null);
 
-        // ⏰ Estado de recordatorio
         const [reminderMinutes, setReminderMinutes] = useState<number>(30);
         const [reminderLabel, setReminderLabel] = useState<string>("30 Minutos");
 
@@ -161,7 +165,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
             setShowLocationModal(false);
         };
 
-        // Convierte minutos a texto amigable
         function formatReminderLabel(totalMinutes: number): string {
             const minutesInDay = 60 * 24;
 
@@ -228,12 +231,11 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                 display_name_location: modality === "presential" ? place : "",
                 lat: modality === "presential" ? location?.lat : null,
                 lon: modality === "presential" ? location?.lon : null,
-                // reminder_minutes: reminderMinutes, // si luego tu backend lo soporta
             };
 
             setLoading(true);
             try {
-                const res = await axios.post(
+                const res = await axios.post<ApiResponse>(
                     `${process.env.NEXT_PUBLIC_BACKEND}/api/crud_create/appointments/create`,
                     payload
                 );
@@ -261,9 +263,9 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                     });
                     setShowSummary(true);
                 }
-            } catch (err: unknown) {
+            } catch (err) {
                 console.error(err);
-                setErrors({ general: "Error: No se pudo crear la cita" });
+                  setErrors({ general: "Error: No se pudo crear la cita" });
             } finally {
                 setLoading(false);
             }
@@ -439,7 +441,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                     <p className="text-red-600 text-sm mt-1">{errors.general}</p>
                                 )}
 
-                                {/* Área que muestra el tiempo de recordatorio actual */}
                                 <div>
                                     <ReminderArea
                                         label="Tiempo de Recordatorio:"
@@ -447,7 +448,6 @@ const AppointmentForm = forwardRef<AppointmentFormHandle, AppointmentFormProps>(
                                     />
                                 </div>
 
-                                {/* Botón de Recordatorio */}
                                 <button
                                     type="button"
                                     onClick={() => setShowReminderModal(true)}

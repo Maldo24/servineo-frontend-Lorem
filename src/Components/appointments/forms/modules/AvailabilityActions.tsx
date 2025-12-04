@@ -14,11 +14,11 @@ export const AvailabilityActions = ({
   confirmDisabled = false,
 }: AvailabilityActionsProps) => {
   return (
-    <div className="flex items-center justify-end gap-2 pt-2">
-      <Button variant="secondary" onClick={onCancel}>
+    <div className='flex items-center justify-end gap-2 pt-2'>
+      <Button variant='secondary' onClick={onCancel}>
         Cancelar
       </Button>
-      <Button variant="primary" onClick={onConfirm} disabled={confirmDisabled}>
+      <Button variant='primary' onClick={onConfirm} disabled={confirmDisabled}>
         {confirmPlaceholder}
       </Button>
     </div>

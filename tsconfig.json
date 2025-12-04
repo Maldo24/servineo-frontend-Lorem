@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/ctrlC/home-tsx"
+    "src/app/ctrlC/home-tsx",
+    "src/components/calendar/mobile/MobileDayliView.tsx"
   ],
   "exclude": ["node_modules"]
 }

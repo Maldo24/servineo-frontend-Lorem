@@ -10,7 +10,7 @@ export function SearchButton(props: React.ButtonHTMLAttributes<HTMLButtonElement
 
   return (
     <Button
-      size="lg"
+      size='lg'
       className={`
         bg-[#2B6AE0] text-white
         ${disabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#2B6AE0]/90'}

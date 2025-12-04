@@ -90,31 +90,31 @@ export default function RecentOffersSection() {
   };
 
   return (
-    <section className="w-full py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+    <section className='w-full py-12 px-4'>
+      <div className='max-w-7xl mx-auto'>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4'>
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('recOfTitle')}</h2>
-            <p className="text-gray-600">{t('recOfDescription')}</p>
+            <h2 className='text-3xl font-bold text-gray-900 mb-2'>{t('recOfTitle')}</h2>
+            <p className='text-gray-600'>{t('recOfDescription')}</p>
           </div>
 
           <Link
-            href="/job-offer-list"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg"
+            href='/job-offer-list'
+            className='inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all hover:shadow-lg'
           >
             {t('viewAll')}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
             </svg>
           </Link>
         </div>
 
         {/* Category Filter */}
-        <div className="mb-6">
+        <div className='mb-6'>
           {isMobile ? (
-            <div className="relative">
-              <div className="flex items-center gap-2">
+            <div className='relative'>
+              <div className='flex items-center gap-2'>
                 <button
                   onClick={() => scroll('left')}
                   disabled={!canScrollLeft}
@@ -123,14 +123,14 @@ export default function RecentOffersSection() {
                       ? 'bg-white border-2 border-gray-200 hover:border-primary text-gray-700 hover:text-primary shadow-sm'
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
-                  aria-label="Scroll left"
+                  aria-label='Scroll left'
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className='w-5 h-5' />
                 </button>
 
                 <div
                   ref={scrollContainerRef}
-                  className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth flex-1"
+                  className='flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth flex-1'
                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                   {CATEGORIES.map((cat) => (
@@ -156,14 +156,14 @@ export default function RecentOffersSection() {
                       ? 'bg-white border-2 border-gray-200 hover:border-primary text-gray-700 hover:text-primary shadow-sm'
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
-                  aria-label="Scroll right"
+                  aria-label='Scroll right'
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className='w-5 h-5' />
                 </button>
               </div>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className='flex flex-wrap gap-2'>
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
@@ -183,26 +183,26 @@ export default function RecentOffersSection() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className='flex justify-center items-center py-12'>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
           </div>
         )}
 
         {/* Error State */}
         {error && !isLoading && (
-          <div className="text-center py-12">
-            <p className="text-red-500 mb-4">{error}</p>
+          <div className='text-center py-12'>
+            <p className='text-red-500 mb-4'>{error}</p>
           </div>
         )}
 
         {/* Offers Grid */}
         {!isLoading && !error && trabajos.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
             {trabajos.map((trabajo) => (
               <JobOfferCard
                 key={trabajo._id}
                 offer={trabajo}
-                viewMode="grid"
+                viewMode='grid'
                 onClick={handleCardClick}
               />
             ))}
@@ -211,12 +211,12 @@ export default function RecentOffersSection() {
 
         {/* Empty State */}
         {!isLoading && !error && trabajos.length === 0 && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-              <SlidersHorizontal className="w-8 h-8 text-gray-400" />
+          <div className='text-center py-12'>
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4'>
+              <SlidersHorizontal className='w-8 h-8 text-gray-400' />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('noOffersAvailable')}</h3>
-            <p className="text-gray-500">{t('noOffersCategory')}</p>
+            <h3 className='text-lg font-medium text-gray-900 mb-2'>{t('noOffersAvailable')}</h3>
+            <p className='text-gray-500'>{t('noOffersCategory')}</p>
           </div>
         )}
       </div>

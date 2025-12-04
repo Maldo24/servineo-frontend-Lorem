@@ -13,7 +13,7 @@ export const CircularDayButton = ({
 }: CircularDayButtonProps) => {
   return (
     <button
-      type="button"
+      type='button'
       onClick={() => onToggle(day)}
       className={`
         w-12 h-12 rounded-full border-2 flex items-center justify-center

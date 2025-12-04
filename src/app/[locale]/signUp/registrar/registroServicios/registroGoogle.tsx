@@ -13,13 +13,27 @@ interface RegistroGoogleProps {
     title: string;
     message: string;
   }) => void;
+
+  captchaValid: boolean;
 }
 
-export default function RegistroGoogle({ onSuccessClose, onNotify }: RegistroGoogleProps) {
+export default function RegistroGoogle({
+  onSuccessClose,
+  onNotify,
+  captchaValid,
+}: RegistroGoogleProps) {
   const router = useRouter();
   const { setUser } = useAuth();
 
   const handleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!captchaValid) {
+      onNotify?.({
+        type: 'warning',
+        title: 'Completa la verificación',
+        message: 'Debes confirmar que no eres un robot antes de continuar.',
+      });
+      return;
+    }
     const token = credentialResponse?.credential;
     if (!token) {
       onNotify?.({
@@ -88,8 +102,18 @@ export default function RegistroGoogle({ onSuccessClose, onNotify }: RegistroGoo
   };
 
   return (
-    <div className="flex justify-center">
-      <GoogleButton onLoginSuccess={handleLoginSuccess} />
+    <div className='flex justify-center'>
+      <GoogleButton
+        onLoginSuccess={handleLoginSuccess}
+        disabled={!captchaValid}
+        onDisabledClick={() =>
+          onNotify?.({
+            type: 'warning',
+            title: 'Verificación requerida',
+            message: 'Debes completar el captcha antes de continuar.',
+          })
+        }
+      />
     </div>
   );
 }

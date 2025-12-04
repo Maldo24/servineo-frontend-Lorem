@@ -1,0 +1,317 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Perez",
+    "servicio": "Plomería",
+    "lat": -17.393,
+    "lng": -66.156,
+    "zona": "Centro - Plaza 14 de Septiembre",
+    "available": true
+  },
+  {
+    "id": 2,
+    "nombre": "Maria Lopez",
+    "servicio": "Electricidad",
+    "lat": -17.38,
+    "lng": -66.142,
+    "zona": "Cala Cala",
+    "available": false
+  },
+  {
+    "id": 3,
+    "nombre": "Carlos Sanchez",
+    "servicio": "Carpintería",
+    "lat": -17.355,
+    "lng": -66.212,
+    "zona": "Tiquipaya",
+    "available": true
+  },
+  {
+    "id": 4,
+    "nombre": "Ana Torres",
+    "servicio": "Pintura",
+    "lat": -17.42,
+    "lng": -66.155,
+    "zona": "San Antonio",
+    "available": false
+  },
+  {
+    "id": 5,
+    "nombre": "Luis Fernandez",
+    "servicio": "Jardinería",
+    "lat": -17.433,
+    "lng": -66.182,
+    "zona": "Valle Hermoso",
+    "available": true
+  },
+  {
+    "id": 6,
+    "nombre": "Sofia Ramirez",
+    "servicio": "Cerrajería",
+    "lat": -17.35,
+    "lng": -66.25,
+    "zona": "Quillacollo",
+    "available": false
+  },
+  {
+    "id": 7,
+    "nombre": "Diego Morales",
+    "servicio": "Albañilería",
+    "lat": -17.42,
+    "lng": -66.17,
+    "zona": "Laguna Alalay",
+    "available": true
+  },
+  {
+    "id": 8,
+    "nombre": "Laura Gutierrez",
+    "servicio": "Electricidad",
+    "lat": -17.435,
+    "lng": -66.115,
+    "zona": "Pacata Alta",
+    "available": false
+  },
+  {
+    "id": 9,
+    "nombre": "Pedro Rojas",
+    "servicio": "Plomería",
+    "lat": -17.365,
+    "lng": -66.155,
+    "zona": "Temporal",
+    "available": true
+  },
+  {
+    "id": 10,
+    "nombre": "Valeria Castillo",
+    "servicio": "Carpintería",
+    "lat": -17.46,
+    "lng": -66.125,
+    "zona": "Sacaba",
+    "available": false
+  },
+  {
+    "id": 11,
+    "nombre": "Fernando Alvarez",
+    "servicio": "Pintura",
+    "lat": -17.41,
+    "lng": -66.21,
+    "zona": "Sarcobamba",
+    "available": true
+  },
+  {
+    "id": 12,
+    "nombre": "Camila Diaz",
+    "servicio": "Jardinería",
+    "lat": -17.46,
+    "lng": -66.18,
+    "zona": "Villa Pagador",
+    "available": false
+  },
+  {
+    "id": 13,
+    "nombre": "Ricardo Salazar",
+    "servicio": "Cerrajería",
+    "lat": -17.348,
+    "lng": -66.189,
+    "zona": "Colcapirhua",
+    "available": true
+  },
+  {
+    "id": 14,
+    "nombre": "Isabella Cruz",
+    "servicio": "Electricidad",
+    "lat": -17.375,
+    "lng": -66.097,
+    "zona": "Queru Queru",
+    "available": false
+  },
+  {
+    "id": 15,
+    "nombre": "Martin Herrera",
+    "servicio": "Albañilería",
+    "lat": -17.33,
+    "lng": -66.22,
+    "zona": "Tiquipaya Norte",
+    "available": true
+  },
+  {
+    "id": 16,
+    "nombre": "Patricia Vargas",
+    "servicio": "Plomería",
+    "lat": -17.395,
+    "lng": -66.2,
+    "zona": "Lacma",
+    "available": false
+  },
+  {
+    "id": 17,
+    "nombre": "Jorge Medina",
+    "servicio": "Pintura",
+    "lat": -17.47,
+    "lng": -66.16,
+    "zona": "K'ara K'ara",
+    "available": true
+  },
+  {
+    "id": 18,
+    "nombre": "Daniela Rivas",
+    "servicio": "Electricidad",
+    "lat": -17.34,
+    "lng": -66.13,
+    "zona": "Banda Norte",
+    "available": false
+  },
+  {
+    "id": 19,
+    "nombre": "Hector Paredes",
+    "servicio": "Jardinería",
+    "lat": -17.44,
+    "lng": -66.14,
+    "zona": "Cota Cota",
+    "available": true
+  },
+  {
+    "id": 20,
+    "nombre": "Monica Cabrera",
+    "servicio": "Carpintería",
+    "lat": -17.4,
+    "lng": -66.18,
+    "zona": "Temporal Sur",
+    "available": false
+  },
+  {
+    "id": 21,
+    "nombre": "Alfredo Jimenez",
+    "servicio": "Cerrajería",
+    "lat": -17.42,
+    "lng": -66.115,
+    "zona": "La Maica",
+    "available": true
+  },
+  {
+    "id": 22,
+    "nombre": "Gabriela Solis",
+    "servicio": "Plomería",
+    "lat": -17.45,
+    "lng": -66.19,
+    "zona": "Sudoeste",
+    "available": false
+  },
+  {
+    "id": 23,
+    "nombre": "Victor Huanca",
+    "servicio": "Electricidad",
+    "lat": -17.37,
+    "lng": -66.2,
+    "zona": "Quillacollo Centro",
+    "available": true
+  },
+  {
+    "id": 24,
+    "nombre": "Liliana Pinto",
+    "servicio": "Pintura",
+    "lat": -17.38,
+    "lng": -66.17,
+    "zona": "Sarcobamba Este",
+    "available": false
+  },
+  {
+    "id": 25,
+    "nombre": "Marcos Flores",
+    "servicio": "Limpieza",
+    "lat": -17.34,
+    "lng": -66.18,
+    "zona": "Quillacollo Norte",
+    "available": true
+  },
+  {
+    "id": 26,
+    "nombre": "Paola Montaño",
+    "servicio": "Gasfitería",
+    "lat": -17.43,
+    "lng": -66.16,
+    "zona": "Huañacota",
+    "available": false
+  },
+  {
+    "id": 27,
+    "nombre": "Rodrigo Ortega",
+    "servicio": "Albañilería",
+    "lat": -17.45,
+    "lng": -66.13,
+    "zona": "Sacaba Centro",
+    "available": true
+  },
+  {
+    "id": 28,
+    "nombre": "Natalia Cardenas",
+    "servicio": "Limpieza",
+    "lat": -17.41,
+    "lng": -66.095,
+    "zona": "Pacata Baja",
+    "available": true
+  },
+  {
+    "id": 29,
+    "nombre": "Andres Quiroga",
+    "servicio": "Gasfitería",
+    "lat": -17.39,
+    "lng": -66.22,
+    "zona": "Queru Queru Oeste",
+    "available": false
+  },
+  {
+    "id": 30,
+    "nombre": "Lorena Vargas",
+    "servicio": "Electricidad",
+    "lat": -17.37,
+    "lng": -66.24,
+    "zona": "Tiquipaya Sur",
+    "available": true
+  },
+  {
+    "id": 31,
+    "nombre": "Julio Gutierrez",
+    "servicio": "Carpintería",
+    "lat": -17.46,
+    "lng": -66.22,
+    "zona": "La Tamborada",
+    "available": false
+  },
+  {
+    "id": 32,
+    "nombre": "Carmen Rojas",
+    "servicio": "Limpieza",
+    "lat": -17.41,
+    "lng": -66.23,
+    "zona": "Quillacollo Sur",
+    "available": true
+  },
+  {
+    "id": 33,
+    "nombre": "Oscar Perez",
+    "servicio": "Pintura",
+    "lat": -17.37,
+    "lng": -66.26,
+    "zona": "Tiquipaya Oeste",
+    "available": false
+  },
+  {
+    "id": 34,
+    "nombre": "Esteban Vallejos",
+    "servicio": "Cerrajería",
+    "lat": -17.355,
+    "lng": -66.15,
+    "zona": "Cercado Norte",
+    "available": true
+  },
+  {
+    "id": 35,
+    "nombre": "Mariana Suarez",
+    "servicio": "Plomería",
+    "lat": -17.48,
+    "lng": -66.19,
+    "zona": "Valle Hermoso Sur",
+    "available": false
+  }
+]

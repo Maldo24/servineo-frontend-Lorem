@@ -28,5 +28,6 @@ export default function useDayUtilities(date: Date) {
     if (count === 'disabled') return 'Inhabilitado';
     return '';
   };
+
   return { isPast, isSameDay, isToday, getColor, getText };
 }

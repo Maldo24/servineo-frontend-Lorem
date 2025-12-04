@@ -24,7 +24,7 @@ export default function MobileMonthView({
   const days: React.ReactNode[] = [];
 
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-12" />);
+    days.push(<div key={`empty-${i}`} className='h-12' />);
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -35,8 +35,8 @@ export default function MobileMonthView({
     );
   }
   return (
-    <div className="p-4">
-      <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-gray-500 mb-2">
+    <div className='p-4'>
+      <div className='grid grid-cols-7 gap-2 text-center text-sm font-medium text-gray-500 mb-2'>
         <div>L</div>
         <div>M</div>
         <div>M</div>
@@ -46,7 +46,7 @@ export default function MobileMonthView({
         <div>D</div>
       </div>
 
-      <div className="grid grid-cols-7 gap-y-4">{days}</div>
+      <div className='grid grid-cols-7 gap-y-4'>{days}</div>
     </div>
   );
 }

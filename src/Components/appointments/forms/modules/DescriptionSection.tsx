@@ -15,7 +15,7 @@ export const DescriptionSection = ({
 }: DescriptionSectionProps) => {
   return (
     <TextArea
-      label="Descripción del trabajo"
+      label='Descripción del trabajo'
       value={description}
       onChange={readOnly ? undefined : (e) => onChange?.(e.target.value)}
       placeholder={readOnly ? '' : 'Breve descripción de lo que se requiere'}

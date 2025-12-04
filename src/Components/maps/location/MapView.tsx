@@ -20,16 +20,16 @@ interface MapViewProps {
 }
 
 export default function MapView({ onSelect, markerPosition }: MapViewProps) {
-    return (
-        <MapContainer
-            center={[markerPosition?.lat || -17.39, markerPosition?.lon || -66.15]}
-            zoom={13}
-            style={{ height: 400, width: '100%' }}
-        >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <MarkerHandler onSelect={onSelect} markerPosition={markerPosition} />
-        </MapContainer>
-    );
+  return (
+    <MapContainer
+      center={[markerPosition?.lat || -17.39, markerPosition?.lon || -66.15]}
+      zoom={13}
+      style={{ height: 400, width: '100%' }}
+    >
+      <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+      <MarkerHandler onSelect={onSelect} markerPosition={markerPosition} />
+    </MapContainer>
+  );
 }
 
 interface MarkerHandlerProps {

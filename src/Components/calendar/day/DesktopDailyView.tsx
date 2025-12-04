@@ -12,16 +12,16 @@ function getDayName(dayNumber: number): string {
 }
 export default function DesktopDailyView({ date }: DesktopDailyViewProps) {
   return (
-    <div className="flex">
+    <div className='flex'>
       <div>
-        <div className="text-white">
+        <div className='text-white'>
           <p>--</p>
         </div>
         <Hours />
       </div>
 
-      <div className="w-full">
-        <div className=" flex items-center justify-center border-r border-b bg-gray-300 text-black">
+      <div className='w-full'>
+        <div className=' flex items-center justify-center border-r border-b bg-gray-300 text-black'>
           {getDayName(date.getDay())}{' '}
         </div>
         <DesktopDailyHours date={date} view={'day'} />

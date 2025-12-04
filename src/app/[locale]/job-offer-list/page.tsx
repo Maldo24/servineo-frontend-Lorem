@@ -1,334 +1,712 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useLogClickMutation } from '../../redux/services/activityApi';
+import { useLogSearchMutation, useUpdateFiltersMutation } from '../../redux/services/searchApi';
 import {
-    SearchBar,
-    NoResultsMessage,
-    FilterButton,
-    FilterDrawer,
-    Paginacion,
-    PaginationInfo,
-    PaginationSelector,
-    SortCard,
+  SearchBar,
+  NoResultsMessage,
+  FilterButton,
+  FilterDrawer,
+  Paginacion,
+  PaginationInfo,
+  PaginationSelector,
+  SortCard,
 } from '@/Components/Job-offers';
 
 import { useAppDispatch, useAppSelector } from '@/app/redux/hooks';
 import {
-    setSearch,
-    setFilters,
-    setSortBy,
-    setRegistrosPorPagina,
-    resetPagination,
-    setPaginaActual,
-    resetFilters,
-    enablePersistence,
+  setSearch,
+  setFilters,
+  setSortBy,
+  setRegistrosPorPagina,
+  resetPagination,
+  setRating,
+  setPaginaActual,
+  resetFilters,
+  enablePersistence,
 } from '@/app/redux/slice/jobOfert';
+import { STORAGE_KEYS } from '@/app/redux/features/jobOffers/storage';
 import type { FilterState } from '@/app/redux/features/jobOffers/types';
 import { getSortValue } from '../../lib/constants/sortOptions';
 import {
-    useJobOffers,
-    useInitialUrlParams,
-    useSyncUrlParams,
+  useJobOffers,
+  useInitialUrlParams,
+  useSyncUrlParams,
 } from '@/app/redux/features/jobOffers/jobOffersHooks';
 import { JobOfferModal } from '@/Components/Job-offers/Job-offer-modal';
 import { JobOffersView, type ViewMode } from '@/Components/Job-offers/JobOffersView';
 import { ViewModeToggle } from '@/Components/Job-offers/ViewModeToggle';
 import { useTranslations } from 'next-intl';
 import type { JobOfferData, AdaptedJobOffer } from '@/types/jobOffers';
-import { adaptOfferToModalFormat } from '@/types/jobOffers';
 
 const SCROLL_POSITION_KEY = 'jobOffers_scrollPosition';
 
 export default function JobOffersPage() {
-    const t = useTranslations('jobOffers');
-    const dispatch = useAppDispatch();
+  const t = useTranslations('jobOffers');
+  const dispatch = useAppDispatch();
 
-    useInitialUrlParams();
+  useInitialUrlParams();
 
-    const { offers, total, isLoading } = useJobOffers();
+  const { offers, total, isLoading } = useJobOffers();
 
-    const {
-        sortBy,
-        search,
-        paginaActual,
-        registrosPorPagina,
-        error: reduxError,
-    } = useAppSelector((state) => state.jobOfert);
+  const {
+    sortBy,
+    search,
+    paginaActual,
+    totalPages,
+    registrosPorPagina,
+    error: reduxError,
+    filters,
+  } = useAppSelector((state) => state.jobOfert);
 
-    useSyncUrlParams();
+  useSyncUrlParams();
 
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const stickyRef = useRef<HTMLDivElement | null>(null);
-    const scrollRestoredRef = useRef(false);
-    const pageBeforeFilter = useRef<number>(1);
-    const hasActiveFilters = useRef<boolean>(false);
-    const [viewMode, setViewMode] = useState<ViewMode>('list');
-    const [selectedOffer, setSelectedOffer] = useState<AdaptedJobOffer | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+  const [userRole, setUserRole] = useState<string>('visitor');
 
-    // Limpiar búsqueda si se navega directamente sin parámetros
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-
-            if (params.toString() === '' && search !== '') {
-                console.log('Navegación directa detectada, limpiando búsqueda guardada');
-                dispatch(setSearch(''));
-            }
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('servineo_user');
+      if (storedUser) {
+        try {
+          const userObj = JSON.parse(storedUser);
+          console.log('User object from localStorage:', userObj);
+          const id = userObj.id || userObj._id || userObj.userId || '';
+          const role = userObj.role || 'visitor';
+          setUserId(id);
+          setUserRole(role);
+          console.log('Extracted user ID:', id, 'Role:', role);
+        } catch (error) {
+          console.error('Error parsing user from localStorage:', error);
+          setUserRole('visitor');
         }
-    }, [dispatch, search]);
+      } else {
+        console.warn('No servineo_user found in localStorage');
+        setUserRole('visitor');
+      }
+    }
+  }, []);
 
-    // Guardar posición del scroll
-    useEffect(() => {
-        const saveScrollPosition = () => {
-            try {
-                sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
-            } catch {
-                // ignorar errores
-            }
-        };
+  const [logSearch] = useLogSearchMutation();
+  const [updateFilters] = useUpdateFiltersMutation();
+  const [logClick] = useLogClickMutation();
 
-        window.addEventListener('beforeunload', saveScrollPosition);
-        return () => {
-            window.removeEventListener('beforeunload', saveScrollPosition);
-        };
-    }, []);
+  const previousSearchQueryRef = useRef<string>('');
+  const previousFiltersRef = useRef<FilterState>(filters);
+  const isInitialMountRef = useRef<boolean>(true);
+  const filterCounterRef = useRef<number>(1);
+  const stickyRef = useRef<HTMLDivElement | null>(null);
+  const scrollRestoredRef = useRef(false);
+  const pageBeforeFilter = useRef<number>(1);
+  const hasActiveFilters = useRef<boolean>(false);
 
-    // Restaurar posición del scroll
-    useEffect(() => {
-        if (!isLoading && Array.isArray(offers) && offers.length > 0 && !scrollRestoredRef.current) {
-            try {
-                const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
-                if (savedPosition) {
-                    const position = parseInt(savedPosition, 10);
-                    if (!isNaN(position)) {
-                        setTimeout(() => {
-                            window.scrollTo(0, position);
-                            scrollRestoredRef.current = true;
-                            sessionStorage.removeItem(SCROLL_POSITION_KEY);
-                        }, 100);
-                    }
-                }
-            } catch {
-                // ignorar errores
-            }
-        }
-    }, [isLoading, offers]);
+  // Ref para almacenar el número real de resultados basado en la paginación
+  const actualSearchCountRef = useRef<number>(0);
 
-    // Sticky header
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
+  // Ref para verificar si ya hemos enviado la búsqueda con el conteo correcto
+  const hasSentSearchRef = useRef<boolean>(false);
 
-        const update = () => {
-            const hdr = document.querySelector('header');
-            const h = hdr ? (hdr as HTMLElement).getBoundingClientRect().height : 0;
-            if (stickyRef.current) {
-                stickyRef.current.style.top = `${h}px`;
-                stickyRef.current.style.zIndex = '40';
-            }
-        };
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const [selectedOffer, setSelectedOffer] = useState<AdaptedJobOffer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-        update();
-        window.addEventListener('resize', update);
+  // Función para calcular el número de resultados basado en la paginación
+  const calculateSearchCount = useCallback(() => {
+    // El total de useJobOffers ya está filtrado por búsqueda y filtros
+    if (!isLoading && total !== undefined && total !== null) {
+      return total;
+    }
+    return 0;
+  }, [isLoading, total]);
 
-        const hdrEl = document.querySelector('header');
-        const mo = hdrEl ? new MutationObserver(update) : null;
-        if (mo && hdrEl) mo.observe(hdrEl, { attributes: true, childList: true, subtree: true });
+  const getFixerNameValue = useCallback((): string => {
+    const filterObj = filters as unknown as Record<string, unknown>;
+    const fixerNameFilter = filterObj.fixerName || filterObj.fixer_name || filterObj.fixerNames;
 
-        return () => {
-            window.removeEventListener('resize', update);
-            if (mo) mo.disconnect();
-        };
-    }, []);
+    if (
+      !fixerNameFilter ||
+      (Array.isArray(fixerNameFilter) && fixerNameFilter.length === 0) ||
+      fixerNameFilter === ''
+    ) {
+      return 'not_applied';
+    }
 
-    // Handlers
-    const handleRegistrosPorPaginaChange = (valor: number) => {
-        scrollRestoredRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        dispatch(setRegistrosPorPagina(valor));
+    if (Array.isArray(fixerNameFilter)) {
+      return fixerNameFilter.join(', ');
+    }
+
+    return fixerNameFilter.toString();
+  }, [filters]);
+
+  const getCityValue = useCallback((): string => {
+    if (!filters.city || (Array.isArray(filters.city) && filters.city.length === 0)) {
+      return 'not_applied';
+    }
+    if (Array.isArray(filters.city)) {
+      return filters.city.join(', ');
+    }
+    return filters.city;
+  }, [filters]);
+
+  const getJobTypeValue = useCallback((): string => {
+    if (!filters.category || filters.category.length === 0) {
+      return 'not_applied';
+    }
+    return filters.category.join(', ');
+  }, [filters]);
+
+  const adaptJobOffer = useCallback((offer: JobOfferData): AdaptedJobOffer => {
+    return {
+      _id: offer._id,
+      fixerId: offer.fixerId,
+      name: offer.fixerName,
+      title: offer.title,
+      description: offer.description,
+      tags: offer.tags || [],
+      phone: offer.contactPhone,
+      photos: offer.photos || [],
+      services: offer.category ? [offer.category] : [],
+      price: offer.price,
+      createdAt: offer.createdAt instanceof Date ? offer.createdAt : new Date(offer.createdAt),
+      city: offer.city,
+    };
+  }, []);
+
+  // Función para enviar una búsqueda pendiente
+  const sendPendingSearch = useCallback(async () => {
+    if (!previousSearchQueryRef.current || previousSearchQueryRef.current.trim().length === 0) {
+      return;
+    }
+
+    const searchCount = actualSearchCountRef.current;
+    const query = previousSearchQueryRef.current;
+
+    const searchData = {
+      user_type: userRole,
+      search_query: query,
+      search_type: 'search_box',
+      filters: {
+        filter_1: {
+          fixer_name: getFixerNameValue(),
+          city: getCityValue(),
+          job_type: getJobTypeValue(),
+          search_count: searchCount,
+        },
+      },
     };
 
-    const handleFiltersApply = (appliedFilters: FilterState) => {
-        scrollRestoredRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      console.log('Enviando BÚSQUEDA PENDIENTE al backend:', JSON.stringify(searchData, null, 2));
+      await logSearch(searchData).unwrap();
+      console.log('Búsqueda registrada exitosamente:', query, 'Resultados:', searchCount);
+      hasSentSearchRef.current = true;
+    } catch (error) {
+      console.error('Error al registrar búsqueda pendiente:', error);
+    }
+  }, [userRole, logSearch, getFixerNameValue, getCityValue, getJobTypeValue]);
 
-        const hasFilters =
-            appliedFilters.range.length > 0 ||
-            appliedFilters.city !== '' ||
-            appliedFilters.category.length > 0;
+  // Actualizar el conteo cuando cambian los resultados
+  useEffect(() => {
+    const currentCount = calculateSearchCount();
+    if (currentCount !== actualSearchCountRef.current) {
+      console.log('Actualizando conteo de resultados:', {
+        anterior: actualSearchCountRef.current,
+        nuevo: currentCount,
+        total: total,
+        isLoading: isLoading,
+      });
+      actualSearchCountRef.current = currentCount;
 
-        if (hasFilters && !hasActiveFilters.current) {
-            pageBeforeFilter.current = paginaActual;
-            hasActiveFilters.current = true;
+      // Si hay una búsqueda pendiente y ya tenemos el conteo correcto, enviarla
+      if (
+        hasSentSearchRef.current === false &&
+        previousSearchQueryRef.current &&
+        currentCount > 0
+      ) {
+        sendPendingSearch();
+      }
+    }
+  }, [calculateSearchCount, total, isLoading, sendPendingSearch]);
+
+  const handleSearchSubmit = useCallback(
+    async (query: string) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      dispatch(setSearch(query));
+      dispatch(resetPagination());
+
+      filterCounterRef.current = 1;
+      previousSearchQueryRef.current = query;
+      hasSentSearchRef.current = false; // Resetear el flag
+
+      console.log('Búsqueda iniciada:', query, 'Esperando resultados...');
+
+      // Esperar un tiempo razonable para que se carguen los resultados
+      const timeoutId = setTimeout(async () => {
+        const searchCount = calculateSearchCount();
+        console.log('Después de timeout - Conteo calculado:', searchCount, 'Total:', total);
+
+        // Si ya tenemos resultados, enviar inmediatamente
+        if (searchCount > 0 && query === previousSearchQueryRef.current) {
+          await sendPendingSearch();
+        }
+        // Si no tenemos resultados aún, waitForResults se encargará más tarde
+      }, 800);
+
+      return () => clearTimeout(timeoutId);
+    },
+    [dispatch, calculateSearchCount, total, sendPendingSearch],
+  );
+
+  // Efecto para detectar cambios en filtros
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      previousFiltersRef.current = { ...filters };
+      return;
+    }
+
+    if (!previousSearchQueryRef.current) {
+      previousFiltersRef.current = { ...filters };
+      return;
+    }
+
+    const currentFilters = filters as unknown as Record<string, unknown>;
+    const previousFilters = previousFiltersRef.current as unknown as Record<string, unknown>;
+
+    const compareFilterValues = (
+      prev: Record<string, unknown>,
+      curr: Record<string, unknown>,
+      key: string,
+    ) => {
+      const prevValue = prev[key];
+      const currValue = curr[key];
+
+      if (Array.isArray(prevValue) && Array.isArray(currValue)) {
+        return JSON.stringify([...prevValue].sort()) !== JSON.stringify([...currValue].sort());
+      }
+
+      return prevValue !== currValue;
+    };
+
+    const filterKeys = ['city', 'category', 'range', 'fixerName', 'fixer_name', 'fixerNames'];
+
+    const filtersChanged = filterKeys.some((key) =>
+      compareFilterValues(previousFilters, currentFilters, key),
+    );
+
+    if (filtersChanged && previousSearchQueryRef.current) {
+      previousFiltersRef.current = { ...filters };
+
+      // Esperar a que los resultados se actualicen con los nuevos filtros
+      const timeoutId = setTimeout(async () => {
+        filterCounterRef.current++;
+
+        const searchCount = calculateSearchCount();
+        console.log('Después de cambiar filtros - Conteo:', searchCount, 'Total:', total);
+
+        const filterData = {
+          filters: {
+            fixer_name: getFixerNameValue(),
+            city: getCityValue(),
+            job_type: getJobTypeValue(),
+            search_count: searchCount,
+          },
+        };
+
+        try {
+          console.log(
+            `Enviando FILTRO para búsqueda: "${previousSearchQueryRef.current}"`,
+            JSON.stringify(filterData, null, 2),
+          );
+
+          await updateFilters(filterData).unwrap();
+          console.log(`Filtro registrado exitosamente. Resultados: ${searchCount}`);
+        } catch (error) {
+          console.error('Error al registrar filtro:', error);
+        }
+      }, 800);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    filters,
+    updateFilters,
+    total,
+    calculateSearchCount,
+    getFixerNameValue,
+    getCityValue,
+    getJobTypeValue,
+  ]);
+
+  const handleCardClick = useCallback(
+    async (offer: JobOfferData) => {
+      const adaptedOffer = adaptJobOffer(offer);
+      setSelectedOffer(adaptedOffer);
+      setIsModalOpen(true);
+
+      if (!userId) {
+        console.warn('User ID no disponible, no se registró el click');
+        return;
+      }
+
+      const activityData = {
+        userId: userId,
+        date: new Date().toISOString(),
+        role: userRole,
+        type: 'click',
+        metadata: {
+          button: 'job_offer',
+          jobTitle: adaptedOffer.title || 'Sin título',
+          jobId: adaptedOffer._id,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        await logClick(activityData).unwrap();
+        console.log('Click registrado:', adaptedOffer.title);
+      } catch (error) {
+        console.error('Error al registrar clic:', error);
+      }
+    },
+    [userId, userRole, logClick, adaptJobOffer],
+  );
+
+  // Efecto para asegurar que la búsqueda se envíe cuando los resultados estén listos
+  useEffect(() => {
+    if (!isLoading && previousSearchQueryRef.current && !hasSentSearchRef.current) {
+      const searchCount = calculateSearchCount();
+      if (searchCount > 0) {
+        // Pequeño delay para asegurar que todo esté estable
+        const timeoutId = setTimeout(() => {
+          sendPendingSearch();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [isLoading, calculateSearchCount, sendPendingSearch]);
+
+  // Resto del código permanece igual...
+  useEffect(() => {
+    if (!isLoading && totalPages > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const pageParam = Number(params.get('page') || 1);
+
+      let correctedPage = pageParam;
+
+      if (pageParam < 1 || isNaN(pageParam)) {
+        correctedPage = 1;
+      } else if (pageParam > totalPages) {
+        correctedPage = totalPages;
+      }
+
+      if (correctedPage !== pageParam) {
+        params.set('page', correctedPage.toString());
+        window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+        dispatch(setPaginaActual(correctedPage));
+      }
+    }
+  }, [isLoading, totalPages, dispatch]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.toString() === '' && search !== '') {
+        let hasSavedSearch = false;
+        try {
+          hasSavedSearch = !!window.localStorage.getItem(STORAGE_KEYS.SEARCH);
+        } catch (e) {
+          hasSavedSearch = false;
+          console.error('Error accessing localStorage:', e);
         }
 
-        if (!hasFilters) {
-            hasActiveFilters.current = false;
+        if (!hasSavedSearch) {
+          console.log('Navegación directa detectada, limpiando búsqueda guardada');
+          dispatch(setSearch(''));
+          previousSearchQueryRef.current = '';
         }
+      }
+    }
+  }, [dispatch, search]);
 
-        dispatch(setFilters(appliedFilters));
-        dispatch(resetPagination());
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      try {
+        sessionStorage.setItem(SCROLL_POSITION_KEY, window.scrollY.toString());
+      } catch {}
     };
 
-    const handleSortChange = (option: string) => {
-        scrollRestoredRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        const backendSort = getSortValue(option);
-        dispatch(setSortBy(backendSort));
+    window.addEventListener('beforeunload', saveScrollPosition);
+    return () => {
+      window.removeEventListener('beforeunload', saveScrollPosition);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading && Array.isArray(offers) && offers.length > 0 && !scrollRestoredRef.current) {
+      try {
+        const savedPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+        if (savedPosition) {
+          const position = parseInt(savedPosition, 10);
+          if (!isNaN(position)) {
+            setTimeout(() => {
+              window.scrollTo(0, position);
+              scrollRestoredRef.current = true;
+              sessionStorage.removeItem(SCROLL_POSITION_KEY);
+            }, 100);
+          }
+        }
+      } catch {}
+    }
+  }, [isLoading, offers]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const update = () => {
+      const hdr = document.querySelector('header');
+      const h = hdr ? (hdr as HTMLElement).getBoundingClientRect().height : 0;
+      if (stickyRef.current) {
+        stickyRef.current.style.top = `${h}px`;
+        stickyRef.current.style.zIndex = '40';
+      }
     };
 
-    const handleSearchSubmit = (query: string) => {
-        scrollRestoredRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        dispatch(setSearch(query));
-        dispatch(resetPagination());
-    };
+    update();
+    window.addEventListener('resize', update);
 
-    const handleResetFilters = () => {
-        const pageToRestore = hasActiveFilters.current ? pageBeforeFilter.current : 1;
+    const hdrEl = document.querySelector('header');
+    const mo = hdrEl ? new MutationObserver(update) : null;
+    if (mo && hdrEl) mo.observe(hdrEl, { attributes: true, childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('resize', update);
+      if (mo) mo.disconnect();
+    };
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
+  const handleRegistrosPorPaginaChange = useCallback(
+    (valor: number) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      dispatch(setRegistrosPorPagina(valor));
+    },
+    [dispatch],
+  );
+
+  const handleFiltersApply = useCallback(
+    (appliedFilters: FilterState) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const hasFilters =
+        appliedFilters.range.length > 0 ||
+        (Array.isArray(appliedFilters.city)
+          ? appliedFilters.city.length > 0
+          : !!appliedFilters.city) ||
+        appliedFilters.category.length > 0;
+
+      if (hasFilters && !hasActiveFilters.current) {
+        pageBeforeFilter.current = paginaActual;
+        hasActiveFilters.current = true;
+      }
+
+      if (!hasFilters) {
         hasActiveFilters.current = false;
+      }
 
-        dispatch(resetFilters());
+      dispatch(setFilters(appliedFilters));
+      dispatch(resetPagination());
+    },
+    [dispatch, paginaActual],
+  );
 
-        setTimeout(() => {
-            dispatch(enablePersistence());
-            dispatch(setPaginaActual(pageToRestore));
-        }, 0);
-    };
+  const handleSortChange = useCallback(
+    (option: string) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const backendSort = getSortValue(option);
+      dispatch(setSortBy(backendSort));
+    },
+    [dispatch],
+  );
 
-    const handlePageChange = (newPage: number) => {
-        scrollRestoredRef.current = true;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        dispatch(setPaginaActual(newPage));
-    };
+  const handleResetFilters = useCallback(() => {
+    const pageToRestore = hasActiveFilters.current ? pageBeforeFilter.current : 1;
+    hasActiveFilters.current = false;
 
-    // Handler para abrir modal al hacer click en el área de la oferta
-    const handleCardClick = (offer: JobOfferData) => {
-        const adaptedOffer = adaptOfferToModalFormat(offer);
-        setSelectedOffer(adaptedOffer);
-        setIsModalOpen(true);
-    };
+    dispatch(resetFilters());
 
-    const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+    setTimeout(() => {
+      dispatch(enablePersistence());
+      dispatch(setPaginaActual(pageToRestore));
+    }, 0);
+  }, [dispatch]);
 
-    return (
-        <>
-            <h1 className="mt-20 sm:mt-24 md:mt-28 lg:mt-32 mb-0 text-center text-xl sm:text-2xl md:text-3xl font-bold pt-3 px-3">
-                {t('pageTitle')}
-            </h1>
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      dispatch(setPaginaActual(newPage));
+    },
+    [dispatch],
+  );
 
-            <div
-                ref={stickyRef}
-                className={`w-full mx-auto px-3 sm:px-4 md:px-6 lg:max-w-5xl sticky top-0 bg-white py-3 shadow-md ${isDrawerOpen ? 'z-10' : 'z-50'
-                    }`}
-            >
-                <div className="flex gap-2">
-                    <FilterButton onClick={toggleDrawer} />
-                    <SearchBar onSearch={handleSearchSubmit} />
-                </div>
+  const handleRatingChange = useCallback(
+    (rating: number | null) => {
+      scrollRestoredRef.current = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                {!isLoading && Array.isArray(offers) && offers.length > 0 && (
-                    <div className="flex flex-col gap-2 mt-2">
-                        <div className="flex justify-between items-center gap-2">
-                            <div className="w-auto">
-                                <SortCard value={sortBy} onSelect={handleSortChange} />
-                            </div>
+      const hasRatingFilter = rating != null;
+      if (hasRatingFilter && !hasActiveFilters.current) {
+        pageBeforeFilter.current = paginaActual;
+        hasActiveFilters.current = true;
+      }
 
-                            {/* Mobile view toggle */}
-                            <ViewModeToggle
-                                viewMode={viewMode}
-                                onChange={setViewMode}
-                                variant="mobile"
-                                className="flex lg:hidden"
-                            />
+      if (!hasRatingFilter) {
+        hasActiveFilters.current = false;
+      }
 
-                            {/* Desktop view toggle */}
-                            <ViewModeToggle
-                                viewMode={viewMode}
-                                onChange={setViewMode}
-                                variant="desktop"
-                                className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2"
-                            />
+      dispatch(setRating(rating));
+      dispatch(resetPagination());
+    },
+    [dispatch, paginaActual],
+  );
 
-                            <div className="hidden lg:block w-auto">
-                                <PaginationSelector
-                                    registrosPorPagina={registrosPorPagina}
-                                    onChange={handleRegistrosPorPaginaChange}
-                                />
-                            </div>
-                        </div>
+  const toggleDrawer = useCallback(() => setIsDrawerOpen((prev) => !prev), []);
 
-                        <div className="flex justify-center lg:hidden">
-                            <PaginationSelector
-                                registrosPorPagina={registrosPorPagina}
-                                onChange={handleRegistrosPorPaginaChange}
-                            />
-                        </div>
-                    </div>
-                )}
+  const handleViewModeChange = useCallback((mode: ViewMode) => {
+    setViewMode(mode);
+  }, []);
+
+  const processedOffers = useMemo(() => {
+    return offers;
+  }, [offers]);
+
+  return (
+    <>
+      <h1 className='mt-20 sm:mt-24 md:mt-28 lg:mt-32 mb-0 text-center text-xl sm:text-2xl md:text-3xl font-bold pt-3 px-3'>
+        {t('pageTitle')}
+      </h1>
+
+      <div
+        ref={stickyRef}
+        className={`w-full mx-auto px-3 sm:px-4 md:px-6 lg:max-w-5xl sticky top-0 bg-white py-3 shadow-md ${
+          isDrawerOpen ? 'z-10' : 'z-50'
+        }`}
+      >
+        <div className='flex gap-2'>
+          <FilterButton onClick={toggleDrawer} />
+          <SearchBar onSearch={handleSearchSubmit} />
+        </div>
+
+        {!isLoading && Array.isArray(offers) && offers.length > 0 && (
+          <div className='flex flex-col gap-2 mt-2'>
+            <div className='flex justify-between items-center gap-2'>
+              <div className='w-auto'>
+                <SortCard value={sortBy} onSelect={handleSortChange} />
+              </div>
+
+              {/* Mobile view toggle */}
+              <ViewModeToggle
+                viewMode={viewMode}
+                onChange={handleViewModeChange}
+                variant='mobile'
+                className='flex lg:hidden'
+              />
+
+              {/* Desktop view toggle */}
+              <ViewModeToggle
+                viewMode={viewMode}
+                onChange={handleViewModeChange}
+                variant='desktop'
+                className='hidden lg:flex absolute left-1/2 transform -translate-x-1/2'
+              />
+
+              <div className='hidden lg:block w-auto'>
+                <PaginationSelector
+                  registrosPorPagina={registrosPorPagina}
+                  onChange={handleRegistrosPorPaginaChange}
+                />
+              </div>
             </div>
 
-            <main className="px-4 sm:px-6 md:px-12 lg:px-24">
-                {reduxError && (
-                    <div className="text-red-500 text-center mb-4 p-3 bg-red-100 rounded">{reduxError}</div>
-                )}
+            <div className='flex justify-center lg:hidden'>
+              <PaginationSelector
+                registrosPorPagina={registrosPorPagina}
+                onChange={handleRegistrosPorPaginaChange}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
-                {isLoading && (
-                    <div className="text-blue-500 text-center mb-4 p-3 bg-blue-100 rounded">
-                        {t('loading', { default: 'Cargando ofertas...' })}
-                    </div>
-                )}
+      <main className='px-4 sm:px-6 md:px-12 lg:px-24'>
+        {reduxError && (
+          <div className='text-red-500 text-center mb-4 p-3 bg-red-100 rounded'>{reduxError}</div>
+        )}
 
-                {/* Overlay cuando el drawer está abierto */}
-                {isDrawerOpen && (
-                    <div className="fixed bg-black z-40" onClick={() => setIsDrawerOpen(false)} />
-                )}
+        {isLoading && (
+          <div className='text-blue-500 text-center mb-4 p-3 bg-blue-100 rounded'>
+            {t('loading', { default: 'Cargando ofertas...' })}
+          </div>
+        )}
 
-                <FilterDrawer
-                    isOpen={isDrawerOpen}
-                    onClose={() => setIsDrawerOpen(false)}
-                    onFiltersApply={handleFiltersApply}
-                    onReset={handleResetFilters}
-                />
+        <FilterDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          onFiltersApply={handleFiltersApply}
+          onRatingChange={handleRatingChange}
+          onReset={handleResetFilters}
+        />
 
-                {!isLoading && Array.isArray(offers) && offers.length > 0 && (
-                    <div className="w-full max-w-5xl mx-auto mb-4">
-                        <div className="flex justify-center">
-                            <PaginationInfo
-                                paginaActual={paginaActual}
-                                registrosPorPagina={registrosPorPagina}
-                                totalRegistros={total}
-                            />
-                        </div>
-                    </div>
-                )}
+        {!isLoading && Array.isArray(offers) && offers.length > 0 && (
+          <div className='w-full max-w-5xl mx-auto mb-4'>
+            <div className='flex justify-center'>
+              <PaginationInfo
+                paginaActual={paginaActual}
+                registrosPorPagina={registrosPorPagina}
+                totalRegistros={total}
+              />
+            </div>
+          </div>
+        )}
 
-                <div className="w-full max-w-5xl mx-auto">
-                    {!isLoading && Array.isArray(offers) && offers.length > 0 ? (
-                        <JobOffersView offers={offers} viewMode={viewMode} onOfferClick={handleCardClick} />
-                    ) : !isLoading ? (
-                        <NoResultsMessage search={search} />
-                    ) : null}
-                </div>
-
-                {!isLoading && Array.isArray(offers) && offers.length > 0 && viewMode !== 'map' && (
-                    <div className="mt-8 mb-24 flex justify-center">
-                        <Paginacion
-                            paginaActual={paginaActual}
-                            registrosPorPagina={registrosPorPagina}
-                            totalRegistros={total}
-                            onChange={handlePageChange}
-                        />
-                    </div>
-                )}
-            </main>
-
-            <JobOfferModal
-                offer={selectedOffer}
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+        <div className='w-full max-w-5xl mx-auto'>
+          {!isLoading && Array.isArray(offers) && offers.length > 0 ? (
+            <JobOffersView
+              offers={processedOffers}
+              viewMode={viewMode}
+              onOfferClick={handleCardClick}
+              search={search}
             />
-        </>
-    );
-}
+          ) : !isLoading ? (
+            <NoResultsMessage search={search} />
+          ) : null}
+        </div>
 
+        {!isLoading && Array.isArray(offers) && offers.length > 0 && viewMode !== 'map' && (
+          <div className='mt-8 mb-24 flex justify-center'>
+            <Paginacion
+              paginaActual={paginaActual}
+              registrosPorPagina={registrosPorPagina}
+              totalRegistros={total}
+              onChange={handlePageChange}
+            />
+          </div>
+        )}
+      </main>
+
+      <JobOfferModal offer={selectedOffer} isOpen={isModalOpen} onClose={handleCloseModal} />
+    </>
+  );
+}

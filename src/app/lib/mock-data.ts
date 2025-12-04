@@ -134,7 +134,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-002',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -157,7 +157,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-003',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -180,7 +180,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-004',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -203,7 +203,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-005',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -226,7 +226,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-006',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -249,7 +249,7 @@ let _mockJobOffers: JobOffer[] = [
     },
   },
   {
-    id: 'offer-001',
+    id: 'offer-007',
     fixerId: 'fixer-001',
     fixerName: 'Juan Carlos Pérez',
     fixerPhoto: '/img/avatars/fixer-001.jpg',
@@ -271,15 +271,35 @@ let _mockJobOffers: JobOffer[] = [
       address: 'Av. Oquendo #234, Cochabamba',
     },
   },
-
-  // Add more mock job offers as needed
+  {
+    id: 'offer-008',
+    fixerId: 'fixer-001',
+    fixerName: 'Juan Carlos Pérez',
+    fixerPhoto: '/img/avatars/fixer-001.jpg',
+    title: 'Servicios de Plomería y Electricidad',
+    description:
+      'Especialista en reparaciones de plomería e instalaciones eléctricas. Soluciones rápidas y garantizadas.',
+    tags: ['Plomería', 'Electricidad', 'Reparaciones'],
+    whatsapp: '59170341618',
+    photos: ['/img/carpinteria1.jpg', '/img/carpinteria2.jpg', '/img/carpinteria3.jpg'],
+    services: ['Plomería', 'Electricidad'],
+    price: 150,
+    rating: 4.8,
+    completedJobs: 124,
+    createdAt: new Date('2025-01-15'),
+    city: 'Cochabamba',
+    location: {
+      lat: -17.3935,
+      lng: -66.1468,
+      address: 'Av. Oquendo #234, Cochabamba',
+    },
+  },
 ];
 
 // Mock de fixers
-// En src/app/lib/mock-data.ts
-export const mockFixers = [
+export const mockFixers: Fixer[] = [
   {
-    id: 'fixer-001',
+    id: '68e87a9cdae3b73d8040102f',
     name: 'Juan Carlos Pérez',
     email: 'juan.perez@example.com',
     phone: '59170341618',
@@ -295,7 +315,7 @@ export const mockFixers = [
     jobOffers: [
       {
         id: 'offer-001',
-        fixerId: 'fixer-001',
+        fixerId: '68e87a9cdae3b73d8040102f',
         fixerName: 'Juan Carlos Pérez',
         fixerPhoto: '/img/avatars/fixer-001.jpg',
         title: 'Servicios de Plomería',
@@ -305,7 +325,6 @@ export const mockFixers = [
         photos: ['/img/plomeria1.jpg'],
         rating: 4.8,
         completedJobs: 124,
-        // AÑADE ESTAS PROPIEDADES FALTANTES:
         tags: ['Plomería', 'Reparación', 'Urgente'],
         whatsapp: '59170341618',
         services: ['Plomería'],
@@ -318,7 +337,7 @@ export const mockFixers = [
       },
       {
         id: 'offer-002',
-        fixerId: 'fixer-001',
+        fixerId: '68e87a9cdae3b73d8040102f',
         fixerName: 'Juan Carlos Pérez',
         fixerPhoto: '/img/avatars/fixer-001.jpg',
         title: 'Instalación Eléctrica',
@@ -328,7 +347,6 @@ export const mockFixers = [
         photos: ['/img/electricidad1.jpg'],
         rating: 4.8,
         completedJobs: 124,
-        // NO OLVIDES ESTAS PROPIEDADES:
         tags: ['Electricidad', 'Instalación'],
         whatsapp: '59170341618',
         services: ['Electricidad'],
@@ -341,9 +359,9 @@ export const mockFixers = [
       },
     ],
   },
-  // ... otros fixers con la misma estructura completa
 ];
-// Update the job offers to include references to fixers
+
+// Actualizar las ofertas de trabajo con datos de los fixers
 _mockJobOffers = _mockJobOffers.map((offer) => {
   const fixer = mockFixers.find((f) => f.id === offer.fixerId);
   return {

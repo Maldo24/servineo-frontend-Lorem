@@ -35,7 +35,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
           }`}
           title={t('viewModes.grid', { default: 'Vista cuadrícula' })}
         >
-          <LayoutGrid className="w-5 h-5" />
+          <LayoutGrid className='w-5 h-5' />
         </button>
         <button
           onClick={() => onChange('map')}
@@ -46,7 +46,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
           }`}
           title={t('viewModes.map')}
         >
-          <Map className="w-5 h-5" />
+          <Map className='w-5 h-5' />
         </button>
       </div>
     );
@@ -65,8 +65,8 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
         }`}
         title={t('viewModes.grid', { default: 'Vista cuadrícula' })}
       >
-        <LayoutGrid className="w-4 h-4" />
-        <span className="text-sm">{t('viewModes.grid', { default: 'Cuadrícula' })}</span>
+        <LayoutGrid className='w-4 h-4' />
+        <span className='text-sm'>{t('viewModes.grid', { default: 'Cuadrícula' })}</span>
       </button>
       <button
         onClick={() => onChange('list')}
@@ -77,8 +77,8 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
         }`}
         title={t('viewModes.list')}
       >
-        <List className="w-4 h-4" />
-        <span className="text-sm">{t('viewModes.list')}</span>
+        <List className='w-4 h-4' />
+        <span className='text-sm'>{t('viewModes.list')}</span>
       </button>
       <button
         onClick={() => onChange('map')}
@@ -89,8 +89,8 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
         }`}
         title={t('viewModes.map')}
       >
-        <Map className="w-4 h-4" />
-        <span className="text-sm">{t('viewModes.map')}</span>
+        <Map className='w-4 h-4' />
+        <span className='text-sm'>{t('viewModes.map')}</span>
       </button>
     </div>
   );

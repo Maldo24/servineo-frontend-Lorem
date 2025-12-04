@@ -34,6 +34,24 @@ interface PriceRangesApiResponse {
   };
 }
 
+// ===== TIPOS PARA FILTER COUNTS =====
+interface FilterCountsResponse {
+  ranges: Record<string, number>;
+  cities: Record<string, number>;
+  categories: Record<string, number>;
+  ratings: Record<string, number>;
+  total: number;
+}
+
+interface FilterCountsParams {
+  range?: string[];
+  city?: string;
+  category?: string[];
+  search?: string;
+  minRating?: number;
+  maxRating?: number;
+}
+
 // Extender el baseApi con endpoints específicos de ofertas
 export const jobOffersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -45,7 +63,7 @@ export const jobOffersApi = baseApi.injectEndpoints({
         if (params.search?.trim()) urlParams.append('search', params.search);
         if (params.filters?.range?.length)
           params.filters.range.forEach((r) => urlParams.append('range', r));
-        if (params.filters?.city) urlParams.append('city', params.filters.city);
+        if (params.filters?.city?.length) urlParams.append('city', params.filters.city.join(','));
         if (params.filters?.category?.length)
           params.filters.category.forEach((c) => urlParams.append('category', c));
         if (params.filters?.tags?.length) urlParams.append('tags', params.filters.tags.join(','));
@@ -58,6 +76,9 @@ export const jobOffersApi = baseApi.injectEndpoints({
         if (params.rating != null) urlParams.append('rating', String(params.rating));
         if (params.titleOnly) urlParams.append('titleOnly', 'true');
         if (params.exact) urlParams.append('exact', 'true');
+
+        // Filtrar solo ofertas activas
+        urlParams.append('status', 'true');
 
         urlParams.append('page', String(params.page || 1));
         urlParams.append('limit', String(params.limit || 10));
@@ -74,6 +95,7 @@ export const jobOffersApi = baseApi.injectEndpoints({
           sortBy: 'recent',
           page: '1',
           limit: String(limit),
+          status: 'true', // Filtrar solo ofertas activas
         });
         if (category && category !== 'Todos') params.append('category', category);
         return `/devmaster/offers?${params.toString()}`;
@@ -130,6 +152,26 @@ export const jobOffersApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    // 5. Filter Counts (AGREGADO SIGUIENDO TU MISMO FORMATO)
+    getFilterCounts: builder.query<FilterCountsResponse, FilterCountsParams>({
+      query: (params) => {
+        const urlParams = new URLSearchParams();
+
+        if (params.range?.length) params.range.forEach((r) => urlParams.append('range', r));
+        if (params.city) urlParams.set('city', params.city);
+        if (params.category?.length)
+          params.category.forEach((c) => urlParams.append('category', c));
+        if (params.search) urlParams.set('search', params.search);
+        if (params.minRating != null) urlParams.set('minRating', String(params.minRating));
+        if (params.maxRating != null) urlParams.set('maxRating', String(params.maxRating));
+
+        return `/devmaster/filter-counts?${urlParams.toString()}`;
+      },
+      transformResponse: (response: { success: boolean; data: FilterCountsResponse }) => {
+        return response.data;
+      },
+    }),
   }),
 });
 
@@ -139,4 +181,6 @@ export const {
   useGetRecentOffersQuery,
   useGetTagsQuery,
   useGetPriceRangesQuery,
+  useGetFilterCountsQuery,
+  useLazyGetFilterCountsQuery,
 } = jobOffersApi;

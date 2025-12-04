@@ -57,42 +57,42 @@ export default function ConfirmationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in">
+    <div className='fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in'>
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        className='fixed inset-0 bg-black/60 backdrop-blur-sm'
         onClick={onClose}
-        aria-hidden="true"
+        aria-hidden='true'
       />
 
       <div
         className={`relative w-full max-w-md bg-card border-2 ${config.borderColor} rounded-2xl shadow-2xl animate-scale-in`}
       >
-        <div className="p-6">
-          <div className="flex items-start gap-4">
+        <div className='p-6'>
+          <div className='flex items-start gap-4'>
             <div
               className={`flex-shrink-0 w-12 h-12 ${config.bgColor} rounded-xl flex items-center justify-center`}
             >
               <AlertTriangle className={`w-6 h-6 ${config.iconColor}`} />
             </div>
 
-            <div className="flex-1 min-w-0">
+            <div className='flex-1 min-w-0'>
               <h3 className={`text-lg font-bold ${config.titleColor} mb-1`}>{title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{message}</p>
+              <p className='text-sm text-muted-foreground leading-relaxed'>{message}</p>
             </div>
 
             <button
               onClick={onClose}
-              className="flex-shrink-0 p-1.5 hover:bg-muted rounded-lg transition-all hover:rotate-90 duration-300"
-              aria-label="Cerrar"
+              className='flex-shrink-0 p-1.5 hover:bg-muted rounded-lg transition-all hover:rotate-90 duration-300'
+              aria-label='Cerrar'
             >
-              <X className="w-5 h-5" />
+              <X className='w-5 h-5' />
             </button>
           </div>
 
-          <div className="flex gap-3 mt-6">
+          <div className='flex gap-3 mt-6'>
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border-2 border-border rounded-xl hover:bg-muted transition-all font-semibold"
+              className='flex-1 px-4 py-2.5 border-2 border-border rounded-xl hover:bg-muted transition-all font-semibold'
             >
               {cancelText}
             </button>

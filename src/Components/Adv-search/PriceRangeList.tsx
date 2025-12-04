@@ -60,7 +60,6 @@ const PriceRangeList: React.FC<PriceRangeListProps> = ({ onFilterChange, clearSi
       // Guardar en sessionStorage para futuros montajes
       try {
         sessionStorage.setItem('adv_price_ranges', JSON.stringify(items));
-        console.log('💾 [PriceRangeList] Saved to sessionStorage cache');
       } catch (err) {
         console.error('❌ [PriceRangeList] Error saving cache:', err);
       }
@@ -112,21 +111,21 @@ const PriceRangeList: React.FC<PriceRangeListProps> = ({ onFilterChange, clearSi
   // ===== ESTADOS DE CARGA Y ERROR =====
   // Mostrar loading solo si NO hay datos en caché
   if (isLoading && ranges.length === 0) {
-    return <div className="p-4 text-sm text-gray-500">{t('resultsCounter.loading')}</div>;
+    return <div className='p-4 text-sm text-gray-500'>{t('resultsCounter.loading')}</div>;
   }
 
   if (queryError) {
     const errorMessage = getErrorMessage(queryError);
-    return <div className="p-4 text-sm text-red-500">Error: {errorMessage}</div>;
+    return <div className='p-4 text-sm text-red-500'>Error: {errorMessage}</div>;
   }
 
   if (!ranges.length) {
-    return <div className="p-4 text-sm text-gray-500">{t('resultsCounter.noResults')}</div>;
+    return <div className='p-4 text-sm text-gray-500'>{t('resultsCounter.noResults')}</div>;
   }
 
   return (
-    <div className="w-full border border-gray-300 rounded-lg overflow-hidden">
-      <div className="max-h-64 overflow-y-auto">
+    <div className='w-full border border-gray-300 rounded-lg overflow-hidden'>
+      <div className='max-h-64 overflow-y-auto'>
         {ranges.map((r, index) => (
           <label
             key={`${r.label}-${index}`}
@@ -135,12 +134,12 @@ const PriceRangeList: React.FC<PriceRangeListProps> = ({ onFilterChange, clearSi
             }`}
           >
             <input
-              type="checkbox"
+              type='checkbox'
               checked={selectedRanges.includes(r.label)}
               onChange={() => handleCheckboxChange(r.label)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className='w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer'
             />
-            <span className="ml-3 text-sm text-gray-700 capitalize">
+            <span className='ml-3 text-sm text-gray-700 capitalize'>
               {formatRangeLabel(r.label)}
             </span>
           </label>

@@ -32,7 +32,7 @@ export default function MobileCalendar({ selectedDate, onSelectDate }: MobileCal
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow p-4 max-w-md mx-auto">
+    <div className='bg-white rounded-2xl shadow p-4 max-w-md mx-auto'>
       <MobileHeader
         month={month}
         year={year}
@@ -49,17 +49,17 @@ export default function MobileCalendar({ selectedDate, onSelectDate }: MobileCal
         onSelectDate={setTempSelectedDate}
       />
 
-      <div className="flex justify-end mt-4">
+      <div className='flex justify-end mt-4'>
         <button
           onClick={handleSelectedClick}
-          className="bg-blue-500 text-white font-semibold px-4 py-2 rounded-2xl
-               active:bg-gray-500 transition-colors"
+          className='bg-blue-500 text-white font-semibold px-4 py-2 rounded-2xl
+               active:bg-gray-500 transition-colors'
         >
           Seleccionar
         </button>
       </div>
 
-      {message && <div className="mt-2 text-gray-700 font-medium text-center">{message}</div>}
+      {message && <div className='mt-2 text-gray-700 font-medium text-center'>{message}</div>}
     </div>
   );
 }

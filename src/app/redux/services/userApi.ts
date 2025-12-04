@@ -49,6 +49,24 @@ export const userApi = baseApi.injectEndpoints({
       query: (id) => `/user/${id}`,
       providesTags: ['User'],
     }),
+    updateLocation: builder.mutation<
+      { success: boolean; user: IUser },
+      {
+        id: string;
+        location: {
+          lat: number;
+          lng: number;
+          direccion?: string;
+        };
+      }
+    >({
+      query: ({ id, location }) => ({
+        url: `/user/${id}/location`,
+        method: 'PATCH',
+        body: { workLocation: location },
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 
   overrideExisting: false,
@@ -62,4 +80,5 @@ export const {
   useConvertToFixerMutation,
   useLazyGetUserByIdQuery,
   useGetUserByIdQuery,
+  useUpdateLocationMutation,
 } = userApi;

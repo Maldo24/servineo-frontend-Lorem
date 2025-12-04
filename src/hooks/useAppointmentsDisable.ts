@@ -61,12 +61,9 @@ export default function useAppointmentsDisable(fixer_id: string, date: Date) {
     fetchData();
   }, [fixer_id, date]);
 
-  /// todosa <= isHourBooked
-
   const isDisabledDay = useCallback(
     (day: Date): boolean => {
       const dayOfWeek = day.getDay();
-
       const dayName = DAY_MAP[dayOfWeek];
 
       return appointmentsDis[dayName].length === 24;

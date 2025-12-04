@@ -1,51 +1,67 @@
 import { baseApi } from './baseApi';
-import type { IJob } from '@/types/job-offer';
+import { IJobOffer } from '@/types/fixer-profile';
+
+interface ApiResponse {
+  data: IJobOffer[];
+  count: number;
+  success?: boolean;
+}
 
 export const jobApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllJobs: builder.query<IJob[], void>({
-      query: () => '/jobs', // Asegúrate que esta ruta coincida con tu backend (ej: /job-offers)
-      providesTags: ['Job'],
-    }),
-    getJobsByFixer: builder.query<IJob[], string>({
-      query: (fixerId) => `/jobs/fixer/${fixerId}`,
+    // Obtener todas las ofertas
+    getAllJobs: builder.query<IJobOffer[], void>({
+      query: () => '/job-offers',
       providesTags: ['Job'],
     }),
 
-    // --- AQUÍ ESTÁ EL CAMBIO ---
-    // 1. Cambiamos el tipo de entrada de Omit<IJob...> a FormData
-    createJob: builder.mutation<IJob, FormData>({
+    // Obtener ofertas por fixerId
+    getJobsByFixer: builder.query<IJobOffer[], string>({
+      query: (fixerId) => `/job-offers/fixer/${fixerId}`,
+      transformResponse: (response: ApiResponse) => response.data,
+      providesTags: ['Job'],
+    }),
+
+    // Crear oferta
+    createJob: builder.mutation<IJobOffer, FormData>({
       query: (formData) => ({
-        url: '/jobs', // Asegúrate que coincida con tu backend router.post('/', ...)
+        url: '/job-offers',
         method: 'POST',
         body: formData,
-        // NOTA: No necesitas poner headers manuales.
-        // RTK Query y el navegador detectarán que es FormData
-        // y pondrán el 'multipart/form-data' automáticamente.
       }),
       invalidatesTags: ['Job'],
     }),
-    // ---------------------------
 
-    updateJob: builder.mutation<IJob, { jobId: string; data: Partial<IJob> & { fixerId: string } }>(
-      {
-        query: ({ jobId, data }) => ({
-          url: `/jobs/${jobId}`,
-          method: 'PATCH',
-          body: data,
-        }),
-        invalidatesTags: ['Job'],
-      },
-    ),
+    // Actualizar oferta
+    updateJob: builder.mutation<IJobOffer, { jobId: string; formData: Partial<FormData> }>({
+      query: ({ jobId, formData }) => ({
+        url: `/job-offers/${jobId}`,
+        method: 'PATCH',
+        body: formData,
+      }),
+      invalidatesTags: ['Job'],
+    }),
+
+    // Eliminar oferta
     deleteJob: builder.mutation<{ message: string }, { jobId: string; fixerId: string }>({
       query: ({ jobId, fixerId }) => ({
-        url: `/jobs/${jobId}`,
+        url: `/job-offers/${jobId}`,
         method: 'DELETE',
         body: { fixerId },
       }),
       invalidatesTags: ['Job'],
     }),
+
+    //Activar / Desactivar oferta
+    toggleJobStatus: builder.mutation<IJobOffer, { jobId: string }>({
+      query: ({ jobId }) => ({
+        url: `/job-offers/${jobId}/toggle-status`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Job'],
+    }),
   }),
+
   overrideExisting: false,
 });
 
@@ -55,4 +71,5 @@ export const {
   useCreateJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
+  useToggleJobStatusMutation,
 } = jobApi;

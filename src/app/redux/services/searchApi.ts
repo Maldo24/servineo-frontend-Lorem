@@ -5,7 +5,7 @@ export interface SearchData {
   search_query: string;
   search_type: string;
   filters: {
-    filter_1: {
+    [x: string]: {
       fixer_name: string;
       city: string;
       job_type: string;

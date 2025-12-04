@@ -67,9 +67,9 @@ export const ModeSelectionModal = forwardRef<ModeSelectionModalHandles, ModeSele
               isOpen ? 'scale-100' : 'scale-95'
             }`}
           >
-            <AvailabilityHeader headerText="Seleccionar Disponibilidad" onClose={handleClose} />
+            <AvailabilityHeader headerText='Seleccionar Disponibilidad' onClose={handleClose} />
 
-            <p className="text-black font-semibold mb-4">Selecciona el modo de configuración</p>
+            <p className='text-black font-semibold mb-4'>Selecciona el modo de configuración</p>
 
             <ModeSelectionActions
               openWeek={handleOpenWeek}

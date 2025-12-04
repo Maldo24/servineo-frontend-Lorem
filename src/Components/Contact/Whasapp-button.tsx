@@ -20,7 +20,7 @@ export function WhatsAppButton({ phone, message = '', className = '' }: WhatsApp
       onClick={handleClick}
       className={`flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors ${className}`}
     >
-      <Phone className="w-4 h-4" />
+      <Phone className='w-4 h-4' />
       <span>Contactar por WhatsApp</span>
     </button>
   );

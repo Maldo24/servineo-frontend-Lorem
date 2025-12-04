@@ -162,99 +162,99 @@ const DateFilterSelector: React.FC<Props> = ({
 
   return (
     <div>
-      <h3 className="text-base mb-2">{t('label')}</h3>
+      <h3 className='text-base mb-2'>{t('label')}</h3>
 
-      <div className="bg-white rounded-lg border border-gray-300 p-4 space-y-3 w-fit">
+      <div className='bg-white rounded-lg border border-gray-300 p-4 space-y-3 w-fit'>
         {/* Opciones de radio: Los más recientes y Los más antiguos */}
         {['recent', 'oldest'].map((filter) => (
           <label
             key={filter}
-            className="flex items-center gap-2 text-sm cursor-pointer hover:text-[#2B31E0] transition-colors"
+            className='flex items-center gap-2 text-sm cursor-pointer hover:text-[#2B31E0] transition-colors'
           >
             <input
-              type="radio"
-              name="dateFilter"
+              type='radio'
+              name='dateFilter'
               value={filter}
               checked={selectedFilter === filter}
               onChange={() => onChange(filter, null)}
-              className="w-4 h-4 cursor-pointer flex-shrink-0 text-[#2B6AE0] rounded-full border-gray-300 focus:ring-[#2B6AE0]"
+              className='w-4 h-4 cursor-pointer flex-shrink-0 text-[#2B6AE0] rounded-full border-gray-300 focus:ring-[#2B6AE0]'
             />
-            <span className="text-gray-700 whitespace-nowrap">{t(`filters.${filter}`)}</span>
+            <span className='text-gray-700 whitespace-nowrap'>{t(`filters.${filter}`)}</span>
           </label>
         ))}
 
         {/* Opción de fecha específica */}
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-[#2B31E0] transition-colors">
+        <div className='space-y-2'>
+          <label className='flex items-center gap-2 text-sm cursor-pointer hover:text-[#2B31E0] transition-colors'>
             <input
-              type="radio"
-              name="dateFilter"
-              value="specific"
+              type='radio'
+              name='dateFilter'
+              value='specific'
               checked={selectedFilter === 'specific'}
               onChange={() => onChange('specific', null)}
-              className="w-4 h-4 cursor-pointer flex-shrink-0 text-[#2B6AE0] rounded-full border-gray-300 focus:ring-[#2B6AE0]"
+              className='w-4 h-4 cursor-pointer flex-shrink-0 text-[#2B6AE0] rounded-full border-gray-300 focus:ring-[#2B6AE0]'
             />
-            <span className="text-gray-700 font-medium whitespace-nowrap">
+            <span className='text-gray-700 font-medium whitespace-nowrap'>
               {t('filters.specific')}
             </span>
           </label>
 
           {/* Inputs de fecha y botón de calendario - solo visible cuando "specific" está seleccionado */}
           {selectedFilter === 'specific' && (
-            <div className="flex flex-col gap-1 ml-6">
-              <div className="flex items-center gap-2">
+            <div className='flex flex-col gap-1 ml-6'>
+              <div className='flex items-center gap-2'>
                 {/* Día */}
                 <input
-                  type="text"
+                  type='text'
                   value={day}
                   onChange={(e) => setDay(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                  placeholder="DD"
+                  placeholder='DD'
                   maxLength={2}
                   className={`w-12 px-2 py-2 border rounded-lg text-sm font-mono text-center bg-white focus:outline-none focus:ring-2 transition-all ${inputBorderClass}`}
                 />
 
-                <span className="text-gray-500 text-xl flex items-center justify-center h-full">
+                <span className='text-gray-500 text-xl flex items-center justify-center h-full'>
                   /
                 </span>
 
                 {/* Mes */}
                 <input
-                  type="text"
+                  type='text'
                   value={month}
                   onChange={(e) => setMonth(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                  placeholder="MM"
+                  placeholder='MM'
                   maxLength={2}
                   className={`w-12 px-2 py-2 border rounded-lg text-sm font-mono text-center bg-white focus:outline-none focus:ring-2 transition-all ${inputBorderClass}`}
                 />
 
-                <span className="text-gray-500 text-xl flex items-center justify-center h-full">
+                <span className='text-gray-500 text-xl flex items-center justify-center h-full'>
                   /
                 </span>
 
                 {/* Año */}
                 <input
-                  type="text"
+                  type='text'
                   value={year}
                   onChange={(e) => setYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  placeholder="AAAA"
+                  placeholder='AAAA'
                   maxLength={4}
                   className={`w-20 px-2 py-2 border rounded-lg text-sm font-mono text-center bg-white focus:outline-none focus:ring-2 transition-all ${inputBorderClass}`}
                 />
 
                 {/* Calendario */}
-                <div className="relative" ref={calendarContainerRef}>
+                <div className='relative' ref={calendarContainerRef}>
                   <button
-                    type="button"
+                    type='button'
                     onClick={handleCalendarToggle}
-                    className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors"
+                    className='flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors'
                   >
-                    <Calendar size={18} className="text-gray-600" />
-                    <ChevronDown size={16} className="text-gray-500" />
+                    <Calendar size={18} className='text-gray-600' />
+                    <ChevronDown size={16} className='text-gray-500' />
                   </button>
 
                   {/* Calendario desplegable */}
                   {showCalendar && (
-                    <div className="absolute z-50 mt-2 -left-100">
+                    <div className='absolute z-50 mt-2 -left-100'>
                       <CalendarComponent
                         selectedDate={selectedDate || new Date()}
                         onDateSelect={handleDateSelect}
@@ -270,7 +270,7 @@ const DateFilterSelector: React.FC<Props> = ({
 
               {/* Mensaje de fecha inválida */}
               {day.length === 2 && month.length === 2 && year.length === 4 && !isValidDate() && (
-                <p className="text-red-500 text-sm">Fecha inválida</p>
+                <p className='text-red-500 text-sm'>Fecha inválida</p>
               )}
             </div>
           )}

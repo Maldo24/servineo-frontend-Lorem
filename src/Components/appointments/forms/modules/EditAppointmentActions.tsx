@@ -74,7 +74,7 @@ export const EditAppointmentActions = ({
       <>
         ¿Está seguro que desea cancelar la cita actual?
         <br />
-        <span className="text-gray-500 text-xs">
+        <span className='text-gray-500 text-xs'>
           *En caso de cancelación,la cita dejara de ser accesible.
         </span>
       </>,
@@ -98,7 +98,7 @@ export const EditAppointmentActions = ({
       <>
         ¿Esta seguro que desea reprogramar la cita actual?
         <br />
-        <span className="text-gray-500 text-xs">
+        <span className='text-gray-500 text-xs'>
           *En caso de reprogramación, la cita actual será cancelada.
         </span>
       </>,
@@ -110,24 +110,24 @@ export const EditAppointmentActions = ({
   };
 
   return (
-    <div className="flex items-center justify-end gap-2 pt-2">
-      <Button variant="secondary" onClick={onCancel}>
+    <div className='flex items-center justify-end gap-2 pt-2'>
+      <Button variant='secondary' onClick={onCancel}>
         Volver
       </Button>
 
       {formType === 'create' && (
-        <Button type="submit" loading={loading} disabled={!changesDetected || submitDisabled}>
+        <Button type='submit' loading={loading} disabled={!changesDetected || submitDisabled}>
           Crear Cita
         </Button>
       )}
 
       {formType === 'edit' && (
         <>
-          <Button type="submit" onClick={askConfirmReprogram}>
+          <Button type='submit' onClick={askConfirmReprogram}>
             Reprogramar
           </Button>
           <Button
-            type="submit"
+            type='submit'
             onClick={() => {
               refetchAll();
             }}
@@ -148,7 +148,7 @@ export const EditAppointmentActions = ({
         title={popupVariant === 'confirm' ? 'Confirmar acción' : 'Atención'}
         message={popupMessage ?? ''}
         confirmLabel={popupConfirmLabel}
-        cancelLabel="Volver"
+        cancelLabel='Volver'
         onConfirm={popupOnConfirm}
       />
     </div>

@@ -25,8 +25,8 @@ export const DaySelectSection: React.FC<DaySelectionProps> = ({ availableDays, o
   };
 
   return (
-    <div className="mb-4">
-      <div className="flex flex-col gap-2">
+    <div className='mb-4'>
+      <div className='flex flex-col gap-2'>
         {days.map((day) => (
           <AvailabilityButton
             key={day}
