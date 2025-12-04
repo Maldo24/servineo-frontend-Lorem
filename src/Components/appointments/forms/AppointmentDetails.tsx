@@ -206,18 +206,18 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-        <div className="absolute inset-0 bg-black/50" onClick={handleClose} aria-hidden="true" />
+      <div className='fixed inset-0 z-50 flex items-center justify-center px-4'>
+        <div className='absolute inset-0 bg-black/50' onClick={handleClose} aria-hidden='true' />
         <div
           ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="edit-appointment-title"
-          className="relative bg-white rounded-lg shadow-xl w-full max-w-xl mx-auto overflow-auto"
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='edit-appointment-title'
+          className='relative bg-white rounded-lg shadow-xl w-full max-w-xl mx-auto overflow-auto'
           style={{ maxHeight: '90vh' }}
         >
-          <div className="p-4 sm:p-6 text-black">
-            <EditAppointmentHeader onClose={handleClose} title="Detalles de la Cita" />
+          <div className='p-4 sm:p-6 text-black'>
+            <EditAppointmentHeader onClose={handleClose} title='Detalles de la Cita' />
 
             <DateTimeDisplaySection
               datetime={datetime}
@@ -247,7 +247,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                 address={address}
                 error={errors.location}
                 onOpenLocationModal={() => setShowLocationModal(true)}
-                formtype="view"
+                formtype='view'
               />
             ) : (
               <MeetingLinkSection
@@ -270,10 +270,10 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
                     }
                   : undefined
               }
-              formtype="view"
+              formtype='view'
             />
 
-            {msg && <p className="text-sm text-red-600">{msg}</p>}
+            {msg && <p className='text-sm text-red-600'>{msg}</p>}
 
             <EditAppointmentActions
               loading={loading}
@@ -281,7 +281,7 @@ const EditAppointmentForm = forwardRef<EditAppointmentFormHandle>((_props, ref) 
               onCancel={handleClose}
               onDelete={handleDeleteAppointment}
               submitDisabled={modality === 'presencial' && !address}
-              formType="view"
+              formType='view'
             />
           </div>
         </div>

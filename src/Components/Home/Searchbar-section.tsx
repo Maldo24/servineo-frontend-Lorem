@@ -3,12 +3,13 @@
 
 import { Search, X } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // 👈 TU CAMBIO: agregado usePathname
 import { useSearchHistory } from '@/app/redux/features/searchHistory/useSearchHistory';
 import { useSearchSuggestions } from '@/app/redux/features/searchHistory/useSearchSuggestions';
 import { useSearchKeyboard } from '@/app/redux/features/searchHistory/useSearchKeyboard';
 import { useSearchTouch } from '@/app/redux/features/searchHistory/useSearchTouch';
 import { SearchDropdown } from '@/Components/Shared/SearchDropdown';
+import { validateSearch } from '@/app/lib/validations/search.validator';
 
 interface SearchBarProps {
   value: string;
@@ -28,6 +29,7 @@ export function SearchBar({
   onSearch,
 }: SearchBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   // Estado local
   const [isFocused, setIsFocused] = useState(false);
@@ -35,9 +37,15 @@ export function SearchBar({
   const [highlighted, setHighlighted] = useState<number>(-1);
   const [longPressedItem, setLongPressedItem] = useState<string | null>(null);
   const [previewValue, setPreviewValue] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const currentLanguage = useMemo(() => {
+    const pathSegments = (pathname || '').split('/').filter(Boolean);
+    const langSegment = pathSegments[0];
+    return ['en', 'es'].includes(langSegment) ? langSegment : 'es';
+  }, [pathname]);
 
   // Hooks personalizados para historial y sugerencias
   const { history, addToHistory, removeFromHistory, clearHistory } = useSearchHistory({
@@ -49,6 +57,7 @@ export function SearchBar({
     minLength: 1,
     debounceMs: 300,
     maxResults: 6,
+    language: currentLanguage, // 👈 TU CAMBIO: Pasar idioma
   });
 
   // Función para realizar la búsqueda con redirección
@@ -119,7 +128,7 @@ export function SearchBar({
   const handleSearch = useCallback(() => {
     const searchValue = previewValue ?? value;
     const trimmed = searchValue.trim();
-
+    if (error) return;
     if (trimmed) {
       addToHistory(trimmed);
       setIsOpen(false);
@@ -127,7 +136,7 @@ export function SearchBar({
       setPreviewValue(null);
       performSearch(trimmed);
     }
-  }, [value, previewValue, addToHistory, performSearch]);
+  }, [value, previewValue, addToHistory, performSearch, error]);
 
   // Hook de navegación por teclado
   const { handleKeyDown } = useSearchKeyboard({
@@ -155,9 +164,18 @@ export function SearchBar({
   // Manejar cambios en el input
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange(e.target.value);
+      let newValue = e.target.value;
+      if (newValue.length > 100) {
+        newValue = newValue.slice(0, 100);
+        setError('Límite máximo de 100 caracteres.');
+        onChange(newValue);
+        return;
+      }
+      onChange(newValue);
       setPreviewValue(null);
       setHighlighted(-1);
+      const { isValid, error } = validateSearch(newValue);
+      setError(isValid ? undefined : error);
     },
     [onChange],
   );
@@ -179,7 +197,7 @@ export function SearchBar({
   return (
     <div className={`flex-1 relative group ${className}`} ref={containerRef}>
       {/* Icono de búsqueda */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+      <div className='absolute left-4 top-1/3 -translate-y-1/2 z-10'>
         <Search
           className={`w-5 h-5 transition-all duration-300 ${
             isFocused
@@ -196,17 +214,17 @@ export function SearchBar({
             onChange('');
             setPreviewValue(null);
           }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label="Limpiar búsqueda"
+          className='absolute right-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 hover:text-gray-600 transition-colors'
+          aria-label='Limpiar búsqueda'
         >
-          <X className="w-4 h-4" />
+          <X className='w-4 h-4' />
         </button>
       )}
 
       {/* Input de búsqueda */}
       <input
         ref={inputRef}
-        type="text"
+        type='text'
         placeholder={placeholder}
         value={previewValue ?? value}
         onChange={handleInputChange}
@@ -235,9 +253,11 @@ export function SearchBar({
           shadow-lg
           disabled:opacity-50 disabled:cursor-not-allowed
           ${
-            isFocused
-              ? 'border-primary shadow-[0_0_30px_rgba(59,130,246,0.3)] scale-[1.02] bg-white'
-              : 'border-primary hover:border-blue-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+            error
+              ? 'border-red-500 shadow-[0_0_0_1px_red]'
+              : isFocused
+                ? 'border-primary shadow-[0_0_30px_rgba(59,130,246,0.3)] scale-[1.02] bg-white'
+                : 'border-primary hover:border-blue-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
           }
           ${disabled ? 'bg-gray-100' : ''}
         `}
@@ -245,7 +265,7 @@ export function SearchBar({
 
       {/* Línea de animación en focus */}
       {isFocused && !disabled && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse" />
+        <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse' />
       )}
 
       {/* Dropdown unificado */}
@@ -277,8 +297,12 @@ export function SearchBar({
         onCancelDelete={() => setLongPressedItem(null)}
         maxVisibleHistory={5}
         maxVisibleSuggestions={5}
-        className="border-2 border-primary/20 rounded-2xl shadow-2xl backdrop-blur-md"
+        className='border-2 border-primary/20 rounded-2xl shadow-2xl backdrop-blur-md'
       />
+      {/* Mensaje de error */}
+      <div className='min-h-5 mt-1'>
+        {error && <p className='text-red-500 text-sm leading-4'>{error}</p>}
+      </div>
     </div>
   );
 }

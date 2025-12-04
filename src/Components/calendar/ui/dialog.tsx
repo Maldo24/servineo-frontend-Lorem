@@ -20,8 +20,8 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
   if (!open) return null;
 
   return createPortal(
-    <div aria-modal="true" role="dialog" className="fixed inset-0 z-[9999] grid place-items-center">
-      <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange?.(false)} />
+    <div aria-modal='true' role='dialog' className='fixed inset-0 z-[9999] grid place-items-center'>
+      <div className='fixed inset-0 bg-black/50' onClick={() => onOpenChange?.(false)} />
       {children}
     </div>,
     document.body,

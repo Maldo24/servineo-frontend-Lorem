@@ -1,6 +1,5 @@
 // src/app/redux/services/searchHistoryApi.ts
 import { baseApi } from './baseApi';
-import { ensureSessionId } from '@/app/lib/session';
 
 interface SearchHistoryItem {
   searchTerm: string;
@@ -27,100 +26,133 @@ interface SuggestionsResponse {
   suggestions?: SuggestionItem[];
 }
 
+// Helper seguro que obtiene sessionId solo en cliente
+function getClientSessionId(): string {
+  if (typeof window === 'undefined') {
+    console.warn('⚠️ getClientSessionId llamado en servidor, retornando vacío');
+    return '';
+  }
+
+  let sid = localStorage.getItem('sessionId');
+
+  if (!sid) {
+    sid = crypto.randomUUID?.() || `sid-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    localStorage.setItem('sessionId', sid);
+  }
+
+  return sid;
+}
+
+// Helper para actualizar sessionId desde backend
+function updateSessionIdFromResponse(response: { sessionId?: string }) {
+  if (typeof window === 'undefined') return;
+
+  if (response.sessionId) {
+    const currentSid = localStorage.getItem('sessionId');
+    if (currentSid !== response.sessionId) {
+      localStorage.setItem('sessionId', response.sessionId);
+    }
+  }
+}
+
+// Helper para construir URLs con params
+function buildUrlWithParams(
+  base: string,
+  params: Record<string, string | number | boolean>,
+): string {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+  return queryString ? `${base}?${queryString}` : base;
+}
+
 export const searchHistoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // ===== OBTENER HISTORIAL =====
     getSearchHistory: builder.query<string[], string>({
       query: (searchTerm = '') => {
-        // Asegurar que existe sessionId antes de cada petición
-        ensureSessionId();
-        const sessionId = localStorage.getItem('sessionId') || '';
+        const sessionId = getClientSessionId();
 
-        return {
-          url: `/devmaster/offers`,
-          params: {
-            action: 'getHistory',
-            search: searchTerm,
-            sessionId,
-          },
-        };
+        if (!sessionId) {
+          console.error('❌ No se pudo obtener sessionId');
+          return { url: '/devmaster/offers', method: 'GET' };
+        }
+
+        const url = buildUrlWithParams('/devmaster/offers', {
+          action: 'getHistory',
+          search: searchTerm,
+          sessionId: sessionId,
+        });
+
+        return { url, method: 'GET' };
       },
       transformResponse: (response: HistoryResponse) => {
-        if (response.sessionId && typeof window !== 'undefined') {
-          const currentSid = localStorage.getItem('sessionId');
-          if (currentSid !== response.sessionId) {
-            console.log('🔄 Actualizando sessionId desde getHistory:', response.sessionId);
-            localStorage.setItem('sessionId', response.sessionId);
-          }
-        }
+        updateSessionIdFromResponse(response);
 
         if (response.success && response.searchHistory) {
           return response.searchHistory.map((item) => item.searchTerm);
         }
+
         return [];
       },
       providesTags: ['SearchHistory'],
     }),
 
-    // ===== ELIMINAR ITEM DEL HISTORIAL =====
+    // ===== ELIMINAR ITEM =====
     deleteSearchHistory: builder.mutation<{ success: boolean; updatedHistory: string[] }, string>({
       query: (searchTerm) => {
-        ensureSessionId();
-        const sessionId = localStorage.getItem('sessionId') || '';
+        const sessionId = getClientSessionId();
 
-        return {
-          url: `/devmaster/offers`,
-          params: {
-            action: 'deleteHistory',
-            searchTerm,
-            sessionId,
-          },
-        };
-      },
-      transformResponse: (response: HistoryResponse) => {
-        if (response.sessionId && typeof window !== 'undefined') {
-          const currentSid = localStorage.getItem('sessionId');
-          if (currentSid !== response.sessionId) {
-            console.log('🔄 Actualizando sessionId desde deleteHistory:', response.sessionId);
-            localStorage.setItem('sessionId', response.sessionId);
-          }
+        if (!sessionId) {
+          console.error('❌ No se pudo obtener sessionId');
+          return { url: '/devmaster/offers', method: 'GET' };
         }
 
-        return {
-          success: response.success,
-          updatedHistory: response.searchHistory?.map((item) => item.searchTerm) || [],
-        };
+        const url = buildUrlWithParams('/devmaster/offers', {
+          action: 'deleteHistory',
+          searchTerm: searchTerm,
+          sessionId: sessionId,
+        });
+
+        return { url, method: 'GET' };
+      },
+      transformResponse: (response: HistoryResponse) => {
+        updateSessionIdFromResponse(response);
+
+        const updatedHistory = response.searchHistory?.map((i) => i.searchTerm) || [];
+        return { success: response.success, updatedHistory };
       },
       invalidatesTags: ['SearchHistory'],
     }),
 
-    // ===== LIMPIAR TODO EL HISTORIAL =====
+    // ===== LIMPIAR TODO =====
     clearSearchHistory: builder.mutation<{ success: boolean; updatedHistory: string[] }, void>({
       query: () => {
-        ensureSessionId();
-        const sessionId = localStorage.getItem('sessionId') || '';
+        const sessionId = getClientSessionId();
 
-        return {
-          url: `/devmaster/offers`,
-          params: {
-            action: 'clearAllHistory',
-            sessionId,
-          },
-        };
-      },
-      transformResponse: (response: HistoryResponse) => {
-        if (response.sessionId && typeof window !== 'undefined') {
-          const currentSid = localStorage.getItem('sessionId');
-          if (currentSid !== response.sessionId) {
-            console.log('🔄 Actualizando sessionId desde clearHistory:', response.sessionId);
-            localStorage.setItem('sessionId', response.sessionId);
-          }
+        if (!sessionId) {
+          console.error('❌ No se pudo obtener sessionId');
+          return { url: '/devmaster/offers', method: 'GET' };
         }
 
-        return {
-          success: response.success,
-          updatedHistory: response.searchHistory?.map((item) => item.searchTerm) || [],
-        };
+        const url = buildUrlWithParams('/devmaster/offers', {
+          action: 'clearAllHistory',
+          sessionId: sessionId,
+        });
+
+        return { url, method: 'GET' };
+      },
+      transformResponse: (response: HistoryResponse) => {
+        updateSessionIdFromResponse(response);
+
+        const updatedHistory = response.searchHistory?.map((i) => i.searchTerm) || [];
+        return { success: response.success, updatedHistory };
       },
       invalidatesTags: ['SearchHistory'],
     }),
@@ -128,40 +160,37 @@ export const searchHistoryApi = baseApi.injectEndpoints({
     // ===== OBTENER SUGERENCIAS =====
     getSearchSuggestions: builder.query<string[], { query: string; limit?: number }>({
       query: ({ query, limit = 6 }) => {
-        ensureSessionId();
-        const sessionId = localStorage.getItem('sessionId') || '';
+        const sessionId = getClientSessionId();
 
-        return {
-          url: `/devmaster/offers`,
-          params: {
-            search: query,
-            limit,
-            record: 'false', // No registrar en historial
-            sessionId,
-          },
-        };
+        if (!sessionId) {
+          console.error('❌ No se pudo obtener sessionId');
+          return { url: '/devmaster/offers', method: 'GET' };
+        }
+
+        const url = buildUrlWithParams('/devmaster/offers', {
+          search: query,
+          limit: limit,
+          record: false,
+          sessionId: sessionId,
+        });
+
+        return { url, method: 'GET' };
       },
       transformResponse: (response: SuggestionsResponse) => {
-        if (response.sessionId && typeof window !== 'undefined') {
-          const currentSid = localStorage.getItem('sessionId');
-          if (currentSid !== response.sessionId) {
-            console.log('🔄 Actualizando sessionId desde suggestions:', response.sessionId);
-            localStorage.setItem('sessionId', response.sessionId);
-          }
-        }
+        updateSessionIdFromResponse(response);
 
         if (response.success && response.suggestions) {
           return response.suggestions.map((s) => String(s.term ?? '')).filter(Boolean);
         }
+
         return [];
       },
-      // No invalidar tags porque es solo lectura
     }),
   }),
   overrideExisting: false,
 });
 
-// ===== EXPORTAR HOOKS =====
+// EXPORT HOOKS
 export const {
   useGetSearchHistoryQuery,
   useDeleteSearchHistoryMutation,

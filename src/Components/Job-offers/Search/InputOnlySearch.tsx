@@ -15,13 +15,13 @@ export const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ search }) =>
   const trimmed = search?.trim();
 
   return (
-    <div className="text-center py-12">
-      <p className="text-gray-500 text-xl font-roboto font-normal">
+    <div className='text-center py-12'>
+      <p className='text-gray-500 text-xl font-roboto font-normal'>
         {t('noResults')}
         {trimmed && (
           <>
             {' '}
-            {t('for')} <span className="font-bold">&quot;{trimmed}&quot;</span>
+            {t('for')} <span className='font-bold'>&quot;{trimmed}&quot;</span>
           </>
         )}
       </p>
@@ -93,11 +93,11 @@ export const InputOnlySearch = ({ onSearch, onValueChange }: InputOnlySearchProp
   }`;
 
   return (
-    <div className="w-full">
-      <div className="relative">
+    <div className='w-full'>
+      <div className='relative'>
         <SearchIcon hasError={hasError} />
         <Input
-          type="text"
+          type='text'
           placeholder={t('placeholder')}
           className={inputClasses}
           value={value}
@@ -106,7 +106,7 @@ export const InputOnlySearch = ({ onSearch, onValueChange }: InputOnlySearchProp
         />
         {value.length > 0 && <ClearButton onClick={handleClear} />}
       </div>
-      <div className="h-2 mt-1">{hasError && <p className="text-red-500 text-sm">{error}</p>}</div>
+      <div className='h-2 mt-1'>{hasError && <p className='text-red-500 text-sm'>{error}</p>}</div>
     </div>
   );
 };

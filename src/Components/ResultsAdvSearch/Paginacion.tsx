@@ -24,11 +24,11 @@ const Paginacion: React.FC<PaginacionProps> = ({
   const yaLlegoAlFinal = registrosMostrados >= totalRegistros;
 
   return (
-    <div className="flex gap-1 flex-wrap justify-center mt-4">
+    <div className='flex gap-1 flex-wrap justify-center mt-4'>
       {paginaActual > 1 && (
         <button
           onClick={() => onChange(paginaActual - 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-blue-500 hover:text-white"
+          className='px-3 py-1 rounded bg-gray-200 hover:bg-blue-500 hover:text-white'
         >
           {t('previous')}
         </button>

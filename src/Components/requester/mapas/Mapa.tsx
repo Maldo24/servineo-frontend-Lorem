@@ -102,7 +102,7 @@ export default function MapaLeaflet() {
         pais || null,
       );
 
-      window.location.href = '/';
+      window.location.href = '/signUp/registrar/registrarTelefono';
     } catch (error) {
       console.error(error);
     }
@@ -153,7 +153,7 @@ export default function MapaLeaflet() {
             style={{ height: '100%', width: '100%' }}
           >
             <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
             />
             {position && ubicacionPermitida && <MoveMapToPosition position={position} />}
@@ -193,7 +193,7 @@ export default function MapaLeaflet() {
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2B6AE0')}
           onClick={manejarEnvio}
         >
-          {cargandoDireccion ? 'Obteniendo dirección...' : 'Finalizar registro'}
+          {cargandoDireccion ? 'Obteniendo dirección...' : 'Continuar'}
         </button>
       </div>
     </div>

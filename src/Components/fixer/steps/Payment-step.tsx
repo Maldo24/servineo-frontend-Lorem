@@ -17,9 +17,9 @@ interface PaymentStepProps {
 }
 
 const PAYMENT_CONFIG: Record<PaymentMethod, { label: string; icon: React.ReactNode }> = {
-  cash: { label: 'Efectivo', icon: <Banknote className="h-4 w-4" /> },
-  qr: { label: 'QR', icon: <QrCode className="h-4 w-4" /> },
-  card: { label: 'Tarjeta', icon: <CreditCard className="h-4 w-4" /> },
+  cash: { label: 'Efectivo', icon: <Banknote className='h-4 w-4' /> },
+  qr: { label: 'QR', icon: <QrCode className='h-4 w-4' /> },
+  card: { label: 'Tarjeta', icon: <CreditCard className='h-4 w-4' /> },
 };
 
 export function PaymentStep({
@@ -48,13 +48,13 @@ export function PaymentStep({
   };
 
   return (
-    <Card title="Métodos de pago aceptados">
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
+    <Card title='Métodos de pago aceptados'>
+      <div className='space-y-4'>
+        <div className='flex flex-wrap gap-2'>
           {(['cash', 'qr', 'card'] as const).map((m) => (
             <button
               key={m}
-              type="button"
+              type='button'
               onClick={() => onTogglePayment(m)}
               className={
                 'rounded-full px-4 py-2 text-sm transition-all flex items-center gap-2 ' +
@@ -70,17 +70,17 @@ export function PaymentStep({
         </div>
 
         {needsAccount && (
-          <div className="space-y-2 animate-fade-in">
-            <label className="text-sm text-gray-800">Nro de Cuenta para recibir pagos</label>
+          <div className='space-y-2 animate-fade-in'>
+            <label className='text-sm text-gray-800'>Nro de Cuenta para recibir pagos</label>
             <input
               value={accountInfo}
               onChange={(e) => handleAccountChange(e.target.value)}
-              placeholder="Ingrese solo números de su cuenta"
+              placeholder='Ingrese solo números de su cuenta'
               maxLength={34}
-              className="w-full rounded-full bg-gray-200 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              className='w-full rounded-full bg-gray-200 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition-all'
             />
-            <div className="flex justify-between items-center px-2">
-              <p className="text-xs text-gray-600">
+            <div className='flex justify-between items-center px-2'>
+              <p className='text-xs text-gray-600'>
                 Solo números, máximo 34 caracteres ({accountInfo.length}/34)
               </p>
               <span
@@ -97,14 +97,14 @@ export function PaymentStep({
         )}
 
         {paymentsError && (
-          <div className="flex items-center gap-1 text-sm text-red-600">
-            <AlertCircle className="h-4 w-4" />
+          <div className='flex items-center gap-1 text-sm text-red-600'>
+            <AlertCircle className='h-4 w-4' />
             <span>{paymentsError}</span>
           </div>
         )}
         {accountError && (
-          <div className="flex items-center gap-1 text-sm text-red-600">
-            <AlertCircle className="h-4 w-4" />
+          <div className='flex items-center gap-1 text-sm text-red-600'>
+            <AlertCircle className='h-4 w-4' />
             <span>{accountError}</span>
           </div>
         )}

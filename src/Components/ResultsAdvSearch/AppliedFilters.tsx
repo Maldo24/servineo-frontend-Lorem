@@ -13,13 +13,13 @@ export const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ search }) =>
   const trimmed = search?.trim();
 
   return (
-    <div className="text-center py-12">
-      <p className="text-gray-500 text-xl font-roboto font-normal">
+    <div className='text-center py-12'>
+      <p className='text-gray-500 text-xl font-roboto font-normal'>
         {t('noResults')}
         {trimmed && (
           <>
             {' '}
-            {t('for')} <span className="font-bold">&quot;{trimmed}&quot;</span>
+            {t('for')} <span className='font-bold'>&quot;{trimmed}&quot;</span>
           </>
         )}
       </p>
@@ -78,11 +78,11 @@ export default function AppliedFilters({ params, onModify }: Props) {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-6 px-4">
+    <div className='w-full max-w-5xl mx-auto mt-6 px-4'>
       <div className="bg-white border rounded-lg shadow-sm p-4 flex items-center justify-between font-['Roboto'] text-sm">
         <div>
-          <p className="text-sm font-semibold text-gray-700">{t('searchPlaceholder')}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <p className='text-sm font-semibold text-gray-700'>{t('searchPlaceholder')}</p>
+          <div className='mt-2 flex flex-wrap gap-2'>
             {(() => {
               const minRaw = params['minPrice'] as FilterParamValue;
               const maxRaw = params['maxPrice'] as FilterParamValue;
@@ -107,8 +107,8 @@ export default function AppliedFilters({ params, onModify }: Props) {
 
                 tags.push(
                   <span
-                    key="price"
-                    className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                    key='price'
+                    className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                   >
                     {text}
                   </span>,
@@ -124,7 +124,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                   tags.push(
                     <span
                       key={k}
-                      className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                      className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                     >
                       {txt}
                     </span>,
@@ -136,7 +136,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                   tags.push(
                     <span
                       key={k}
-                      className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                      className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                     >
                       {t('titleOnly')}
                     </span>,
@@ -148,7 +148,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                   tags.push(
                     <span
                       key={k}
-                      className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                      className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                     >
                       {t('exactWords')}
                     </span>,
@@ -162,7 +162,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                   tags.push(
                     <span
                       key={k}
-                      className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                      className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                     >
                       {`${t('date')}: ${dateLabel}`}
                     </span>,
@@ -176,7 +176,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                     tags.push(
                       <span
                         key={k}
-                        className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                        className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                       >
                         {`Calificación: ${ratingNum.toFixed(1)}`}
                       </span>,
@@ -192,7 +192,7 @@ export default function AppliedFilters({ params, onModify }: Props) {
                 tags.push(
                   <span
                     key={k}
-                    className="inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded"
+                    className='inline-block bg-sky-50 text-sky-500 text-sm px-3 py-1 rounded'
                   >
                     {value}
                   </span>,
@@ -204,11 +204,11 @@ export default function AppliedFilters({ params, onModify }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center mt-3">
+        <div className='flex items-center mt-3'>
           <button
-            type="button"
+            type='button'
             onClick={handleModify}
-            className="bg-[#2B6AE0] text-white hover:bg-[#2B6AE0]/90 px-4 py-2 text-sm sm:text-base font-roboto font-semibold rounded shadow transition-all duration-200"
+            className='bg-[#2B6AE0] text-white hover:bg-[#2B6AE0]/90 px-4 py-2 text-sm sm:text-base font-roboto font-semibold rounded shadow transition-all duration-200'
           >
             {t('modify')}
           </button>

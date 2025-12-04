@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { ZoomIn } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { useTranslations } from 'next-intl';
 
@@ -11,10 +11,7 @@ interface AdvancedSearchButtonProps {
   alt?: string;
 }
 
-export function AdvancedSearchButton({
-  src = '/img/advSearch.jpg',
-  alt,
-}: AdvancedSearchButtonProps) {
+export function AdvancedSearchButton({}: AdvancedSearchButtonProps) {
   const t = useTranslations('search');
   const router = useRouter();
 
@@ -26,8 +23,8 @@ export function AdvancedSearchButton({
     <Button
       onClick={handleClick}
       aria-label={t('goToAdvancedSearch')}
-      size="lg"
-      className="
+      size='lg'
+      className='
         bg-[#2B6AE0] text-white
         hover:bg-[#2B6AE0]/90
         shrink-0
@@ -39,16 +36,10 @@ export function AdvancedSearchButton({
         shadow
         transition-all duration-200
         flex items-center justify-center
-      "
+      '
     >
-      <div className="flex-shrink-0">
-        <Image
-          src={src}
-          alt={alt ?? t('advancedSearch')}
-          width={32}
-          height={32}
-          className="rounded-full object-cover"
-        />
+      <div className='flex-shrink-0'>
+        <ZoomIn className='w-8 h-8' strokeWidth={2.8} />
       </div>
     </Button>
   );

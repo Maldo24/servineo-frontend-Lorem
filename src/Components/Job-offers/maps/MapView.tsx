@@ -347,22 +347,22 @@ export function MapView({ offers, onOfferClick }: MapViewProps) {
   // Si no estamos en el cliente, mostrar un placeholder
   if (!isClient) {
     return (
-      <div className="w-full h-full rounded-2xl overflow-hidden shadow-lg border border-blue-200 bg-gray-200 flex items-center justify-center">
+      <div className='w-full h-full rounded-2xl overflow-hidden shadow-lg border border-blue-200 bg-gray-200 flex items-center justify-center'>
         <p>Cargando mapa...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg border border-blue-200">
-      <div ref={mapRef} className="w-full h-full relative" />
+    <div className='relative w-full h-full rounded-2xl overflow-hidden shadow-lg border border-blue-200'>
+      <div ref={mapRef} className='w-full h-full relative' />
 
       {/* ======================================================================
           📍 PANEL "DETALLES DE LA OFERTA" (JobQuickInfo) - OPTIMIZADO
           ====================================================================== */}
       {hoveredOffer && (
         <div
-          className="absolute top-4 left-1/4 -translate-x-1/2 z-[400] animate-in fade-in slide-in-from-top-4 duration-200 w-full max-w-sm px-4"
+          className='absolute top-4 left-1/4 -translate-x-1/2 z-[400] animate-in fade-in slide-in-from-top-4 duration-200 w-full max-w-sm px-4'
           onMouseEnter={() => {
             // Marcar que estamos sobre la tarjeta
             isHoveringCardRef.current = true;
@@ -408,98 +408,98 @@ export function MapView({ offers, onOfferClick }: MapViewProps) {
       )}
 
       {/* Botones de zoom */}
-      <div className="absolute top-4 left-4 flex flex-col gap-0 z-[450] bg-white rounded-lg shadow-md border border-gray-300 overflow-hidden">
+      <div className='absolute top-4 left-4 flex flex-col gap-0 z-[450] bg-white rounded-lg shadow-md border border-gray-300 overflow-hidden'>
         <button
           onClick={handleZoomIn}
-          className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors border-b border-gray-300"
-          aria-label="Zoom in"
+          className='w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors border-b border-gray-300'
+          aria-label='Zoom in'
         >
-          <span className="text-xl font-semibold leading-none">+</span>
+          <span className='text-xl font-semibold leading-none'>+</span>
         </button>
         <button
           onClick={handleZoomOut}
-          className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors"
-          aria-label="Zoom out"
+          className='w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors'
+          aria-label='Zoom out'
         >
-          <span className="text-xl font-semibold leading-none">−</span>
+          <span className='text-xl font-semibold leading-none'>−</span>
         </button>
       </div>
 
       {/* ======================================================================
           📍 PANEL DINÁMICO "DETALLES DEL MAPA" CON CONTROL DE RADIO
           ====================================================================== */}
-      <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-xl border border-blue-300 rounded-2xl p-4 shadow-2xl shadow-blue-500/20 z-[450] animate-in fade-in slide-in-from-right duration-500 max-w-xs">
-        <h4 className="font-bold text-sm text-primary mb-3 flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
+      <div className='absolute bottom-4 right-4 bg-white/95 backdrop-blur-xl border border-blue-300 rounded-2xl p-4 shadow-2xl shadow-blue-500/20 z-[450] animate-in fade-in slide-in-from-right duration-500 max-w-xs'>
+        <h4 className='font-bold text-sm text-primary mb-3 flex items-center gap-2'>
+          <MapPin className='w-4 h-4' />
           Detalles del mapa
         </h4>
-        <div className="space-y-2.5 text-sm">
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="relative">
-              <div className="w-5 h-5 rounded-full bg-primary border-2 border-white shadow-lg transition-transform duration-300 group-hover:scale-110" />
+        <div className='space-y-2.5 text-sm'>
+          <div className='flex items-center gap-3 group cursor-default'>
+            <div className='relative'>
+              <div className='w-5 h-5 rounded-full bg-primary border-2 border-white shadow-lg transition-transform duration-300 group-hover:scale-110' />
             </div>
-            <span className="font-medium">Tu ubicación</span>
+            <span className='font-medium'>Tu ubicación</span>
           </div>
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="relative">
-              <div className="w-5 h-5 rounded-full bg-black/20 border-2 border-white shadow-lg transition-transform duration-300 group-hover:scale-110" />
+          <div className='flex items-center gap-3 group cursor-default'>
+            <div className='relative'>
+              <div className='w-5 h-5 rounded-full bg-black/20 border-2 border-white shadow-lg transition-transform duration-300 group-hover:scale-110' />
             </div>
-            <span className="font-medium">Ofertas de trabajo</span>
+            <span className='font-medium'>Ofertas de trabajo</span>
           </div>
 
           {/* Control de Radio */}
-          <div className="pt-3 border-t border-blue-500/30 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700 text-xs font-medium">Radio de búsqueda</span>
-              <span className="text-primary text-sm font-bold">{radiusKm.toFixed(1)} km</span>
+          <div className='pt-3 border-t border-blue-500/30 space-y-3'>
+            <div className='flex items-center justify-between'>
+              <span className='text-gray-700 text-xs font-medium'>Radio de búsqueda</span>
+              <span className='text-primary text-sm font-bold'>{radiusKm.toFixed(1)} km</span>
             </div>
 
             {/* Slider */}
-            <div className="relative">
+            <div className='relative'>
               <input
-                type="range"
-                min="0.5"
-                max="10"
-                step="0.5"
+                type='range'
+                min='0.5'
+                max='10'
+                step='0.5'
                 value={radiusKm}
                 onChange={(e) => handleRadiusChange(parseFloat(e.target.value))}
-                className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-700 transition-all"
+                className='w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600 hover:accent-blue-700 transition-all'
               />
-              <div className="flex justify-between text-xs text-gray-400 mt-1">
+              <div className='flex justify-between text-xs text-gray-400 mt-1'>
                 <span>0.5km</span>
                 <span>10km</span>
               </div>
             </div>
 
             {/* Botones +/- */}
-            <div className="flex items-center justify-center gap-2">
+            <div className='flex items-center justify-center gap-2'>
               <button
                 onClick={decreaseRadius}
                 disabled={radiusKm <= 0.5}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:scale-110"
-                aria-label="Disminuir radio"
+                className='w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:scale-110'
+                aria-label='Disminuir radio'
               >
-                <Minus className="w-4 h-4" />
+                <Minus className='w-4 h-4' />
               </button>
-              <span className="text-xs text-gray-500 min-w-[60px] text-center">Ajustar radio</span>
+              <span className='text-xs text-gray-500 min-w-[60px] text-center'>Ajustar radio</span>
               <button
                 onClick={increaseRadius}
                 disabled={radiusKm >= 10}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:scale-110"
-                aria-label="Aumentar radio"
+                className='w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:scale-110'
+                aria-label='Aumentar radio'
               >
-                <Plus className="w-4 h-4" />
+                <Plus className='w-4 h-4' />
               </button>
             </div>
           </div>
         </div>
 
         {/* Contador de ofertas */}
-        <div className="mt-3 pt-3 border-t border-blue-500/30">
-          <p className="text-xs font-semibold text-primary">
+        <div className='mt-3 pt-3 border-t border-blue-500/30'>
+          <p className='text-xs font-semibold text-primary'>
             {offersInRadius} {offersInRadius === 1 ? 'oferta' : 'ofertas'} en el radio
           </p>
-          <p className="text-xs text-gray-500 mt-1">{offers.length} total disponibles</p>
+          <p className='text-xs text-gray-500 mt-1'>{offers.length} total disponibles</p>
         </div>
       </div>
     </div>

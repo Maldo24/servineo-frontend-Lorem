@@ -37,14 +37,14 @@ export function JobFixerSection({ jobType, fixers, matchCount }: JobFixerSection
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className='border border-gray-200 rounded-lg overflow-hidden bg-white'>
       <button
         onClick={() => dispatch(toggleJobExpanded(jobType))}
-        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 transition-colors"
+        className='w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 transition-colors'
       >
-        <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-gray-800">{formatJobType(jobType)}</h3>
-          <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+        <div className='flex items-center gap-2'>
+          <h3 className='text-lg font-semibold text-gray-800'>{formatJobType(jobType)}</h3>
+          <span className='text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full'>
             ({matchCount})
           </span>
         </div>
@@ -56,11 +56,11 @@ export function JobFixerSection({ jobType, fixers, matchCount }: JobFixerSection
       </button>
 
       {isExpanded && (
-        <div className="p-6 space-y-4 animate-fade-in">
+        <div className='p-6 space-y-4 animate-fade-in'>
           {fixers.length > 0 ? (
             fixers.map((fixer) => <FixerCard key={fixer.id} fixer={fixer} />)
           ) : (
-            <p className="text-center text-gray-500 py-8">No hay resultados</p>
+            <p className='text-center text-gray-500 py-8'>No hay resultados</p>
           )}
         </div>
       )}

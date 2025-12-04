@@ -8,7 +8,7 @@ interface Params {
   search?: string;
   filters?: {
     range?: string[];
-    city?: string;
+    city?: string[];
     category?: string[];
     tags?: string[];
     minPrice?: number | null;
@@ -68,7 +68,7 @@ export const useSyncUrlParamsAdv = (p: Params) => {
     if (titleOnly) params.set('titleOnly', 'true');
     if (exact) params.set('exact', 'true');
     filterRange?.forEach((r) => params.append('range', r));
-    if (filterCity) params.set('city', filterCity);
+    if (filterCity && filterCity.length) params.set('city', filterCity.join(','));
     if (filterCategory && filterCategory.length) params.set('category', filterCategory.join(','));
     if (filterTags && filterTags.length) params.set('tags', filterTags.join(','));
     if (filterMinPrice != null) params.set('minPrice', String(filterMinPrice));

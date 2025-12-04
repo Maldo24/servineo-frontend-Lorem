@@ -106,36 +106,36 @@ export default function DatePicker({ selectedDate, onDateChange }: DatePickerPro
             className={`flex items-center justify-center bg-white text-gray-800 rounded-xl shadow-sm px-3 py-2 border transition-all duration-200 w-fit cursor-text
                 ${isFocused ? 'border-blue-500 ring-2 ring-blue-300 shadow-md' : 'border-gray-200 hover:shadow-md'}
             `}
-        >
-            <input
-                className="w-10 text-center font-medium text-xl focus:outline-none bg-transparent"
-                type="text"
-                value={day}
-                onChange={handleDateChange}
-                onBlur={handleDayBlur}
-                placeholder="DD"
-                onFocus={() => setIsFocused(true)}
-            />
-            <span className="text-gray-400 text-2xl mx-1">/</span>
-            <input
-                className="w-10 text-center font-medium text-xl focus:outline-none bg-transparent"
-                type="text"
-                value={month}
-                onChange={handleMonthChange}
-                onBlur={handleMonthBlur}
-                placeholder="MM"
-                onFocus={() => setIsFocused(true)}
-            />
-            <span className="text-gray-400 text-2xl mx-1">/</span>
-            <input
-                className="w-14 text-center font-medium text-xl focus:outline-none bg-transparent"
-                type="text"
-                value={year}
-                onChange={handleYearChange}
-                onBlur={handleYearBlur}
-                placeholder="YYYY"
-                onFocus={() => setIsFocused(true)}
-            />
-        </div>
-    );
+    >
+      <input
+        className='w-10 text-center font-medium text-xl focus:outline-none bg-transparent'
+        type='text'
+        value={day}
+        onChange={handleDateChange}
+        onBlur={handleDayBlur}
+        placeholder='DD'
+        onFocus={() => setIsFocused(true)}
+      />
+      <span className='text-gray-400 text-2xl mx-1'>/</span>
+      <input
+        className='w-10 text-center font-medium text-xl focus:outline-none bg-transparent'
+        type='text'
+        value={month}
+        onChange={handleMonthChange}
+        onBlur={handleMonthBlur}
+        placeholder='MM'
+        onFocus={() => setIsFocused(true)}
+      />
+      <span className='text-gray-400 text-2xl mx-1'>/</span>
+      <input
+        className='w-14 text-center font-medium text-xl focus:outline-none bg-transparent'
+        type='text'
+        value={year}
+        onChange={handleYearChange}
+        onBlur={handleYearBlur}
+        placeholder='YYYY'
+        onFocus={() => setIsFocused(true)}
+      />
+    </div>
+  );
 }

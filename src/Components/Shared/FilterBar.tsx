@@ -48,10 +48,10 @@ export function FilterBar({
             isOpen ? 'text-blue-500 rotate-180 scale-110' : 'text-blue-600'
           }`}
         />
-        <span className="text-blue-900">Filtros</span>
+        <span className='text-blue-900'>Filtros</span>
 
         {selectedFilters.length > 0 && (
-          <span className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-full shadow-lg shadow-blue-500/50 animate-pulse">
+          <span className='px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-full shadow-lg shadow-blue-500/50 animate-pulse'>
             {selectedFilters.length}
           </span>
         )}
@@ -60,26 +60,26 @@ export function FilterBar({
       {!disabled && isOpen && filters.length > 0 && (
         <>
           {/* Backdrop overlay */}
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className='fixed inset-0 z-40' onClick={() => setIsOpen(false)} />
 
-          <div className="absolute top-full left-0 right-0 mt-3 p-6 bg-white/95 backdrop-blur-xl border-2 border-blue-300 rounded-2xl shadow-[0_0_40px_rgba(59,130,246,0.3)] z-50 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-500" />
-                <h3 className="text-sm font-bold text-blue-900">Selecciona tus filtros</h3>
+          <div className='absolute top-full left-0 right-0 mt-3 p-6 bg-white/95 backdrop-blur-xl border-2 border-blue-300 rounded-2xl shadow-[0_0_40px_rgba(59,130,246,0.3)] z-50 animate-in fade-in slide-in-from-top-4 duration-300'>
+            <div className='flex items-center justify-between mb-4'>
+              <div className='flex items-center gap-2'>
+                <Sparkles className='w-4 h-4 text-blue-500' />
+                <h3 className='text-sm font-bold text-blue-900'>Selecciona tus filtros</h3>
               </div>
               {selectedFilters.length > 0 && (
                 <button
                   onClick={onClearFilters}
-                  className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                  className='flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors'
                 >
-                  <X className="w-3 h-3" />
+                  <X className='w-3 h-3' />
                   Limpiar todo
                 </button>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className='flex flex-wrap gap-2'>
               {filters.map((filter, index) => {
                 const isSelected = selectedFilters.includes(filter);
                 return (
@@ -100,14 +100,14 @@ export function FilterBar({
                   >
                     {filter}
                     {isSelected && (
-                      <span className="ml-2 inline-block w-2 h-2 bg-white rounded-full animate-pulse" />
+                      <span className='ml-2 inline-block w-2 h-2 bg-white rounded-full animate-pulse' />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+            <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50' />
           </div>
         </>
       )}

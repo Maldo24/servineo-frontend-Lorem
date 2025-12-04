@@ -39,16 +39,20 @@ export default function SortCard({ value, onSelect }: SortCardProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          className="flex font-bold items-center gap-2 !border-black hover:!bg-[#2B6AE0] hover:!text-white !transition-colors"
+          variant='outline'
+          className='flex font-bold items-center gap-2
+          !bg-[#2B6AE0] !text-white !transition-colors hover:!bg-[#2B6AE0]/90
+            !shadow-md
+            focus-visible:!ring-0 focus-visible:!ring-offset-0
+            py-5'
         >
           {currentLabel}
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className='h-4 w-4' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="start"
-        className="!bg-white !border-black !shadow-md !rounded-lg z-70"
+        align='start'
+        className='!bg-white !border-black !shadow-md !rounded-lg z-70'
       >
         {sortOptions.map((option) => (
           <DropdownMenuItem

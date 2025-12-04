@@ -37,12 +37,12 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
   }
 
   return (
-    <div className="relative aspect-[16/9] overflow-hidden group">
+    <div className='relative aspect-video overflow-hidden group'>
       <Image
         src={images[currentIndex]}
         alt={`${alt} - Imagen ${currentIndex + 1}`}
         fill
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
+        className='object-cover transition-transform duration-500 group-hover:scale-105'
         priority
       />
 
@@ -54,24 +54,24 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
               e.stopPropagation();
               handlePrevious();
             }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
-            aria-label="Imagen anterior"
+            className='absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70'
+            aria-label='Imagen anterior'
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className='w-5 h-5' />
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleNext();
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
-            aria-label="Siguiente imagen"
+            className='absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70'
+            aria-label='Siguiente imagen'
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className='w-5 h-5' />
           </button>
 
           {/* Dots Indicators */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+          <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5'>
             {images.map((_, index) => (
               <button
                 key={index}

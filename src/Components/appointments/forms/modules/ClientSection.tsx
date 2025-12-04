@@ -20,23 +20,23 @@ export const ClientSection = React.forwardRef<HTMLInputElement, ClientSectionPro
     };
 
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
         <Input
           ref={ref}
-          label="Cliente *"
+          label='Cliente *'
           value={client}
           readOnly={readonly}
           onChange={(e) => onClientChange(e.target.value)}
-          placeholder="Nombre del cliente"
+          placeholder='Nombre del cliente'
           error={errors.client}
         />
 
         <Input
-          label="Contacto *"
+          label='Contacto *'
           value={contact}
           readOnly={readonly}
           onChange={handleContactChange}
-          placeholder="7XXXXXXX"
+          placeholder='7XXXXXXX'
           error={errors.contact}
         />
       </div>

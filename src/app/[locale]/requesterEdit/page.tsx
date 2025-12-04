@@ -10,6 +10,8 @@ import ChangePasswordForm from '@/Components/requester/request/ChangePasswordFor
 //import { obtenerDatosUsuarioLogueado } from '../redux/services/editNumber';
 //import CloseSessionPage from '@/app/requesterEdit/closeSession/page';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+
 /*
 interface RequesterDataState {
   requesterId: string
@@ -27,6 +29,7 @@ const INITIAL_DATA: RequesterDataState = {
 }
 */
 export default function ConfiguracionPage() {
+  const t = useTranslations('ConfiguracionPage');
   const { user } = useAuth();
   const router = useRouter();
   //const [menuOpen, setMenuOpen] = useState(false);
@@ -37,9 +40,6 @@ export default function ConfiguracionPage() {
   //const [profileData, setProfileData] = useState<RequesterDataState>(INITIAL_DATA)
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
-
-  // 🆕 Estados para HU8 (Cambiar Contraseña)
-  //onst [passwordChanging, setPasswordChanging] = useState(false)
 
   type SafeUser = { name?: string; email?: string; url_photo?: string };
   const safeUser = (user as SafeUser) ?? null;
@@ -52,7 +52,6 @@ export default function ConfiguracionPage() {
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
-  //Función para cargar datos de perfil (HU5)
   const loadProfileData = useCallback(async () => {
     if (!user) return;
 
@@ -60,27 +59,14 @@ export default function ConfiguracionPage() {
     setProfileError(null);
 
     try {
-      //const rawData = await obtenerDatosUsuarioLogueado()
-      /*
-      const data: RequesterDataState = {
-        requesterId: rawData.requesterId,
-        phone: rawData.telefono || '',
-        direction: rawData.ubicacion?.direccion || '',
-        coordinates: [
-          rawData.ubicacion?.lat || 0,
-          rawData.ubicacion?.lng || 0,
-        ],
-      }
-      */
-      //setProfileData(data)
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error al cargar los datos del perfil.';
+      const message = err instanceof Error ? err.message : t('errors.loadProfile');
       setProfileError(message);
       //setProfileData(INITIAL_DATA)
     } finally {
       setProfileLoading(false);
     }
-  }, [user]);
+  }, [user, t]);
 
   //Cargar datos cuando se activa la sección de perfil
   useEffect(() => {
@@ -107,31 +93,35 @@ export default function ConfiguracionPage() {
       case 'perfil':
         if (profileLoading) {
           return (
-            <div className="flex items-center justify-center h-64">
-              <p className="text-blue-600 text-lg animate-pulse">Cargando datos del perfil...</p>
+            <div className='flex items-center justify-center h-64'>
+              <p className='text-blue-600 text-lg animate-pulse'>{t('loading.profile')}</p>
             </div>
           );
         }
 
         if (profileError) {
           return (
-            <div className="max-w-md mx-auto text-center">
-              <h2 className="text-xl font-semibold text-red-600 mb-4">Error de Carga</h2>
-              <p className="text-gray-600 mb-6">No se pudo cargar el perfil: {profileError}</p>
+            <div className='max-w-md mx-auto text-center'>
+              <h2 className='text-xl font-semibold text-red-600 mb-4'>{t('errors.loadTitle')}</h2>
+              <p className='text-gray-600 mb-6'>
+                {t('errors.loadMessage', { error: profileError })}
+              </p>
               <button
                 onClick={loadProfileData}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300"
+                className='bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300'
               >
-                Reintentar Carga
+                {t('buttons.retry')}
               </button>
             </div>
           );
         }
 
         return (
-          <div className="max-w-4xl w-full">
-            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">Editar Perfil</h2>
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+          <div className='max-w-4xl w-full'>
+            <h2 className='text-2xl font-bold text-center mb-8 text-gray-800'>
+              {t('sections.editProfile')}
+            </h2>
+            <div className='bg-white rounded-2xl shadow-lg p-6 border border-gray-200'>
               <RequesterEditForm />
             </div>
           </div>
@@ -139,11 +129,11 @@ export default function ConfiguracionPage() {
 
       case 'password':
         return (
-          <div className="max-w-2xl w-full">
-            <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">
-              Cambiar Contraseña
+          <div className='max-w-2xl w-full'>
+            <h2 className='text-2xl font-bold text-center mb-8 text-gray-800'>
+              {t('sections.changePassword')}
             </h2>
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+            <div className='bg-white rounded-2xl shadow-lg p-6 border border-gray-200'>
               <ChangePasswordForm onCancel={handlePasswordCancel} onSaved={handlePasswordSaved} />
             </div>
           </div>
@@ -151,45 +141,62 @@ export default function ConfiguracionPage() {
 
       case 'seguridad':
         return (
-          <div className="max-w-4xl w-full">
-            <h2 className="text-xl font-semibold text-center mb-2">Seguridad</h2>
-            <p className="text-sm text-center text-gray-600 mb-8">
-              Opciones y recomendaciones que te ayudan a proteger tu cuenta
+          <div className='max-w-4xl w-full'>
+            <h2 className='text-xl font-semibold text-center mb-2'>{t('sections.security')}</h2>
+            <p className='text-sm text-center text-gray-600 mb-8'>
+              {t('sections.securityDescription')}
             </p>
 
-            <div className="flex justify-center gap-6">
+            <div className='flex justify-center gap-6'>
               {/* Cambiar contraseña - Ahora interno */}
               <button
                 onClick={() => setSeccionActiva('password')}
-                className="flex items-center gap-3 px-6 py-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out bg-white text-gray-800 cursor-pointer min-w-[220px]"
+                className='flex items-center gap-3 px-6 py-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out bg-white text-gray-800 cursor-pointer min-w-[220px]'
               >
-                <div className="p-2 rounded-md bg-blue-50">
+                <div className='p-2 rounded-md bg-blue-50'>
                   <Image
-                    src="/icons/edit-pass.png"
-                    alt="Cambiar contraseña"
+                    src='/icons/edit-pass.png'
+                    alt={t('security.changePassword')}
                     width={32}
                     height={32}
-                    className="w-8 h-8 object-contain text-blue-600"
+                    className='w-8 h-8 object-contain text-blue-600'
                   />
                 </div>
-                <span className="font-medium">Cambiar contraseña</span>
+                <span className='font-medium'>{t('security.changePassword')}</span>
               </button>
 
               {/* Dispositivos vinculados */}
               <button
-                onClick={() => router.push('/requesterEdit/closeSession/')}
-                className="flex items-center gap-3 px-6 py-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out bg-white text-gray-800 cursor-pointer min-w-[220px]"
+                onClick={() => router.push('/requesterEdit/dispositivosVinculados/')}
+                className='flex items-center gap-3 px-6 py-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out bg-white text-gray-800 cursor-pointer min-w-[220px]'
               >
-                <div className="p-2 rounded-md bg-blue-50">
+                <div className='p-2 rounded-md bg-blue-50'>
                   <Image
-                    src="/icons/logins.png"
-                    alt="Dispositivos vinculados"
+                    src='/icons/logins.png'
+                    alt={t('security.linkedDevices')}
                     width={24}
                     height={24}
-                    className="w-6 h-6 object-contain text-blue-600"
+                    className='w-6 h-6 object-contain text-blue-600'
                   />
                 </div>
-                <span className="font-medium">Dispositivos vinculados</span>
+                <span className='font-medium'>{t('security.linkedDevices')}</span>
+              </button>
+
+              {/* 🆕 Authenticator (nuevo botón) */}
+              <button
+                onClick={() => router.push('/requesterEdit/Seguridad/Authenticator/')}
+                className='flex items-center gap-3 px-6 py-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out bg-white text-gray-800 cursor-pointer min-w-[220px]'
+              >
+                <div className='p-2 rounded-md bg-blue-50'>
+                  <Image
+                    src='/icons/appauth.png'
+                    alt='Authenticator'
+                    width={24}
+                    height={24}
+                    className='w-6 h-6 object-contain text-blue-600'
+                  />
+                </div>
+                <span className='font-medium'>Authenticator</span>
               </button>
             </div>
           </div>
@@ -200,35 +207,32 @@ export default function ConfiguracionPage() {
 
       default: // 'inicio'
         return (
-          <div className="flex flex-col items-center justify-top flex-1 mt-10">
+          <div className='flex flex-col items-center justify-top flex-1 mt-10'>
             {safeUser ? (
               <>
-                <div className="mb-4">
+                <div className='mb-4'>
                   {safeUser.url_photo ? (
                     <Image
                       src={safeUser.url_photo}
-                      alt="Foto de perfil"
+                      alt={t('welcome.profilePhoto')}
                       width={112}
                       height={112}
-                      className="w-28 h-28 rounded-full border-4 border-blue-100 object-cover mb-4 shadow-sm"
+                      className='w-28 h-28 rounded-full border-4 border-blue-100 object-cover mb-4 shadow-sm'
                     />
                   ) : (
-                    <div className="w-28 h-28 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-semibold text-blue-700 mb-4 shadow-sm border-4 border-blue-200">
+                    <div className='w-28 h-28 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-semibold text-blue-700 mb-4 shadow-sm border-4 border-blue-200'>
                       {getInitials(safeUser.name ?? safeUser.email ?? '')}
                     </div>
                   )}
                 </div>
-                <h2 className="text-2xl font-semibold mb-2 text-gray-800">
-                  Te damos la bienvenida,{' '}
-                  <span className="text-blue-600">{safeUser.name ?? 'Usuario'}</span>
+                <h2 className='text-2xl font-semibold mb-2 text-gray-800'>
+                  {t('welcome.title', { name: safeUser.name ?? t('welcome.defaultName') })}{' '}
+                  <span className='text-blue-600'>{safeUser.name ?? 'Usuario'}</span>
                 </h2>
-                <p className="text-gray-600 max-w-md text-center">
-                  Gestiona tu información, privacidad y seguridad para mejorar tu experiencia en{' '}
-                  <strong>Servineo</strong>.
-                </p>
+                <p className='text-gray-600 max-w-md text-center'>{t('welcome.description')}</p>
               </>
             ) : (
-              <p className="text-gray-600">Inicia sesión para ver tus configuraciones.</p>
+              <p className='text-gray-600'>{t('welcome.loginRequired')}</p>
             )}
           </div>
         );
@@ -236,26 +240,26 @@ export default function ConfiguracionPage() {
   };
 
   return (
-    <div className="font-sans flex flex-col min-h-screen bg-gray-50 text-gray-800">
+    <div className='font-sans flex flex-col min-h-screen bg-gray-50 text-gray-800'>
       {/* Header - igual */}
 
-      <div className="flex flex-1">
+      <div className='flex flex-1'>
         {/* Sidebar actualizado */}
-        <aside className="w-64 bg-white p-6 flex flex-col justify-between relative shadow-md">
+        <aside className='w-64 bg-white p-6 flex flex-col justify-between relative shadow-md'>
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <div className='flex items-center justify-between mb-4'>
+              <h2 className='text-lg font-semibold text-gray-800 flex items-center gap-2'>
                 <button
                   onClick={() => router.back()}
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600"
+                  className='flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600'
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className='w-4 h-4' />
                 </button>
-                Configuración
+                {t('title')}
               </h2>
             </div>
 
-            <nav className="space-y-2">
+            <nav className='space-y-2'>
               {/* Editar Perfil - Ahora interno */}
               <button
                 onClick={() => setSeccionActiva('perfil')}
@@ -266,13 +270,13 @@ export default function ConfiguracionPage() {
                 }`}
               >
                 <Image
-                  src="/icons/edit-config.png"
-                  alt="Editar Perfil"
+                  src='/icons/edit-config.png'
+                  alt={t('navigation.editProfile')}
                   width={24}
                   height={24}
-                  className="w-6 h-6"
+                  className='w-6 h-6'
                 />
-                Editar Perfil
+                {t('navigation.editProfile')}
               </button>
 
               {/* Seguridad - Estado interno */}
@@ -285,13 +289,13 @@ export default function ConfiguracionPage() {
                 }`}
               >
                 <Image
-                  src="/icons/seguridad-config.png"
-                  alt="Seguridad"
+                  src='/icons/seguridad-config.png'
+                  alt={t('navigation.security')}
                   width={28}
                   height={28}
-                  className="w-7 h-7"
+                  className='w-7 h-7'
                 />
-                Seguridad
+                {t('navigation.security')}
               </button>
 
               {/* Cuentas vinculadas - Estado interno */}
@@ -304,20 +308,20 @@ export default function ConfiguracionPage() {
                 }`}
               >
                 <Image
-                  src="/icons/cuentas.png"
-                  alt="Cuentas"
+                  src='/icons/cuentas.png'
+                  alt={t('navigation.linkedAccounts')}
                   width={28}
                   height={28}
-                  className="w-7 h-7"
+                  className='w-7 h-7'
                 />
-                Cuentas vinculadas
+                {t('navigation.linkedAccounts')}
               </button>
             </nav>
           </div>
         </aside>
 
         {/* Contenido dinámico */}
-        <main className="flex-1 flex flex-col items-center text-center p-8 relative">
+        <main className='flex-1 flex flex-col items-center text-center p-8 relative'>
           {renderContenido()}
         </main>
       </div>

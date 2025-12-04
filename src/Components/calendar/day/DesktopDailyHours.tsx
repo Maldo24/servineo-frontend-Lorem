@@ -34,7 +34,7 @@ export default function DesktopDailyHours({ date, view }: DesktopDailyViewProps)
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className='flex-1 flex flex-col'>
       {hours.map((hour) => (
         <HourCell
           key={hour}

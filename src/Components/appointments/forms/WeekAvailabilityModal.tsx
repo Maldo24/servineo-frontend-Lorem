@@ -198,30 +198,30 @@ export const WeekAvailabilityModal = forwardRef<
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
-          <AvailabilityHeader headerText="Seleccionar Disponibilidad" onClose={handleClose} />
+      <div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'>
+        <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-6'>
+          <AvailabilityHeader headerText='Seleccionar Disponibilidad' onClose={handleClose} />
 
-          <p className="text-black font-semibold mb-4">Días de trabajo de la semana</p>
+          <p className='text-black font-semibold mb-4'>Días de trabajo de la semana</p>
 
           {loading ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-2">Cargando configuración...</span>
+            <div className='flex justify-center items-center py-8'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+              <span className='ml-2'>Cargando configuración...</span>
             </div>
           ) : error ? (
-            <div className="text-red-600 text-center py-4">
+            <div className='text-red-600 text-center py-4'>
               {error}
-              <div className="flex gap-2 justify-center mt-3">
+              <div className='flex gap-2 justify-center mt-3'>
                 <button
                   onClick={loadPreviousConfiguration}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                  className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm'
                 >
                   Reintentar
                 </button>
                 <button
                   onClick={handleClose}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm"
+                  className='px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm'
                 >
                   Cerrar
                 </button>
@@ -231,13 +231,13 @@ export const WeekAvailabilityModal = forwardRef<
             <>
               <WeekDaysSection selectedDays={selectedDays} onDaysChange={handleDaysChange} />
 
-              <p className="text-sm text-gray-700 mb-4">
+              <p className='text-sm text-gray-700 mb-4'>
                 *Los días seleccionados (azules) se aplicarán como laborales para todas las semanas
                 de cada mes.
               </p>
 
               <AvailabilityActions
-                confirmPlaceholder="Guardar"
+                confirmPlaceholder='Guardar'
                 onCancel={handleCancel}
                 onConfirm={handleConfirm}
               />

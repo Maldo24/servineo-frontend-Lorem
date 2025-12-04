@@ -8,7 +8,7 @@ const MapaLeaflet = dynamic(() => import('@/Components/requester/mapas/MapaLeafl
 
 export default function PageUbicacion() {
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-50">
+    <div className='w-full min-h-screen flex flex-col items-center justify-center bg-gray-50'>
       <MapaLeaflet />
     </div>
   );

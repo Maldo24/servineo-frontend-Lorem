@@ -21,7 +21,7 @@ export default function MobileList({
 
   return (
     <div>
-      <div className="flex flex-col bg-gray-200 rounded-full p-1 w-fit mx-auto cursor-pointer">
+      <div className='flex flex-col bg-gray-200 rounded-full p-1 w-fit mx-auto cursor-pointer'>
         <div>
           <button
             onClick={() => setType('day')}
@@ -42,7 +42,7 @@ export default function MobileList({
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className='mt-4'>
         {type === 'day' && (
           <DaySchedule
             fixerId={fixerId}
@@ -53,7 +53,7 @@ export default function MobileList({
         )}
       </div>
 
-      <div className="mt-4">
+      <div className='mt-4'>
         {type === 'week' && (
           <WeekSchedule
             fixerId={fixerId}

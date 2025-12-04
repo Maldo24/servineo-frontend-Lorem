@@ -148,26 +148,26 @@ export default function ChangePasswordForm({ onCancel }: Props) {
   };
 
   return (
-    <div className="relative flex flex-col gap-6 rounded-lg border border-[#E5F4FB] bg-white p-6 shadow-sm transition-all duration-300">
-      <p className="text-sm text-gray-400 mb-2">
+    <div className='relative flex flex-col gap-6 rounded-lg border border-[#E5F4FB] bg-white p-6 shadow-sm transition-all duration-300'>
+      <p className='text-sm text-gray-400 mb-2'>
         Elige una contraseña segura y no la utilices en otras cuentas.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
         {/* Contraseña actual */}
         <div>
           <label
-            htmlFor="currentPassword"
-            className="block text-sm font-semibold text-[#1A223F] mb-2 text-left"
+            htmlFor='currentPassword'
+            className='block text-sm font-semibold text-[#1A223F] mb-2 text-left'
           >
             Contraseña actual
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              id="currentPassword"
+              id='currentPassword'
               type={showCurrentPassword ? 'text' : 'password'}
               {...register('currentPassword')}
-              placeholder="Ingresa tu contraseña actual"
+              placeholder='Ingresa tu contraseña actual'
               className={`w-full rounded-md border px-3 py-2 text-[#1A223F] placeholder-gray-400 focus:outline-none focus:ring-1 ${
                 errors.currentPassword
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -181,32 +181,32 @@ export default function ChangePasswordForm({ onCancel }: Props) {
               }}
             />
             <button
-              type="button"
+              type='button'
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3"
+              className='absolute inset-y-0 right-0 flex items-center pr-3'
             >
               {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {errors.currentPassword && (
-            <p className="text-sm text-red-600 mt-1">{errors.currentPassword.message}</p>
+            <p className='text-sm text-red-600 mt-1'>{errors.currentPassword.message}</p>
           )}
         </div>
 
         {/* Nueva contraseña */}
         <div>
           <label
-            htmlFor="newPassword"
-            className="block text-sm font-semibold text-[#1A223F] mb-2 text-left"
+            htmlFor='newPassword'
+            className='block text-sm font-semibold text-[#1A223F] mb-2 text-left'
           >
             Nueva contraseña
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              id="newPassword"
+              id='newPassword'
               type={showNewPassword ? 'text' : 'password'}
               {...register('newPassword')}
-              placeholder="Mínimo 8 caracteres, mayúscula, minúscula, número"
+              placeholder='Mínimo 8 caracteres, mayúscula, minúscula, número'
               className={`w-full rounded-md border px-3 py-2 text-[#1A223F] placeholder-gray-400 focus:outline-none focus:ring-1 ${
                 errors.newPassword
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -220,32 +220,32 @@ export default function ChangePasswordForm({ onCancel }: Props) {
               }}
             />
             <button
-              type="button"
+              type='button'
               onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3"
+              className='absolute inset-y-0 right-0 flex items-center pr-3'
             >
               {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {errors.newPassword && (
-            <p className="text-sm text-red-600 mt-1">{errors.newPassword.message}</p>
+            <p className='text-sm text-red-600 mt-1'>{errors.newPassword.message}</p>
           )}
         </div>
 
         {/* Confirmar contraseña */}
         <div>
           <label
-            htmlFor="confirmPassword"
-            className="block text-sm font-semibold text-[#1A223F] mb-2 text-left"
+            htmlFor='confirmPassword'
+            className='block text-sm font-semibold text-[#1A223F] mb-2 text-left'
           >
             Confirmar nueva contraseña
           </label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              id="confirmPassword"
+              id='confirmPassword'
               type={showConfirmPassword ? 'text' : 'password'}
               {...register('confirmPassword')}
-              placeholder="Repita su nueva contraseña"
+              placeholder='Repita su nueva contraseña'
               className={`w-full rounded-md border px-3 py-2 text-[#1A223F] placeholder-gray-400 focus:outline-none focus:ring-1 ${
                 errors.confirmPassword
                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -259,15 +259,15 @@ export default function ChangePasswordForm({ onCancel }: Props) {
               }}
             />
             <button
-              type="button"
+              type='button'
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3"
+              className='absolute inset-y-0 right-0 flex items-center pr-3'
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>
+            <p className='text-sm text-red-600 mt-1'>{errors.confirmPassword.message}</p>
           )}
         </div>
 
@@ -283,14 +283,14 @@ export default function ChangePasswordForm({ onCancel }: Props) {
             }`}
           >
             {(apiError.includes('bloqueada') || apiError.includes('Demasiados intentos')) && (
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">🔒</span>
+              <div className='flex items-center gap-2 mb-2'>
+                <span className='text-lg'>🔒</span>
                 <strong>Seguridad Activada</strong>
               </div>
             )}
             {apiError.includes('restantes') && (
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-lg">⚠️</span>
+              <div className='flex items-center gap-2 mb-1'>
+                <span className='text-lg'>⚠️</span>
                 <strong>Atención</strong>
               </div>
             )}
@@ -299,47 +299,47 @@ export default function ChangePasswordForm({ onCancel }: Props) {
         )}
 
         {success && (
-          <div className="rounded-md bg-green-50 p-3 text-sm text-green-700 transition-opacity duration-1000 ease-out flex items-center gap-2">
-            <span className="text-lg">✅</span>
+          <div className='rounded-md bg-green-50 p-3 text-sm text-green-700 transition-opacity duration-1000 ease-out flex items-center gap-2'>
+            <span className='text-lg'>✅</span>
             {success}
           </div>
         )}
 
         {/* Resto del componente igual... */}
-        <div className="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">Última modificación:</span>
+        <div className='mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200'>
+          <div className='flex items-center gap-2'>
+            <span className='text-sm font-medium text-gray-700'>Última modificación:</span>
             {cargandoFecha ? (
-              <div className="flex items-center gap-1">
-                <Loader2 size={14} className="animate-spin" />
-                <span className="text-sm text-gray-500">Cargando...</span>
+              <div className='flex items-center gap-1'>
+                <Loader2 size={14} className='animate-spin' />
+                <span className='text-sm text-gray-500'>Cargando...</span>
               </div>
             ) : (
-              <span className="text-sm text-gray-600">{ultimaModificacion}</span>
+              <span className='text-sm text-gray-600'>{ultimaModificacion}</span>
             )}
           </div>
         </div>
 
         {/* Botones */}
-        <div className="pt-4 flex justify-end gap-3">
+        <div className='pt-4 flex justify-end gap-3'>
           <button
-            type="submit"
+            type='submit'
             disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0] disabled:bg-[#759AE0]"
+            className='flex items-center gap-2 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0] disabled:bg-[#759AE0]'
           >
             {isSubmitting ? (
               <>
-                <Loader2 size={14} className="animate-spin" /> Guardando...
+                <Loader2 size={14} className='animate-spin' /> Guardando...
               </>
             ) : (
               'Cambiar contraseña'
             )}
           </button>
           <button
-            type="button"
+            type='button'
             onClick={() => (onCancel ? onCancel() : router.back())}
             disabled={isSubmitting}
-            className="rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20"
+            className='rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20'
           >
             Cancelar
           </button>
@@ -348,23 +348,23 @@ export default function ChangePasswordForm({ onCancel }: Props) {
 
       {/* Modal igual... */}
       {showSuggestionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white w-[520px] rounded-lg shadow-lg overflow-hidden">
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60'>
+          <div className='bg-white w-[520px] rounded-lg shadow-lg overflow-hidden'>
             <div
-              className="text-center text-white font-semibold py-4 text-lg"
+              className='text-center text-white font-semibold py-4 text-lg'
               style={{
                 background: 'linear-gradient(135deg, #2B31E0 0%, #1AA7ED 50%, #5E2BE0 100%)',
               }}
             >
               Sugerencia
             </div>
-            <div className="p-6 text-center text-[#1A223F] text-base">
+            <div className='p-6 text-center text-[#1A223F] text-base'>
               Servineo te recomienda cerrar todas las sesiones activas de tus dispositivos.
             </div>
-            <div className="flex justify-between px-6 pb-6 gap-6">
+            <div className='flex justify-between px-6 pb-6 gap-6'>
               <button
                 onClick={() => router.push('/')}
-                className="flex-1 rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20"
+                className='flex-1 rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20'
               >
                 No, cerrar sesiones
               </button>
@@ -381,7 +381,7 @@ export default function ChangePasswordForm({ onCancel }: Props) {
                     alert('No se pudo cerrar todas las sesiones. Intenta nuevamente.');
                   }
                 }}
-                className="flex-1 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0]"
+                className='flex-1 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0]'
               >
                 Sí, cerrar sesiones
               </button>

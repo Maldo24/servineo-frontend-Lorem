@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# Lock files
+package-lock.json
+
 # next.js
 /.next/
 /out/
@@ -33,6 +36,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env
 .env.local
+.env.example
 
 # vercel
 .vercel

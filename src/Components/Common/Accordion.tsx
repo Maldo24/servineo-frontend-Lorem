@@ -45,8 +45,8 @@ const Accordion = ({
 
   return (
     <div className={['w-full', className].filter(Boolean).join(' ')}>
-      <button type="button" className={headerClasses} onClick={toggle}>
-        <span className="text-gray-700">{title}</span>
+      <button type='button' className={headerClasses} onClick={toggle}>
+        <span className='text-gray-700'>{title}</span>
         <ChevronDown
           className={[
             'w-4 h-4 text-gray-500 transform transition-transform duration-200',
@@ -57,7 +57,7 @@ const Accordion = ({
         />
       </button>
       <div className={contentClasses}>
-        <div className="p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg">
+        <div className='p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg'>
           {children}
         </div>
       </div>

@@ -46,7 +46,8 @@ export function parseUrlToFilters(searchParams: URLSearchParams): {
 } {
   const search = searchParams.get('search') || '';
   const ranges = searchParams.getAll('range');
-  const city = searchParams.get('city') || '';
+  const cityRaw = searchParams.get('city') || '';
+  const city = cityRaw ? cityRaw.split(',').filter(Boolean) : [];
 
   const categoryRaw = searchParams.get('category') || '';
   const category = categoryRaw ? categoryRaw.split(',').filter(Boolean) : [];
@@ -73,6 +74,12 @@ export function parseUrlToFilters(searchParams: URLSearchParams): {
   const rating =
     ratingRaw != null ? (Number.isNaN(Number(ratingRaw)) ? null : Number(ratingRaw)) : null;
 
+  // ✅ NUEVO: Detectar si la categoría fue automarcada desde búsqueda
+  const isAutoSelectedCategory = search.trim() !== '' && category.length > 0;
+
+  // ✅ NUEVO: Detectar si la ciudad fue automarcada desde búsqueda
+  const isAutoSelectedCity = search.trim() !== '' && city.length > 0;
+
   return {
     search,
     filters: {
@@ -82,6 +89,8 @@ export function parseUrlToFilters(searchParams: URLSearchParams): {
       tags,
       minPrice,
       maxPrice,
+      isAutoSelectedCategory, // ✅ Agregado
+      isAutoSelectedCity, // ✅ Agregado
     },
     sortBy,
     page,
@@ -162,6 +171,8 @@ export function filtersToUrlParams(params: {
   exact?: boolean;
   date?: string | null;
   rating?: number | null;
+  totalRegistros?: number;
+  totalPages?: number;
 }): URLSearchParams {
   const urlParams = new URLSearchParams();
 
@@ -172,7 +183,9 @@ export function filtersToUrlParams(params: {
   if (params.filters?.range?.length) {
     params.filters.range.forEach((r) => urlParams.append('range', r));
   }
-  if (params.filters?.city) urlParams.set('city', params.filters.city);
+  if (params.filters?.city?.length) {
+    urlParams.set('city', params.filters.city.join(','));
+  }
   if (params.filters?.category?.length) {
     urlParams.set('category', params.filters.category.join(','));
   }
@@ -191,7 +204,8 @@ export function filtersToUrlParams(params: {
   if (params.rating != null) urlParams.set('rating', String(params.rating));
   if (params.page != null) urlParams.set('page', String(params.page));
   if (params.limit != null) urlParams.set('limit', String(params.limit));
-
+  if (params.totalRegistros != null) urlParams.set('total', String(params.totalRegistros));
+  if (params.totalPages != null) urlParams.set('totalPages', String(params.totalPages));
   return urlParams;
 }
 

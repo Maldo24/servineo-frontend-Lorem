@@ -1,3 +1,4 @@
+// esto ya no se utilizara
 import { baseApi } from './baseApi';
 
 export interface JobOfferLocation {

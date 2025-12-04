@@ -6,7 +6,6 @@ import React, {
     useRef,
     useState,
 } from "react";
-import axios from "axios";
 import { z } from "zod";
 import LocationModal from "./LocationModal";
 import AppointmentSummaryModal from "./AppointmentSummaryModal";
@@ -28,6 +27,25 @@ interface RescheduleFormProps {
     onSuccess?: () => void;
 }
 
+interface ApiResponse {
+    success?: boolean;
+    message?: string;
+    modified?: boolean;
+    data?: {
+        _id?: string;
+        current_requester_name?: string;
+        current_requester_phone?: string;
+        appointment_description?: string;
+        mail?: string | string[];
+        appointment_type?: string;
+        latitude?: number | string;
+        longitude?: number | string;
+        display_name_location?: string;
+        link_id?: string;
+    };
+    [key: string]: unknown;
+}
+
 const baseSchema = z.object({
     client: z
         .string()
@@ -45,7 +63,7 @@ const baseSchema = z.object({
             message: "El correo debe ser de Gmail (@gmail.com)"
         })
         .optional()
-        .or(z.literal('')), // Permite campo vacío
+        .or(z.literal('')),
 
     description: z
         .string()
@@ -87,8 +105,7 @@ const appointmentSchema = z.discriminatedUnion("modality", [
     presentialSchema,
 ]);
 
-const API_BASE =
-    process.env.NEXT_PUBLIC_BACKEND;
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND;
 
 function ymd(iso: string) {
     const d = new Date(iso);
@@ -213,7 +230,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(
                         String(startHour(pastDate))
                     )}`;
 
-                const res = await axios.get(url, {
+                const res = await axios.get<ApiResponse>(url, {
                     headers: { Accept: "application/json" },
                     timeout: 10000,
                 });
@@ -350,7 +367,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(
                     reprogram_reason: motivo ?? "Sin motivo",
                 };
 
-                const updateRes = await axios.put(updateUrl, updatePayload, {
+                const updateRes = await axios.put<ApiResponse>(updateUrl, updatePayload, {
                     headers: { "Content-Type": "application/json" },
                     timeout: 10000,
                 });
@@ -394,7 +411,7 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(
                             : null,
                 };
 
-                const createRes = await axios.post(
+                const createRes = await axios.post<ApiResponse>(
                     `${API_BASE}/api/crud_create/appointments/create`,
                     createPayload,
                     {
@@ -435,18 +452,12 @@ export default forwardRef<RescheduleFormHandle, RescheduleFormProps>(
                     motive: motivo || undefined,
                 });
                 setShowSummary(true);
-            } catch (err: unknown) {
+            } catch (err) {
                 console.error("Error en reprogramación:", err);
 
-                if (axios.isAxiosError(err)) {
+                if (err instanceof Error) {
                     setErrors({
-                        general:
-                            err.response?.data?.message ||
-                            `Error servidor (${err.response?.status})`,
-                    });
-                } else if (err instanceof Error) {
-                    setErrors({
-                        general: err?.message || "No se pudo reprogramar",
+                        general: err.message || "No se pudo reprogramar",
                     });
                 } else {
                     setErrors({

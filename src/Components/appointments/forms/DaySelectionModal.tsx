@@ -118,28 +118,28 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
             isOpen ? 'scale-100' : 'scale-95'
           }"
           >
-            <AvailabilityHeader headerText="Seleccionar Disponibilidad" onClose={handleClose} />
+            <AvailabilityHeader headerText='Seleccionar Disponibilidad' onClose={handleClose} />
 
-            <p className="text-black font-semibold mb-4">Días de trabajo de la semana</p>
+            <p className='text-black font-semibold mb-4'>Días de trabajo de la semana</p>
 
             {loading ? (
-              <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-2">Cargando configuración...</span>
+              <div className='flex justify-center items-center py-8'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+                <span className='ml-2'>Cargando configuración...</span>
               </div>
             ) : error ? (
-              <div className="text-red-600 text-center py-4">
+              <div className='text-red-600 text-center py-4'>
                 {error}
-                <div className="flex gap-2 justify-center mt-3">
+                <div className='flex gap-2 justify-center mt-3'>
                   <button
                     onClick={loadPreviousConfiguration}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                    className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm'
                   >
                     Reintentar
                   </button>
                   <button
                     onClick={handleClose}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm"
+                    className='px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm'
                   >
                     Cerrar
                   </button>
@@ -152,13 +152,13 @@ export const DaySelectionModal = forwardRef<DaySelectionModalHandles, DaySelecti
                   onDaysChange={handleSelectedDaysChange}
                 />
 
-                <p className="text-sm text-gray-700 mb-4">
+                <p className='text-sm text-gray-700 mb-4'>
                   *Se editará la disponibilidad los días seleccionados (azules)
                 </p>
 
                 <AvailabilityActions
                   onCancel={handleCancel}
-                  confirmPlaceholder="Editar"
+                  confirmPlaceholder='Editar'
                   onConfirm={handleConfirm}
                   confirmDisabled={isConfirmDisabled}
                 />

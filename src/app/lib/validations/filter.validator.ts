@@ -17,7 +17,7 @@ const nameRangeArray = z.array(RangeEnum).default([]);
 
 const cityRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s-]+$/;
 const cityString = z.string().trim().regex(cityRegex, { message: 'Ciudad inválida.' });
-const cityUnion = z.union([cityString, z.literal('')]).default('');
+const cityArray = z.array(cityString).default([]);
 
 const categoryItem = z
   .string()
@@ -28,7 +28,7 @@ const categoryItem = z
 
 const FilterSchema = z.object({
   range: nameRangeArray,
-  city: cityUnion,
+  city: cityArray,
   category: z.array(categoryItem).default([]),
 });
 

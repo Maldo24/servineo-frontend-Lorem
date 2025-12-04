@@ -3,6 +3,7 @@ const CLIENT_BASE = '/api/controlC/cliente';
 
 export interface AuthProvider {
   provider: 'email' | 'google' | 'discord' | 'github';
+  providerId?: string;
   email?: string;
   token?: string;
 }

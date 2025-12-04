@@ -124,23 +124,23 @@ export const DayAvailabilityModal = forwardRef<
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
-          <AvailabilityHeader headerText="Seleccionar Disponibilidad" onClose={handleClose} />
+      <div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50'>
+        <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-6'>
+          <AvailabilityHeader headerText='Seleccionar Disponibilidad' onClose={handleClose} />
 
-          <p className="text-black font-semibold mb-4">
+          <p className='text-black font-semibold mb-4'>
             Horas de trabajo para:{' '}
             {daysToConfigure.map((day) => day.charAt(0).toUpperCase() + day.slice(1)).join(', ')}
           </p>
 
           <SelectHourSection selectedHours={selectedHours} onHoursChange={toggleHour} />
 
-          <p className="text-sm text-gray-700 mb-4">
+          <p className='text-sm text-gray-700 mb-4'>
             *Las horas seleccionadas (azules) se aplicaran para todos los días laborales
             seleccionados de cada semana.
           </p>
 
-          {error && <div className="text-red-600 text-sm mb-4 p-2 bg-red-50 rounded">{error}</div>}
+          {error && <div className='text-red-600 text-sm mb-4 p-2 bg-red-50 rounded'>{error}</div>}
 
           <AvailabilityActions
             onCancel={handleCancel}

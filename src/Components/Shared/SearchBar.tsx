@@ -22,7 +22,7 @@ export function SearchBar({
 
   return (
     <div className={`flex-1 relative group ${className}`}>
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+      <div className='absolute left-4 top-1/2 -translate-y-1/2 z-10'>
         <Search
           className={`w-5 h-5 transition-all duration-300 ${
             isFocused
@@ -37,7 +37,7 @@ export function SearchBar({
       )} */}
 
       <input
-        type="text"
+        type='text'
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -62,7 +62,7 @@ export function SearchBar({
       />
 
       {isFocused && !disabled && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse" />
+        <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse' />
       )}
     </div>
   );

@@ -46,8 +46,8 @@ export default function MobileHeader({
     });
 
   return (
-    <div className="text-black flex justify-between items-center mb-4 px-2">
-      <div className="flex items-center gap-2">
+    <div className='text-black flex justify-between items-center mb-4 px-2'>
+      <div className='flex items-center gap-2'>
         <button
           onClick={handlePrev}
           disabled={isPrevDisabled}
@@ -60,7 +60,7 @@ export default function MobileHeader({
           &lt;
         </button>
 
-        <span className="text-lg font-semibold">{monthNames[month]}</span>
+        <span className='text-lg font-semibold'>{monthNames[month]}</span>
 
         <button
           onClick={handleNext}
@@ -75,8 +75,8 @@ export default function MobileHeader({
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-lg font-semibold">{year}</span>
+      <div className='flex items-center gap-2'>
+        <span className='text-lg font-semibold'>{year}</span>
       </div>
     </div>
   );

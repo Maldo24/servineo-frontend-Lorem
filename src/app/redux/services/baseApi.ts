@@ -2,7 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Force /api to use Next.js proxy
-const API_URL = '/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL + '/api';
 
 // Log para debugging (solo en desarrollo)
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
@@ -12,11 +12,11 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 export const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
   prepareHeaders: (headers) => {
-    const token = localStorage.getItem('servineo_token');
-    if (token) {
-      headers.set('authorization', `Bearer ${token}`);
-    }
-    headers.set('Content-Type', 'application/json');
+    //const token = localStorage.getItem('servineo_token');
+    // if (token) {
+    //   headers.set('authorization', `Bearer ${token}`);
+    // }
+    // //  headers.set('Content-Type', 'application/json');
     return headers;
   },
   credentials: 'include',
@@ -47,6 +47,7 @@ export const baseApi = createApi({
     'SearchHistory',
     'Experience',
     'Portfolio',
+    'Certification',
   ],
   endpoints: () => ({}),
 });

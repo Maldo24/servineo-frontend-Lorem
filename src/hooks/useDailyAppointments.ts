@@ -83,8 +83,6 @@ export default function useAppointmentsByDate(fixer_id: string, date: Date) {
     [appointments],
   );
 
-  /// todosa <= isHourBooked
-
   const isDisabled = useCallback(
     (day: Date, hour: number): boolean => {
       const dayOfWeek = day.getDay();

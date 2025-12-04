@@ -54,15 +54,15 @@ function ResultsAdvSearchPageContent() {
 
   return (
     <>
-      <main className="pt-20 lg:pt-24 px-4 sm:px-6 md:px-12 lg:px-24 pb-12">
-        <h1 className="text-center text-xl sm:text-2xl md:text-3xl font-bold mb-8 mt-4">
+      <main className='pt-20 lg:pt-24 px-4 sm:px-6 md:px-12 lg:px-24 pb-12'>
+        <h1 className='text-center text-xl sm:text-2xl md:text-3xl font-bold mb-8 mt-4'>
           {t('pageTitle')}
         </h1>
 
         <AppliedFilters params={appliedParams ?? {}} />
-        <div className="flex w-full max-w-5xl mx-auto mt-4 px-4 mb-2 items-center justify-between">
+        <div className='flex w-full max-w-5xl mx-auto mt-4 px-4 mb-2 items-center justify-between'>
           {/* Left side */}
-          <div className="flex items-center gap-4">
+          <div className='flex items-center gap-4'>
             <PaginationSelector
               registrosPorPagina={registrosPorPagina}
               onChange={handleRegistrosChange}
@@ -70,26 +70,26 @@ function ResultsAdvSearchPageContent() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className='flex items-center gap-3'>
             {/* Mobile toggle */}
             <ViewModeToggle
               viewMode={viewMode}
               onChange={setViewMode}
-              variant="mobile"
-              className="flex lg:hidden"
+              variant='mobile'
+              className='flex lg:hidden'
             />
 
             {/* Desktop toggle */}
             <ViewModeToggle
               viewMode={viewMode}
               onChange={setViewMode}
-              variant="desktop"
-              className="hidden lg:flex"
+              variant='desktop'
+              className='hidden lg:flex'
             />
           </div>
         </div>
 
-        <div className="flex justify-center my-4">
+        <div className='flex justify-center my-4'>
           <PaginationInfo
             paginaActual={paginaActual}
             registrosPorPagina={registrosPorPagina}
@@ -98,13 +98,13 @@ function ResultsAdvSearchPageContent() {
         </div>
 
         {/* Cards de resultados (reutilizadas) */}
-        <div className="w-full max-w-5xl mx-auto">
+        <div className='w-full max-w-5xl mx-auto'>
           {!loading && offers && offers.length > 0 ? (
             <JobOffersView offers={offers} viewMode={viewMode} onOfferClick={handleCardClick} />
           ) : !loading ? (
-            <div className="text-gray-500 text-center">{t('noResults')}</div>
+            <div className='text-gray-500 text-center'>{t('noResults')}</div>
           ) : (
-            <div className="text-blue-500 text-center mb-4 p-3 bg-blue-100 rounded">
+            <div className='text-blue-500 text-center mb-4 p-3 bg-blue-100 rounded'>
               {t('loading')}
             </div>
           )}
@@ -112,7 +112,7 @@ function ResultsAdvSearchPageContent() {
 
         {/* Paginación inferior (reutilizada) */}
         {!loading && offers && offers.length > 0 && (
-          <div className="mt-8 mb-24 flex justify-center">
+          <div className='mt-8 mb-24 flex justify-center'>
             <Paginacion
               paginaActual={paginaActual}
               registrosPorPagina={registrosPorPagina}
@@ -133,13 +133,13 @@ function ResultsAdvSearchPageContent() {
 }
 
 export default function ResultsAdvSearchPage() {
-  const t = useTranslations('resultsAdvSearch');
+  const t = useTranslations('AdvSearch');
 
   return (
     <Suspense
       fallback={
-        <div className="pt-20 lg:pt-24 px-4 flex justify-center items-center min-h-screen">
-          <div className="text-blue-500 text-center p-3 bg-blue-100 rounded">
+        <div className='pt-20 lg:pt-24 px-4 flex justify-center items-center min-h-screen'>
+          <div className='text-blue-500 text-center p-3 bg-blue-100 rounded'>
             {t('loadingFallback')}
           </div>
         </div>

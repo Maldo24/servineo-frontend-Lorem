@@ -14,14 +14,14 @@ import {
   setTitleOnly,
   setExact,
   updatePagination,
-  restoreSavedState,
+  //restoreSavedState,
   resetFilters,
   enablePersistence,
   setError,
 } from '@/app/redux/slice/jobOfert';
 import { selectSearchParams, selectJobOffersState } from './selectors';
 import { parseUrlToFilters, filtersToUrlParams, parseAppliedParams } from './parsers';
-import { restoreFromStorage } from './storage';
+// import { restoreFromStorage } from './storage';
 import {
   isFromAdvSearch,
   clearAdvSearchMark,
@@ -31,10 +31,12 @@ import {
 } from './session';
 import { ParamsMap } from './types';
 import { JOBOFERT_ALLOWED_LIMITS } from '@/app/lib/validations/pagination.validator';
+import { sanitizePage } from '@/app/lib/validations/pagination.validator'; //
 
 /**
  * Hook principal que combina RTK Query con el slice de Redux
  */
+
 export function useJobOffers() {
   const dispatch = useAppDispatch();
   const params = useAppSelector(selectSearchParams);
@@ -42,26 +44,7 @@ export function useJobOffers() {
   const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const shouldClearErrorRef = useRef(true);
 
-  // ✅ Validar página < 1
-  useEffect(() => {
-    if (params.page < 1) {
-      dispatch(setError(`La página ${params.page} no es válida. Debe ser mayor o igual a 1.`));
-      setSkipQuery(true);
-      shouldClearErrorRef.current = false;
-
-      errorTimeoutRef.current = setTimeout(() => {
-        dispatch(setPaginaActual(1));
-        setSkipQuery(false);
-        shouldClearErrorRef.current = true;
-      }, 2500);
-
-      return () => {
-        if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
-      };
-    }
-  }, [params.page, dispatch]);
-
-  // ✅ Validar límite inválido
+  // ✅ Validar límite inválido (ANTES de la query)
   useEffect(() => {
     if (!JOBOFERT_ALLOWED_LIMITS.includes(params.limit)) {
       dispatch(
@@ -99,7 +82,19 @@ export function useJobOffers() {
     },
   );
 
-  // ✅ NUEVO - Capturar error 400 del backend
+  // Validar página < 1 (DESPUÉS de declarar data)
+  useEffect(() => {
+    if (!data) return;
+
+    const totalPages = Math.ceil(data.total / params.limit) || 1;
+    const correctedPage = sanitizePage(params.page, totalPages);
+
+    if (correctedPage !== params.page) {
+      dispatch(setPaginaActual(correctedPage));
+    }
+  }, [params.page, params.limit, data, dispatch]);
+
+  // Capturar error 400 del backend
   useEffect(() => {
     if (error && 'status' in error) {
       const fetchError = error as FetchBaseQueryError;
@@ -108,7 +103,6 @@ export function useJobOffers() {
         const message = (fetchError.data as { message?: string }).message;
 
         if (message) {
-          console.log('❌ API ERROR 400:', message);
           dispatch(setError(message));
           shouldClearErrorRef.current = false;
 
@@ -183,8 +177,31 @@ export function useInitialUrlParams() {
       dispatch(setPaginaActual(parsed.page));
       dispatch(enablePersistence());
     } else {
-      const restored = restoreFromStorage();
-      dispatch(restoreSavedState(restored));
+      // const restored = restoreFromStorage();
+
+      // 🔧 MIGRACIÓN: Convertir city de string a string[]
+      // const migratedState = {
+      //   ...restored,
+      //   filters: {
+      // ...restored.filters,
+      // city: (() => {
+      // const cityValue = restored.filters.city;
+      // Si es string, convertir a array
+      // if (typeof cityValue === 'string') {
+      //   return cityValue ? [cityValue] : [];
+      // }
+      // Si ya es array, usar tal cual
+      // if (Array.isArray(cityValue)) {
+      //   return cityValue;
+      // }
+      // Fallback
+      //     return [];
+      //   })(),
+      // },
+      // };
+
+      // dispatch(restoreSavedState(migratedState));
+      dispatch(enablePersistence());
     }
   }, [searchParams, dispatch]);
 }
@@ -217,8 +234,6 @@ export function useSyncUrlParams() {
 
     const queryString = urlParams.toString();
     const target = queryString ? `?${queryString}` : '';
-
-    if (typeof window !== 'undefined' && window.location.search === target) return;
 
     router.replace(target, { scroll: false });
   }, [params, router]);
@@ -295,25 +310,4 @@ export function useAppliedFilters() {
     appliedParams,
     handleClearApplied,
   };
-}
-
-/**
- * Hook para debug/logging en desarrollo
- */
-export function useJobOffersDebug() {
-  const state = useAppSelector(selectJobOffersState);
-  const params = useAppSelector(selectSearchParams);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.group('🔍 JobOffers State');
-      console.log('Current Page:', state.paginaActual);
-      console.log('Total Pages:', state.totalPages);
-      console.log('Total Records:', state.totalRegistros);
-      console.log('Preserved Total:', state.preservedTotalRegistros);
-      console.log('Params:', params);
-      console.log('Error:', state.error);
-      console.groupEnd();
-    }
-  }, [state, params]);
 }

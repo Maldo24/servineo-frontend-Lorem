@@ -14,16 +14,16 @@ export const MeetingLinkSection = ({
   readonly,
 }: MeetingLinkSectionProps) => {
   return (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       <Input
-        label="Enlace de reunión"
+        label='Enlace de reunión'
         value={meetingLink}
         readOnly={readonly}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="https://meet.example.com/abcd"
+        placeholder='https://meet.example.com/abcd'
         error={error}
       />
-      <p className="text-xs text-gray-600">
+      <p className='text-xs text-gray-600'>
         Si no ingresa enlace, se generará uno automáticamente.
       </p>
     </div>

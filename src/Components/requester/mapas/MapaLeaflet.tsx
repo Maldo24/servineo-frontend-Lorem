@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useAuth } from '../auth/usoAutentificacion';
 import { enviarUbicacion, enviarTokenGoogle } from '@/app/redux/services/auth/registro';
+import { useParams } from 'next/navigation';
 
 const customIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
@@ -22,6 +23,9 @@ function MoveMapToPosition({ position }: { position: [number, number] }) {
 }
 
 export default function MapaLeaflet() {
+  const params = useParams();
+  const locale = params.locale;
+
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [ubicacionPermitida, setUbicacionPermitida] = useState<boolean | null>(null);
   const [direccion, setDireccion] = useState<string | null>(null);
@@ -55,7 +59,6 @@ export default function MapaLeaflet() {
               const country = data.address?.country || null;
               let dir = data.display_name || null;
 
-              //Limpiar la dirección para que no repita dep y país
               if (dir) {
                 if (dep) dir = dir.replace(new RegExp(`,?\\s*${dep}`, 'gi'), '');
                 if (country) dir = dir.replace(new RegExp(`,?\\s*${country}`, 'gi'), '');
@@ -94,22 +97,18 @@ export default function MapaLeaflet() {
 
   const manejarEnvio = async () => {
     try {
-      if (cargandoDireccion) {
-        return;
-      }
+      if (cargandoDireccion) return;
 
       let token = localStorage.getItem('servineo_token');
 
       if (!token) {
         const googleToken = sessionStorage.getItem('google_token_temp');
-        if (!googleToken) {
-          return;
-        }
+        if (!googleToken) return;
 
         const data = await enviarTokenGoogle(googleToken);
         if (data.token && data.user) {
           token = data.token;
-          localStorage.setItem('servineo_token', data.token); // ✅ AGREGA ESTA LÍNEA
+          localStorage.setItem('servineo_token', data.token);
           localStorage.setItem('servineo_user', JSON.stringify(data.user));
           setUser(data.user);
           sessionStorage.removeItem('google_token_temp');
@@ -118,7 +117,6 @@ export default function MapaLeaflet() {
         }
       }
 
-      // Enviar lat, lng, dirección, departamento, país
       await enviarUbicacion(
         position?.[0] || 0,
         position?.[1] || 0,
@@ -127,7 +125,8 @@ export default function MapaLeaflet() {
         pais || null,
       );
 
-      window.location.href = '/';
+      //redireccion telefono
+      window.location.href = `/${locale}/signUp/registrar/telefono`;
     } catch (error) {
       console.error(error);
     }
@@ -178,7 +177,7 @@ export default function MapaLeaflet() {
             style={{ height: '100%', width: '100%' }}
           >
             <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
             />
             {position && ubicacionPermitida && <MoveMapToPosition position={position} />}
@@ -214,11 +213,9 @@ export default function MapaLeaflet() {
             transition: '0.2s',
             boxShadow: '0 3px 10px rgba(43,106,224,0.3)',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1AA7ED')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#2B6AE0')}
           onClick={manejarEnvio}
         >
-          {cargandoDireccion ? 'Obteniendo dirección...' : 'Finalizar registro'}
+          {cargandoDireccion ? 'Obteniendo dirección...' : 'Continuar'}
         </button>
       </div>
     </div>

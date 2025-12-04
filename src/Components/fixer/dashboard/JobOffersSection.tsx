@@ -1,362 +1,587 @@
 'use client';
 
 import { useState } from 'react';
-import { PillButton } from '../Pill-button';
-import { Plus, Briefcase, Trash2 } from 'lucide-react';
-import { IJobOffer } from '@/types/fixer-profile';
-import { Modal } from '@/Components/Modal';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus, Briefcase, Upload, X, MoreVertical } from 'lucide-react';
+
+import { PillButton } from '../Pill-button';
+import { Modal } from '@/Components/Modal';
+import NotificationModal from '@/Components/Modal-notifications';
 import { JobOfferCard } from '@/Components/Job-offers/JobOfferCard';
-import type { JobOfferData } from '@/types/jobOffers';
+import Image from 'next/image';
+import { boliviaCities } from '@/app/lib/validations/Job-offer-Schemas';
+import { t } from 'i18next';
+//import { useTranslations } from 'next-intl';
 import { useAppSelector } from '@/app/redux/hooks';
+
 import {
-  useGetJobOffersByFixerQuery,
-  useCreateJobOfferMutation,
-  useUpdateJobOfferMutation,
-  useDeleteJobOfferMutation,
-  CreateJobOfferInput,
-} from '@/app/redux/services/jobOfferApi';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+  useGetJobsByFixerQuery,
+  useCreateJobMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
+  useToggleJobStatusMutation,
+} from '@/app/redux/services/jobApi';
 
-// Type guards para errores
-function isFetchBaseQueryError(error: unknown): error is FetchBaseQueryError {
-  return typeof error === 'object' && error != null && 'status' in error;
+import {
+  jobOfferSchema,
+  jobCategories,
+  type JobOfferFormData,
+} from '@/app/lib/validations/Job-offer-Schemas';
+
+import type { IJobOffer } from '@/types/fixer-profile';
+
+interface NotificationState {
+  isOpen: boolean;
+  type: 'success' | 'error' | 'info' | 'warning';
+  title: string;
+  message: string;
+  onConfirm?: () => void;
 }
 
-function isErrorWithData(error: unknown): error is { data: { error?: string; message?: string } } {
-  return (
-    typeof error === 'object' &&
-    error != null &&
-    'data' in error &&
-    typeof (error as { data: unknown }).data === 'object'
-  );
-}
+type JobStateFilter = 'active' | 'inactive';
 
-interface JobOffersSectionProps {
+export function JobOffersSection({
+  readOnly = false,
+  effectiveeffectiveUserId = '',
+}: {
   readOnly?: boolean;
-}
-
-export function JobOffersSection({ readOnly = false }: JobOffersSectionProps) {
+  effectiveeffectiveUserId?: string;
+}) {
   const { user } = useAppSelector((state) => state.user);
-  const userId = user?._id || '';
+  const effectiveeffectiveeffectiveUserId = effectiveeffectiveUserId || user?._id || '';
 
-  // API Hooks
-  const { data: apiOffers, isLoading } = useGetJobOffersByFixerQuery(userId, {
-    skip: !userId,
+  const { data: apiOffers, isLoading } = useGetJobsByFixerQuery(effectiveeffectiveeffectiveUserId, {
+    skip: !effectiveeffectiveeffectiveUserId,
   });
-  const [createOffer] = useCreateJobOfferMutation();
-  const [updateOffer] = useUpdateJobOfferMutation();
-  const [deleteOffer] = useDeleteJobOfferMutation();
+  const [createJob, { isLoading: isCreating }] = useCreateJobMutation();
+  const [updateJob, { isLoading: isUpdating }] = useUpdateJobMutation();
+  const [deleteJob] = useDeleteJobMutation();
+  const [toggleJobStatus] = useToggleJobStatusMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [offerToDelete, setOfferToDelete] = useState<string | null>(null);
   const [editingOffer, setEditingOffer] = useState<IJobOffer | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
-  const { register, handleSubmit, reset, setValue } = useForm<IJobOffer>();
+  const [notify, setNotify] = useState<NotificationState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+  });
 
-  // Map API offers to local IJobOffer format
-  const offers: IJobOffer[] =
-    apiOffers?.map((offer) => ({
-      _id: offer._id || offer.id,
-      fixerId: offer.fixerId,
-      fixerName: offer.fixerName,
-      fixerWhatsapp: offer.whatsapp,
-      description: offer.description,
-      city: offer.city,
-      price: offer.price,
-      categories: offer.services || [],
-      images: offer.photos || [],
-      createdAt: offer.createdAt
-        ? new Date(offer.createdAt).toISOString()
-        : new Date().toISOString(),
-    })) || [];
+  const [filter, setFilter] = useState<JobStateFilter>('active');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  // === Modal de creación/edición ===
-  const handleOpenModal = (offer?: IJobOffer) => {
-    if (readOnly) return;
-    if (offer) {
-      setEditingOffer(offer);
-      setValue('description', offer.description);
-      setValue('price', offer.price);
-      setValue('categories', offer.categories);
-      setValue('city', offer.city);
-    } else {
-      setEditingOffer(null);
-      reset({
-        description: '',
-        price: 0,
-        categories: [],
-        city: 'Cochabamba',
-        images: [],
-      });
-    }
-    setIsModalOpen(true);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<JobOfferFormData>({
+    resolver: zodResolver(jobOfferSchema),
+    defaultValues: {
+      price: 0,
+      city: 'Cochabamba',
+      contactPhone: user?.telefono || '',
+      title: '',
+      description: '',
+      category: '',
+      tags: [] as string[],
+    },
+  });
+
+  const currentTags = watch('tags') || [];
+
+  const showNotify = (
+    type: NotificationState['type'],
+    title: string,
+    message: string,
+    onConfirm?: () => void,
+  ) => {
+    setNotify({ isOpen: true, type, title, message, onConfirm });
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingOffer(null);
-    reset();
-  };
+  // ⭐ Filtrar según estado real del backend
+  const filteredOffers = (apiOffers || []).filter(
+    (offer) => {
+      const isActive = offer.status ?? false;
+      return filter === 'active' ? isActive : !isActive;
+    },
+  );
 
-  const onSubmit = async (data: IJobOffer) => {
-    if (!user) return;
+  // -------------------------
+  // 🔥 CREAR / EDITAR OFERTA
+  // -------------------------
+  const onSubmit = async (data: JobOfferFormData) => {
+    if (!user?._id) return showNotify('error', 'Error', 'No se identificó al usuario.');
 
-    // Validation
-    if (!user.telefono) {
-      alert('Por favor, actualiza tu perfil con un número de teléfono antes de crear una oferta.');
-      return;
-    }
-    if (!data.description) {
-      alert('La descripción es obligatoria.');
-      return;
-    }
-    if (!data.city) {
-      alert('La ciudad es obligatoria.');
-      return;
-    }
-    if (!data.categories || data.categories.length === 0) {
-      alert('Debes seleccionar al menos una categoría.');
-      return;
-    }
-    const price = Number(data.price);
-    if (isNaN(price) || price <= 0) {
-      alert('El precio debe ser un número mayor a 0.');
-      return;
+    if (!editingOffer && selectedImages.length === 0) {
+      return showNotify('warning', 'Faltan imágenes', 'Debes subir al menos una foto.');
     }
 
     try {
-      const offerData: CreateJobOfferInput = {
-        fixerId: user._id || '',
-        fixerName: user.name,
-        whatsapp: user.telefono,
-        description: data.description,
-        city: data.city,
-        price: price,
-        services: data.categories,
-        photos: data.images || [],
-        title: data.categories[0] || 'Servicio',
-        location: user.ubicacion
-          ? {
-              lat: user.ubicacion.lat || 0,
-              lng: user.ubicacion.lng || 0,
-              address: user.ubicacion.direccion || '',
-            }
-          : undefined,
-      };
+      const formData = new FormData();
+      formData.append('fixerId', user._id);
+      formData.append('fixerName', user.name || 'Usuario');
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      formData.append('category', data.category);
+      formData.append('price', data.price.toString());
+      formData.append('city', data.city);
+      formData.append('contactPhone', data.contactPhone);
+      formData.append('tags', JSON.stringify(data.tags));
+      formData.append('rating', editingOffer?.rating ? editingOffer.rating.toString() : '5');
 
-      console.log('Sending offer data:', offerData);
+      selectedImages.forEach((file) => formData.append('photos', file));
 
-      if (editingOffer && editingOffer._id) {
-        await updateOffer({
-          offerId: editingOffer._id,
-          data: offerData,
-        }).unwrap();
+      if (editingOffer) {
+        await updateJob({ jobId: editingOffer._id, formData }).unwrap();
+        showNotify('success', 'Actualizado', 'Oferta actualizada correctamente.');
       } else {
-        await createOffer(offerData).unwrap();
+        await createJob(formData).unwrap();
+        showNotify('success', 'Publicado', 'Oferta creada correctamente.');
       }
-      handleCloseModal();
+
+      reset();
+      setSelectedImages([]);
+      setPreviewUrls([]);
+      setEditingOffer(null);
+      setIsModalOpen(false);
     } catch (error) {
-      console.error('Error saving offer:', error);
-
-      let errorMessage = 'Error al guardar la oferta. Revisa la consola para más detalles.';
-
-      if (isErrorWithData(error)) {
-        console.error('Error details:', JSON.stringify(error.data, null, 2));
-        if (error.data.error) {
-          errorMessage = `Error: ${error.data.error}`;
-        } else if (error.data.message) {
-          errorMessage = `Error: ${error.data.message}`;
-        }
-      } else if (isFetchBaseQueryError(error)) {
-        errorMessage = 'error' in error ? String(error.error) : 'Error de conexión';
-      }
-
-      alert(errorMessage);
+      console.error(error);
+      showNotify('error', 'Error', 'Error al procesar la solicitud.');
     }
   };
 
-  // === Modal de eliminación ===
-  const openDeleteModal = (id: string) => {
-    if (readOnly) return;
-    setOfferToDelete(id);
-    setIsDeleteModalOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    if (offerToDelete) {
+  // -------------------------
+  // 🔥 ELIMINAR OFERTA
+  // -------------------------
+  const confirmDelete = (jobId: string) => {
+    if (!effectiveeffectiveUserId) return;
+    showNotify('warning', '¿Eliminar oferta?', 'Esta acción no se puede deshacer.', async () => {
       try {
-        await deleteOffer(offerToDelete).unwrap();
-        setOfferToDelete(null);
-      } catch (error) {
-        console.error('Error deleting offer:', error);
+        await deleteJob({ jobId, fixerId: effectiveeffectiveUserId }).unwrap();
+        setTimeout(() => showNotify('success', 'Eliminado', 'Oferta eliminada.'), 300);
+      } catch (error: unknown) {
+        showNotify('error', 'Error', 'No se pudo eliminar la oferta.');
+        console.error(error);
       }
+    });
+  };
+
+  // -------------------------
+  // 🔥 TOGGLE STATUS REAL
+  // -------------------------
+  const handleToggleActive = async (jobId: string) => {
+    try {
+      await toggleJobStatus({ jobId }).unwrap();
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error(err);
+      showNotify('error', 'Error', 'No se pudo cambiar el estado.');
     }
-    setIsDeleteModalOpen(false);
   };
 
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setOfferToDelete(null);
-  };
-
-  // Mapeo para la tarjeta
-  const mapToCardData = (offer: IJobOffer): JobOfferData => ({
-    _id: offer._id || '',
-    title: offer.categories[0] || 'Sin título',
-    description: offer.description,
-    price: offer.price,
-    category: offer.categories[0] || 'General',
-    tags: offer.categories,
-    city: offer.city,
-    createdAt: new Date(offer.createdAt || Date.now()),
-    fixerId: offer.fixerId,
-    fixerName: offer.fixerName,
-    fixerPhoto: undefined,
-    contactPhone: offer.fixerWhatsapp,
-    allImages: offer.images,
-    photos: offer.images,
-    imagenUrl: offer.images[0],
-    rating: 0,
-    status: 'active',
-    updatedAt: new Date(offer.createdAt || Date.now()),
-  });
-
-  if (isLoading) {
-    return <div className="p-8 text-center">Cargando ofertas...</div>;
-  }
+  if (isLoading) return <div className='p-10 text-center animate-pulse'>Cargando ofertas...</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-          <Briefcase className="h-5 w-5 text-blue-600" />
-          {readOnly ? 'Ofertas de Trabajo' : 'Mis Ofertas de Trabajo'}
+    <div className='space-y-6'>
+      {/* HEADER */}
+      <div className='flex items-center justify-between gap-4'>
+        <h2 className='text-xl font-semibold text-gray-900 flex items-center gap-2'>
+          <Briefcase className='h-5 w-5 text-blue-600' />
+          Mis Ofertas de Trabajo
         </h2>
-        {!readOnly && (
-          <PillButton
-            onClick={() => handleOpenModal()}
-            className="bg-primary text-white hover:bg-blue-800 flex items-center gap-2"
+
+        <div className='flex items-center gap-3'>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as JobStateFilter)}
+            className='border border-gray-300 rounded-full px-3 py-1.5 text-sm text-gray-700 bg-white shadow-sm'
           >
-            <Plus className="h-4 w-4" />
-            Nueva Oferta
-          </PillButton>
-        )}
+            <option value='active'>Ofertas activas</option>
+            <option value='inactive'>Ofertas inactivas</option>
+          </select>
+
+          {!readOnly && (
+            <PillButton
+              onClick={() => {
+                reset();
+                setSelectedImages([]);
+                setPreviewUrls([]);
+                setEditingOffer(null);
+                setIsModalOpen(true);
+              }}
+              className='bg-primary text-white hover:bg-blue-800 flex items-center gap-2'
+            >
+              <Plus className='h-4 w-4' /> Nueva Oferta
+            </PillButton>
+          )}
+        </div>
       </div>
 
-      {/* Lista de ofertas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {offers.length > 0 ? (
-          offers.map((offer) => (
-            <JobOfferCard
-              key={offer._id}
-              offer={mapToCardData(offer)}
-              onEdit={!readOnly ? () => handleOpenModal(offer) : undefined}
-              onDelete={!readOnly ? () => openDeleteModal(offer._id!) : undefined}
-              readOnly={readOnly}
-              className="h-full"
-            />
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
-            No tienes ofertas publicadas.
+      {/* GRID DE OFERTAS */}
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+        {filteredOffers.map((offer) => {
+          const id = offer._id;
+          const isActive = offer.status ?? true;
+
+          return (
+            <div key={id} className='relative h-full'>
+              <div className='h-full rounded-2xl shadow bg-white flex flex-col overflow-visible'>
+                <JobOfferCard
+                  offer={{
+                    _id: offer._id,
+                    fixerId: offer.fixerId,
+                    fixerName: offer.fixerName,
+                    title: offer.title,
+                    description: offer.description,
+                    category: offer.category,
+                    tags: offer.tags || [],
+                    price: offer.price,
+                    city: offer.city,
+                    contactPhone: offer.contactPhone,
+                    createdAt: offer.createdAt || new Date().toISOString(),
+                    rating: offer.rating,
+                    photos: offer.photos || [],
+                    allImages: offer.photos || [],
+                    imagenUrl: offer.photos?.[0] || '',
+                    status: offer.status,
+                  }}
+                  onEdit={
+                    !readOnly
+                      ? () => {
+                          setEditingOffer(offer);
+                          setValue('title', offer.title);
+                          setValue('description', offer.description);
+                          setValue('category', offer.category);
+                          setValue('price', offer.price);
+                          setValue('city', offer.city);
+                          setValue('contactPhone', offer.contactPhone);
+                          setValue('tags', offer.tags || []);
+                          setPreviewUrls(offer.photos || []);
+                          setSelectedImages([]);
+                          setIsModalOpen(true);
+                        }
+                      : undefined
+                  }
+                  onDelete={!readOnly ? () => confirmDelete(id) : undefined}
+                  readOnly={readOnly}
+                  className='flex-1'
+                />
+
+                {/* FOOTER: ESTADO + MENÚ */}
+                <div className='border-t px-3 py-2 flex items-center justify-between'>
+                  {/* Estado */}
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                      isActive
+                        ? 'bg-green-50 text-green-600 border-green-200'
+                        : 'bg-red-50 text-red-600 border-red-200'
+                    }`}
+                  >
+                    {isActive ? 'Activa' : 'Inactiva'}
+                  </span>
+
+                  {/* Menú */}
+                  {!readOnly && (
+                    <div className='relative'>
+                      <button
+                        type='button'
+                        onClick={() => setOpenMenuId((prev) => (prev === id ? null : id))}
+                        className='p-1 rounded-full border border-gray-200 bg-white shadow hover:bg-gray-50'
+                      >
+                        <MoreVertical size={16} className='text-gray-600' />
+                      </button>
+
+                      {openMenuId === id && (
+                        <div className='absolute right-0 top-full mt-1 w-40 bg-white border rounded-lg shadow-lg text-xs z-[100]'>
+                          <button
+                            type='button'
+                            onClick={() => handleToggleActive(id)}
+                            className='w-full text-left px-3 py-2 hover:bg-gray-50'
+                          >
+                            {isActive ? 'Desactivar trabajo' : 'Activar trabajo'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Sin ofertas */}
+        {(!apiOffers || apiOffers.length === 0) && (
+          <div className='col-span-full py-12 text-center text-gray-400 bg-gray-50 rounded-xl border border-dashed'>
+            No hay ofertas publicadas aún.
           </div>
         )}
       </div>
 
-      {/* Modal de Crear/Editar */}
+      {/* ---------------------- */}
+      {/* MODAL DE CREAR/EDITAR */}
+      {/* ---------------------- */}
       <Modal
         open={isModalOpen}
-        onClose={handleCloseModal}
-        title={editingOffer ? 'Editar Oferta' : 'Nueva Oferta'}
-        size="lg"
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingOffer(null);
+          reset();
+          setSelectedImages([]);
+          setPreviewUrls([]);
+        }}
+        title={editingOffer ? t('modal.editTitle') : t('modal.newTitle')}
+        size='lg'
+        closeOnOverlayClick={!isCreating && !isUpdating}
+        className='rounded-2xl border-primary border-2'
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-            <select
-              {...register('categories.0', { required: 'Selecciona una categoría' })}
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="">Seleccionar...</option>
-              <option value="Plomería">Plomería</option>
-              <option value="Electricidad">Electricidad</option>
-              <option value="Carpintería">Carpintería</option>
-              <option value="Pintura">Pintura</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-            <textarea
-              {...register('description', { required: 'La descripción es requerida' })}
-              rows={3}
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Describe tu servicio..."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Precio (Bs.)</label>
-              <input
-                type="number"
-                {...register('price', { required: true, min: 0 })}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
-              <input
-                {...register('city', { required: true })}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <PillButton
-              type="button"
-              onClick={handleCloseModal}
-              className="bg-gray-100 text-gray-700 hover:bg-gray-200"
-            >
-              Cancelar
-            </PillButton>
-            <PillButton type="submit" className="bg-primary text-white hover:bg-blue-800">
-              Guardar
-            </PillButton>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Modal de Confirmación de Eliminación */}
-      <Modal open={isDeleteModalOpen} onClose={closeDeleteModal} title="Eliminar oferta" size="sm">
         <Modal.Body>
-          <p className="text-gray-700">
-            ¿Estás seguro de que quieres eliminar esta oferta de forma permanente? Esta acción{' '}
-            <strong>no se puede deshacer</strong>.
-          </p>
+          <form id='offerForm' onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+            {/* Título */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.title.label')}
+              </label>
+              <input
+                {...register('title')}
+                className='w-full rounded-lg border-primary border p-2'
+                placeholder={t('form.title.placeholder')}
+              />
+              {errors.title && <p className='text-red-500 text-xs'>{errors.title.message}</p>}
+            </div>
+
+            {/* Categoría */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.category.label')}
+              </label>
+              <select
+                {...register('category')}
+                className='w-full rounded-lg border-primary border p-2 bg-white'
+              >
+                <option value=''>{t('form.category.select')}</option>
+                {jobCategories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+              {errors.category && <p className='text-red-500 text-xs'>{errors.category.message}</p>}
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('form.tags.label')}
+              </label>
+
+              <div className='flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300'>
+                {currentTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className='inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-primary border'
+                  >
+                    {tag}
+                    <button
+                      type='button'
+                      onClick={() => {
+                        const newTags = currentTags.filter((t) => t !== tag);
+                        setValue('tags', newTags);
+                      }}
+                      className='hover:text-red-500'
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+
+                {currentTags.length === 0 && (
+                  <span className='text-xs text-gray-400 italic'>{t('form.tags.empty')}</span>
+                )}
+              </div>
+
+              <select
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (!currentTags.includes(value) && currentTags.length < 5) {
+                    setValue('tags', [...currentTags, value]);
+                  }
+                  e.target.value = '';
+                }}
+                className='w-full rounded-lg border-primary border p-2 bg-white mt-1'
+              >
+                <option value=''>{t('form.tags.addTag')}</option>
+                {jobCategories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+
+              {errors.tags && <p className='text-red-500 text-xs'>{errors.tags.message}</p>}
+            </div>
+
+            {/* Descripción */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.description.label')}
+              </label>
+              <textarea
+                {...register('description')}
+                rows={4}
+                className='w-full rounded-lg border-primary border p-2'
+                placeholder={t('form.description.placeholder')}
+              />
+              {errors.description && (
+                <p className='text-red-500 text-xs'>{errors.description.message}</p>
+              )}
+            </div>
+
+            {/* Precio + Ciudad */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('form.price.label')}
+                </label>
+                <input
+                  type='number'
+                  {...register('price', { valueAsNumber: true })}
+                  className='w-full rounded-lg border-primary border p-2'
+                />
+                {errors.price && <p className='text-red-500 text-xs'>{errors.price.message}</p>}
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('form.city.label')}
+                </label>
+                <select
+                  {...register('city')}
+                  className='w-full rounded-lg border-primary border p-2 bg-white'
+                >
+                  {boliviaCities.map((city) => (
+                    <option key={city.value} value={city.value}>
+                      {city.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.city && <p className='text-red-500 text-xs'>{errors.city.message}</p>}
+              </div>
+            </div>
+
+            {/* Teléfono */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.contactPhone.label')}
+              </label>
+              <input
+                {...register('contactPhone')}
+                className='w-full rounded-lg border-primary border p-2'
+              />
+              {errors.contactPhone && (
+                <p className='text-red-500 text-xs'>{errors.contactPhone.message}</p>
+              )}
+            </div>
+
+            {/* Imágenes */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('form.images.label')}
+              </label>
+
+              <div className='grid grid-cols-4 gap-2'>
+                {previewUrls.map((url, idx) => (
+                  <div key={idx} className='relative aspect-square group'>
+                    <Image
+                      src={url}
+                      alt='preview'
+                      fill
+                      className='object-cover rounded-lg border'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => {
+                        setPreviewUrls((prev) => prev.filter((_, i) => i !== idx));
+                        setSelectedImages((prev) => prev.filter((_, i) => i !== idx));
+                      }}
+                      className='absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100'
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+
+                {previewUrls.length < 5 && (
+                  <label className='flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg aspect-square cursor-pointer hover:bg-gray-50'>
+                    <Upload className='text-gray-400' />
+                    <input
+                      type='file'
+                      className='hidden'
+                      accept='image/*'
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        const filtered = files.filter((file) => file.size <= 5 * 1024 * 1024);
+
+                        setSelectedImages((prev) => [...prev, ...filtered]);
+                        setPreviewUrls((prev) => [
+                          ...prev,
+                          ...filtered.map((f) => URL.createObjectURL(f)),
+                        ]);
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+          </form>
         </Modal.Body>
 
         <Modal.Footer>
-          <div className="flex justify-end gap-3">
-            <PillButton
-              onClick={closeDeleteModal}
-              className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+          <div className='flex justify-end gap-2'>
+            <button
+              onClick={() => {
+                reset();
+                setIsModalOpen(false);
+                setEditingOffer(null);
+                setSelectedImages([]);
+                setPreviewUrls([]);
+              }}
+              className='border border-primary py-2 px-4 rounded-2xl text-primary hover:bg-primary hover:text-white'
             >
-              Cancelar
-            </PillButton>
+              {t('buttons.cancel')}
+            </button>
+
             <PillButton
-              onClick={confirmDelete}
-              className="bg-red-600 text-white hover:bg-red-700 flex items-center gap-2"
+              type='submit'
+              form='offerForm'
+              className='bg-primary text-white hover:bg-blue-800'
+              disabled={isCreating || isUpdating}
             >
-              <Trash2 className="h-4 w-4" />
-              Eliminar
+              {isCreating || isUpdating ? t('buttons.saving') : t('buttons.save')}
             </PillButton>
           </div>
         </Modal.Footer>
       </Modal>
+
+      {/* NOTIFICACIONES */}
+      <NotificationModal
+        isOpen={notify.isOpen}
+        onClose={() => setNotify((prev) => ({ ...prev, isOpen: false }))}
+        type={notify.type}
+        title={notify.title}
+        message={notify.message}
+        onConfirm={notify.onConfirm}
+        confirmText='Confirmar'
+        autoClose={!notify.onConfirm}
+      />
     </div>
   );
 }

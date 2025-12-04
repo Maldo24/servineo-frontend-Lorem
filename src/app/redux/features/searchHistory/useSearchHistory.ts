@@ -32,7 +32,6 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
   const hasInitialized = useRef(false);
   const lastBackendData = useRef<string[] | undefined>(undefined);
 
-  // ===== RTK QUERY HOOKS =====
   const {
     data: backendHistory,
     isLoading: isLoadingHistory,
@@ -48,7 +47,7 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
   const isLoading = isLoadingHistory || isDeleting || isClearing;
   const error = localError || (historyError ? 'Error al cargar historial' : null);
 
-  // ===== FUNCIONES DE LOCALSTORAGE =====
+  // ===== LOCAL STORAGE =====
   const loadFromLocalStorage = useCallback(() => {
     try {
       const raw = localStorage.getItem(storageKey);
@@ -65,7 +64,6 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
     (items: string[]) => {
       try {
         localStorage.setItem(storageKey, JSON.stringify(items));
-        console.log('💾 Persisted to localStorage:', items);
       } catch (error) {
         console.error('Error saving search history to localStorage:', error);
       }
@@ -73,15 +71,12 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
     [storageKey],
   );
 
-  // ===== INICIALIZACIÓN (solo una vez al montar) =====
+  // ===== INITIALIZE =====
   useEffect(() => {
     if (hasInitialized.current) return;
 
-    console.log('🎬 Initializing search history...');
-
     // SIEMPRE cargar desde localStorage primero
     const localHistory = loadFromLocalStorage();
-    console.log('📂 Loaded from localStorage:', localHistory);
 
     if (localHistory.length > 0) {
       setHistory(localHistory);
@@ -90,9 +85,8 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
     hasInitialized.current = true;
   }, [loadFromLocalStorage]);
 
-  // ===== SINCRONIZAR CON BACKEND (solo cuando cambia el backend) =====
+  // ===== SYNC BACKEND =====
   useEffect(() => {
-    // No hacer nada si no estamos usando backend
     if (!useBackend) return;
 
     // No hacer nada si aún no hemos inicializado
@@ -103,49 +97,24 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
 
     // Evitar re-procesar los mismos datos del backend
     if (lastBackendData.current === backendHistory) {
-      console.log('⏭️ Skipping - same backend data');
       return;
     }
-
-    console.log('🔄 Backend data changed:', {
-      previous: lastBackendData.current,
-      current: backendHistory,
-      currentHistory: history,
-    });
 
     lastBackendData.current = backendHistory;
 
     // Si el backend tiene datos, usarlos
     if (backendHistory.length > 0) {
-      console.log('✅ Using backend data:', backendHistory);
       setHistory(backendHistory);
       persistToLocalStorage(backendHistory);
     }
-    // Si el backend está vacío Y nuestro estado actual también está vacío
-    else if (backendHistory.length === 0 && history.length === 0) {
-      console.log('📭 Both backend and state are empty');
-      // Todo bien, ambos vacíos
-    }
-    // Si el backend está vacío pero tenemos datos locales
-    else if (backendHistory.length === 0 && history.length > 0) {
-      console.log('⚠️ Backend empty but we have local data:', history);
-      console.log('🔒 KEEPING local data - NOT overwriting');
-      // NO sobrescribir - mantener los datos locales
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useBackend, backendHistory, persistToLocalStorage]);
-  // NOTA: NO incluir 'history' en las dependencias para evitar loops
 
-  // ===== AGREGAR AL HISTORIAL =====
+  // ===== ADD =====
   const addToHistory = useCallback(
     (query: string) => {
       const trimmed = query.trim();
       if (!trimmed) return;
 
-      console.log('➕ Adding to history:', trimmed);
-
-      // Actualizar estado y localStorage inmediatamente
       setHistory((prev) => {
         const filtered = prev.filter((item) => item !== trimmed);
         const updated = [trimmed, ...filtered].slice(0, maxItems);
@@ -153,10 +122,8 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
         return updated;
       });
 
-      // Si usamos backend, refrescar después
       if (useBackend) {
         setTimeout(() => {
-          console.log('🔄 Refetching from backend...');
           refetchHistory();
         }, 500);
       }
@@ -164,39 +131,44 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
     [maxItems, persistToLocalStorage, useBackend, refetchHistory],
   );
 
-  // ===== ELIMINAR ITEM =====
+  // ===== REMOVE (CORREGIDO) =====
   const removeFromHistory = useCallback(
     async (item: string) => {
       setLocalError(null);
-      console.log('🗑️ Removing from history:', item);
 
-      // Guardar estado previo para rollback
-      const previousHistory = history;
+      let previousHistory: string[] = [];
 
       try {
-        // Actualización optimista: actualizar UI y localStorage inmediatamente
         setHistory((prev) => {
+          previousHistory = prev;
           const updated = prev.filter((h) => h !== item);
           persistToLocalStorage(updated);
           return updated;
         });
 
         if (useBackend) {
-          // Intentar eliminar en el backend
           const result = await deleteHistoryItem(item).unwrap();
 
           if (!result.success) {
             throw new Error('Backend deletion failed');
           }
 
-          // Confirmar con el backend
-          console.log('✅ Backend confirmed delete:', result.updatedHistory);
-          lastBackendData.current = result.updatedHistory;
-          setHistory(result.updatedHistory);
-          persistToLocalStorage(result.updatedHistory);
+          const shouldContain = previousHistory.filter((h) => h !== item);
+          const backendReturned = result.updatedHistory;
+
+          if (backendReturned.length === 0 && shouldContain.length > 0) {
+            lastBackendData.current = shouldContain;
+            setHistory(shouldContain);
+            persistToLocalStorage(shouldContain);
+            return;
+          }
+
+          lastBackendData.current = backendReturned;
+          setHistory(backendReturned);
+          persistToLocalStorage(backendReturned);
         }
       } catch (err) {
-        console.error('❌ Remove from history error:', err);
+        console.error('Remove from history error:', err);
         setLocalError('Error al eliminar del historial');
 
         // Rollback: restaurar estado anterior
@@ -204,44 +176,41 @@ export function useSearchHistory(options: UseSearchHistoryOptions = {}): UseSear
         persistToLocalStorage(previousHistory);
       }
     },
-    [history, useBackend, deleteHistoryItem, persistToLocalStorage],
+    [useBackend, deleteHistoryItem, persistToLocalStorage],
   );
 
-  // ===== LIMPIAR TODO =====
+  // ===== CLEAR (CORREGIDO) =====
   const clearHistory = useCallback(async () => {
     setLocalError(null);
-    console.log('🧹 Clearing all history');
 
-    // Guardar estado previo para rollback
-    const previousHistory = history;
+    let previousHistory: string[] = [];
 
     try {
-      // Actualización optimista: limpiar UI y localStorage inmediatamente
-      setHistory([]);
-      persistToLocalStorage([]);
+      setHistory((prev) => {
+        previousHistory = prev;
+        persistToLocalStorage([]);
+        return [];
+      });
 
       if (useBackend) {
-        // Intentar limpiar en el backend
         const result = await clearHistoryMutation().unwrap();
 
         if (!result.success) {
           throw new Error('Backend clear failed');
         }
-
-        console.log('✅ Backend confirmed clear:', result.updatedHistory);
         lastBackendData.current = result.updatedHistory;
         setHistory(result.updatedHistory);
         persistToLocalStorage(result.updatedHistory);
       }
     } catch (err) {
-      console.error('❌ Clear history error:', err);
+      console.error('Clear history error:', err);
       setLocalError('Error al limpiar historial');
 
       // Rollback: restaurar estado anterior
       setHistory(previousHistory);
       persistToLocalStorage(previousHistory);
     }
-  }, [history, useBackend, clearHistoryMutation, persistToLocalStorage]);
+  }, [useBackend, clearHistoryMutation, persistToLocalStorage]);
 
   return {
     history,

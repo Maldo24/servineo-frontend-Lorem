@@ -1,4 +1,4 @@
-const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/controlC`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/signUp`;
 
 export interface User {
   id: string;
@@ -18,6 +18,12 @@ export interface GoogleAuthResponse {
 export interface UbicacionResponse {
   success: boolean;
   message?: string;
+}
+
+export interface TelefonoResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
 }
 
 export async function enviarTokenGoogle(token: string): Promise<GoogleAuthResponse> {
@@ -60,7 +66,7 @@ export async function enviarUbicacion(
 ): Promise<UbicacionResponse> {
   const token = localStorage.getItem('servineo_token');
   try {
-    const res = await fetch(`${BASE_URL}/ubicacion`, {
+    const res = await fetch(`${BASE_URL}/registrar/ubicacion`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,6 +79,33 @@ export async function enviarUbicacion(
     return await res.json();
   } catch (error) {
     console.error('Error al enviar la ubicación al backend:', error);
+    throw error;
+  }
+}
+
+//telefono
+export async function enviarTelefono(telefono: string): Promise<TelefonoResponse> {
+  const token = localStorage.getItem('servineo_token');
+  try {
+    const res = await fetch(`${BASE_URL}/registrar/telefono`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ telefono }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Lanzar error con el mensaje del servidor
+      throw new Error(`Error ${res.status}: ${data.error || res.statusText}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error al enviar el teléfono al backend:', error);
     throw error;
   }
 }

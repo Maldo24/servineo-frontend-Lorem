@@ -1,7 +1,3 @@
-// src/types/jobOffers.ts
-/**
- * Tipo principal para ofertas de trabajo desde el backend
- */
 export interface JobOfferData {
   _id: string;
   fixerId: string;
@@ -10,7 +6,7 @@ export interface JobOfferData {
   title: string;
   description: string;
   category: string;
-  tags: string[]; // Siempre un array, puede estar vacío
+  tags: string[];
   price: number;
   city: string;
   contactPhone: string;
@@ -21,7 +17,7 @@ export interface JobOfferData {
   allImages?: string[];
   completedJobs?: number;
   location?: string[];
-  status?: string;
+  status?: boolean;
   updatedAt?: string | Date;
 }
 

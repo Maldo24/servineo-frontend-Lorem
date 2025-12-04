@@ -3,7 +3,6 @@ export function getSessionId(): string | null {
   if (typeof window === 'undefined') return null;
   try {
     const sid = localStorage.getItem('sessionId');
-    console.log('🔍 getSessionId:', sid); // temporal para debug
     return sid;
   } catch (e) {
     console.warn('No se pudo leer sessionId de localStorage', e);
@@ -22,7 +21,6 @@ export function setSessionId(id: string): void {
       });
     }
     localStorage.setItem('sessionId', id);
-    console.log('✅ SessionId guardado:', id); // temporal para debug
   } catch (e) {
     console.warn('No se pudo guardar sessionId en localStorage', e);
   }
@@ -45,15 +43,11 @@ export function ensureSessionId(): string {
         ? crypto.randomUUID()
         : `sid-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
-    console.log('🆕 Generando nuevo sessionId:', sid);
-
     try {
       localStorage.setItem('sessionId', sid);
     } catch (e) {
       console.warn('No se pudo persistir sessionId en localStorage', e);
     }
-  } else {
-    console.log('✅ SessionId existente encontrado:', sid);
   }
 
   return sid;

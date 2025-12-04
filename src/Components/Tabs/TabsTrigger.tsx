@@ -15,8 +15,8 @@ const TabsTrigger = ({ value, className, children }: TabsTriggerProps) => {
 
   return (
     <button
-      type="button"
-      role="tab"
+      type='button'
+      role='tab'
       aria-selected={isActive}
       onClick={() => onValueChange(value)}
       className={`

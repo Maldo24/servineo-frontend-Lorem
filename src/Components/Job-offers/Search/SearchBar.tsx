@@ -9,13 +9,17 @@ import { SearchButton } from './SearchButton';
 import { AdvancedSearchButton } from './AdvancedSearchButton';
 import { FilterButton } from '../Filter/FilterButton';
 import { validateSearch } from '@/app/lib/validations/search.validator';
-import { useAppSelector } from '@/app/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/app/redux/hooks';
 import { useTranslations } from 'next-intl';
 import { useSearchHistory } from '@/app/redux/features/searchHistory/useSearchHistory';
 import { useSearchSuggestions } from '@/app/redux/features/searchHistory/useSearchSuggestions';
 import { useSearchKeyboard } from '@/app/redux/features/searchHistory/useSearchKeyboard';
 import { useSearchTouch } from '@/app/redux/features/searchHistory/useSearchTouch';
 import { SearchDropdown } from '@/Components/Shared/SearchDropdown';
+import { usePathname } from 'next/navigation'; // 👈 TU ÚNICA IMPORTACIÓN NUEVA
+import { useJobTypeAutoMatch } from '@/lib/useJobTypeAutoMatch';
+import { setFilters } from '@/app/redux/slice/jobOfert';
+import { useEffect } from 'react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -24,8 +28,12 @@ interface SearchBarProps {
 
 export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   const t = useTranslations('search');
+  const pathname = usePathname(); // 👈 TU LÍNEA 1
+  const dispatch = useAppDispatch();
+  const { findMatchingJobType, findMatchingCity } = useJobTypeAutoMatch();
 
   const searchFromStore = useAppSelector((state) => state.jobOfert.search);
+  const filtersFromStore = useAppSelector((state) => state.jobOfert.filters);
 
   const [value, setValue] = React.useState('');
   const [error, setError] = React.useState<string | undefined>();
@@ -37,7 +45,21 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    if (value !== '') {
+      const { isValid, error } = validateSearch(value);
+      setError(isValid ? undefined : error);
+    }
+  }, [value]);
+
   const prevSearchFromStore = React.useRef(searchFromStore);
+
+  // 👇 TU BLOQUE COMPLETO (LÍNEAS 2-6)
+  const currentLanguage = React.useMemo(() => {
+    const pathSegments = (pathname || '').split('/').filter(Boolean);
+    const langSegment = pathSegments[0];
+    return ['en', 'es'].includes(langSegment) ? langSegment : 'es';
+  }, [pathname]);
 
   // Hooks personalizados
   const { history, addToHistory, removeFromHistory, clearHistory } = useSearchHistory({
@@ -49,7 +71,15 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
     minLength: 1,
     debounceMs: 300,
     maxResults: 6,
+    language: currentLanguage, // 👈 TU LÍNEA 7 (única modificación en su código)
   });
+
+  // Restaurar desde Redux/localStorage al cargar
+  React.useEffect(() => {
+    if (searchFromStore) {
+      setValue(searchFromStore);
+    }
+  }, [searchFromStore]);
 
   // Sincronizar con Redux
   React.useEffect(() => {
@@ -62,8 +92,18 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+    if (newValue.length >= 100) {
+      // asegura que no pase de 100
+      const trimmed = newValue.slice(0, 100);
+      setPreviewValue(null);
+      setValue(trimmed);
+      setError('Límite máximo de 100 caracteres.');
+      return;
+    }
     setValue(newValue);
     setPreviewValue(null);
+    // Abrir el dropdown al escribir para que las sugerencias vuelvan a mostrarse
+    setIsOpen(true);
     const { isValid, error } = validateSearch(newValue);
     setError(isValid ? undefined : error);
     setHighlighted(-1);
@@ -73,10 +113,61 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
     setValue('');
     setError(undefined);
     onSearch('');
+    // Limpia el automarcado del filtro cuando se borra la búsqueda
+    if (filtersFromStore.isAutoSelectedCategory || filtersFromStore.isAutoSelectedCity) {
+      dispatch(
+        setFilters({
+          ...filtersFromStore,
+          category: filtersFromStore.isAutoSelectedCategory ? [] : filtersFromStore.category,
+          city: filtersFromStore.isAutoSelectedCity ? [] : filtersFromStore.city,
+          isAutoSelectedCategory: false,
+          isAutoSelectedCity: false,
+        }),
+      );
+    }
+  };
+
+  /**
+   * Auto-detecta si la búsqueda coincide con un tipo de trabajo o ciudad
+   * y auto-selecciona los filtros correspondientes
+   */
+  const applyAutoFilterIfMatch = (searchQuery: string) => {
+    const matchedJobType = findMatchingJobType(searchQuery);
+    const matchedCity = findMatchingCity(searchQuery);
+
+    const newFilters = { ...filtersFromStore };
+
+    if (matchedJobType) {
+      newFilters.category = [matchedJobType];
+      newFilters.isAutoSelectedCategory = true;
+    } else {
+      if (
+        filtersFromStore.isAutoSelectedCategory &&
+        filtersFromStore.category.length === 1 &&
+        filtersFromStore.range.length === 0 &&
+        filtersFromStore.city.length === 0
+      ) {
+        newFilters.category = [];
+        newFilters.isAutoSelectedCategory = false;
+      }
+    }
+
+    if (matchedCity) {
+      newFilters.city = [matchedCity];
+      newFilters.isAutoSelectedCity = true;
+    } else {
+      if (filtersFromStore.isAutoSelectedCity && filtersFromStore.city.length > 0) {
+        newFilters.city = [];
+        newFilters.isAutoSelectedCity = false;
+      }
+    }
+
+    dispatch(setFilters(newFilters));
   };
 
   const selectItem = (item: string) => {
     setValue(item);
+    applyAutoFilterIfMatch(item);
     onSearch(item);
     addToHistory(item);
     setIsOpen(false);
@@ -99,6 +190,7 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
       return;
     }
     const query = data!;
+    applyAutoFilterIfMatch(query);
     onSearch(query);
     addToHistory(query);
     setIsOpen(false);
@@ -166,16 +258,17 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   }`;
 
   return (
-    <div className="w-full" ref={containerRef}>
-      <div className="flex flex-row w-full items-center gap-2">
-        <div className="relative flex-1 min-w-0 self-center">
+    <div className='w-full' ref={containerRef}>
+      <div className='flex flex-row w-full items-center gap-2'>
+        <div className='relative flex-1 min-w-0 self-center'>
           <SearchIcon hasError={hasError} />
           <Input
-            type="text"
+            type='text'
             placeholder={t('placeholder')}
             className={inputClasses}
             value={previewValue ?? value}
             onChange={handleChange}
+            maxLength={100}
             ref={(el) => {
               inputRef.current = el as HTMLInputElement | null;
             }}
@@ -213,13 +306,15 @@ export const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
           />
         </div>
 
-        <div className="flex gap-2 items-center shrink-0">
+        <div className='flex gap-2 items-center shrink-0'>
           <SearchButton onClick={handleSearch} />
           <AdvancedSearchButton />
           {onFilter && <FilterButton onClick={onFilter} />}
         </div>
       </div>
-      <div className="h-2 mt-1">{hasError && <p className="text-red-500 text-sm">{error}</p>}</div>
+      <div className='min-h-5 mt-1'>
+        {hasError && <p className='text-red-500 text-sm leading-4'>{error}</p>}
+      </div>
     </div>
   );
 };

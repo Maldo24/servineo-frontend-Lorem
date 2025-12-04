@@ -40,40 +40,40 @@ export default function FixerGraficCard({ completedJobs, cancelledJobs }: FixerG
   };
 
   return (
-    <div className="bg-white rounded-3xl border-gray-100 overflow-hidden">
-      <div className="p-8 border-b border-gray-100">
-        <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-          <TrendingUp className="w-8 h-8 text-green-600" />
+    <div className='bg-white rounded-3xl border-gray-100 overflow-hidden'>
+      <div className='p-8 border-b border-gray-100'>
+        <h3 className='text-2xl font-bold text-gray-800 flex items-center gap-3'>
+          <TrendingUp className='w-8 h-8 text-green-600' />
           Desempeño Mensual
         </h3>
 
-        <div className="flex items-center justify-between mt-6">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-7 h-7 text-green-600" />
+        <div className='flex items-center justify-between mt-6'>
+          <div className='flex items-center gap-8'>
+            <div className='flex items-center gap-3'>
+              <CheckCircle className='w-7 h-7 text-green-600' />
               <div>
-                <p className="text-2xl font-bold text-gray-800">{yearlyCompleted}</p>
-                <p className="text-xs text-gray-500 uppercase tracking-wider">Completados</p>
+                <p className='text-2xl font-bold text-gray-800'>{yearlyCompleted}</p>
+                <p className='text-xs text-gray-500 uppercase tracking-wider'>Completados</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <XCircle className="w-7 h-7 text-red-500" />
+            <div className='flex items-center gap-3'>
+              <XCircle className='w-7 h-7 text-red-500' />
               <div>
-                <p className="text-2xl font-bold text-gray-800">{yearlyCancelled}</p>
-                <p className="text-xs text-gray-500 uppercase tracking-wider">Cancelados</p>
+                <p className='text-2xl font-bold text-gray-800'>{yearlyCancelled}</p>
+                <p className='text-xs text-gray-500 uppercase tracking-wider'>Cancelados</p>
               </div>
             </div>
           </div>
 
-          <div className="text-right">
-            <p className="text-5xl font-bold text-green-600">{completionRate}%</p>
-            <p className="text-sm text-gray-500 uppercase tracking-wider">Tasa de éxito</p>
+          <div className='text-right'>
+            <p className='text-5xl font-bold text-green-600'>{completionRate}%</p>
+            <p className='text-sm text-gray-500 uppercase tracking-wider'>Tasa de éxito</p>
           </div>
         </div>
       </div>
 
-      <div className="p-8 bg-gradient-to-b from-gray-50 to-white">
-        <div className="grid grid-cols-6 gap-6">
+      <div className='p-8 bg-gradient-to-b from-gray-50 to-white'>
+        <div className='grid grid-cols-6 gap-6'>
           {monthlyData.map((data, index) => {
             const completedHeight = scaleValue(data.completados);
             const cancelledHeight = scaleValue(data.cancelados);
@@ -84,40 +84,40 @@ export default function FixerGraficCard({ completedJobs, cancelledJobs }: FixerG
               monthTotal > 0 ? Math.round((data.completados / monthTotal) * 100) : 0;
 
             return (
-              <div key={index} className="flex flex-col items-center space-y-3">
-                <div className="text-center">
-                  <span className="text-xs font-bold text-gray-700">{data.month}</span>
-                  <p className="text-[10px] font-semibold text-green-600">{successRate}%</p>
+              <div key={index} className='flex flex-col items-center space-y-3'>
+                <div className='text-center'>
+                  <span className='text-xs font-bold text-gray-700'>{data.month}</span>
+                  <p className='text-[10px] font-semibold text-green-600'>{successRate}%</p>
                 </div>
 
-                <div className="flex items-end gap-2 h-64 w-full">
+                <div className='flex items-end gap-2 h-64 w-full'>
                   {/* ⭐ Barra Completados */}
-                  <div className="flex-1 flex flex-col justify-end items-center gap-1">
+                  <div className='flex-1 flex flex-col justify-end items-center gap-1'>
                     <div
-                      className="w-full bg-green-500 rounded-t-lg transition-all duration-700 ease-out shadow-lg"
+                      className='w-full bg-green-500 rounded-t-lg transition-all duration-700 ease-out shadow-lg'
                       style={{
                         height: `${completedHeight}%`,
                         minHeight: data.completados > 0 ? '24px' : '0px',
                       }}
                     />
-                    <span className="text-xs font-bold text-green-700">{data.completados}</span>
+                    <span className='text-xs font-bold text-green-700'>{data.completados}</span>
                   </div>
 
                   {/* ⭐ Barra Cancelados */}
-                  <div className="flex-1 flex flex-col justify-end items-center gap-1">
+                  <div className='flex-1 flex flex-col justify-end items-center gap-1'>
                     <div
-                      className="w-full bg-red-500 rounded-t-lg transition-all duration-700 ease-out shadow-lg"
+                      className='w-full bg-red-500 rounded-t-lg transition-all duration-700 ease-out shadow-lg'
                       style={{
                         height: `${cancelledHeight}%`,
                         minHeight: data.cancelados > 0 ? '20px' : '0px',
                         opacity: data.cancelados > 0 ? 1 : 0.35,
                       }}
                     />
-                    <span className="text-xs font-bold text-red-700">{data.cancelados}</span>
+                    <span className='text-xs font-bold text-red-700'>{data.cancelados}</span>
                   </div>
                 </div>
 
-                <span className="text-xs font-semibold text-gray-600">
+                <span className='text-xs font-semibold text-gray-600'>
                   {data.completados + data.cancelados}
                 </span>
               </div>
@@ -125,13 +125,13 @@ export default function FixerGraficCard({ completedJobs, cancelledJobs }: FixerG
           })}
         </div>
 
-        <div className="flex justify-center gap-10 mt-10 text-sm font-medium">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-green-500 rounded"></div>
+        <div className='flex justify-center gap-10 mt-10 text-sm font-medium'>
+          <div className='flex items-center gap-3'>
+            <div className='w-6 h-6 bg-green-500 rounded'></div>
             <span>Completados</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-red-500 rounded"></div>
+          <div className='flex items-center gap-3'>
+            <div className='w-6 h-6 bg-red-500 rounded'></div>
             <span>Cancelados</span>
           </div>
         </div>

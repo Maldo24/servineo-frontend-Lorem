@@ -25,5 +25,16 @@ export function validatePagination(page: number, limit: number) {
 
   return { isValid: true, data: result.data };
 }
+export function sanitizePage(page: number, totalPages: number = 1): number {
+  if (!page || isNaN(page)) return 1; // Si no hay número
+  if (page < 1) return 1; // Negativos -> 1
+  if (page > totalPages) return totalPages; // Si pasa límite -> última página
+  return page; // Si es válido, se mantiene
+}
+export function sanitizeLimit(limit: number): number {
+  const DEFAULT = 10;
+  if (JOBOFERT_ALLOWED_LIMITS.includes(limit)) return limit;
+  return DEFAULT;
+}
 
 export { PaginationSchema, JOBOFERT_ALLOWED_LIMITS };

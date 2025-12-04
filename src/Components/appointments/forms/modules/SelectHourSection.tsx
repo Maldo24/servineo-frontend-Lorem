@@ -18,9 +18,9 @@ export const SelectHourSection = ({ selectedHours, onHoursChange }: SelectHourSe
   ];
 
   return (
-    <div className="mb-6">
-      <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-2">
-        <div className="flex flex-col gap-2">
+    <div className='mb-6'>
+      <div className='max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-2'>
+        <div className='flex flex-col gap-2'>
           {hours.map((hour) => (
             <AvailabilityButton
               key={hour}

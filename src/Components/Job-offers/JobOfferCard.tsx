@@ -1,7 +1,7 @@
 // src/Components/Job-offers/JobOfferCard.tsx
 'use client';
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,285 +16,376 @@ import {
 import { useTranslations } from 'next-intl';
 import { useImageCarousel } from '@/app/redux/features/jobOffers/useImageCarousel';
 import type { JobOfferData } from '@/types/jobOffers';
+import { SearchHighlight } from '../SearchHighlight';
 
 interface JobOfferCardProps {
   offer: JobOfferData;
-  viewMode?: 'grid' | 'list';
+  viewMode?: 'grid' | 'list' | string;
   onClick?: (offer: JobOfferData) => void;
   onEdit?: (offer: JobOfferData) => void;
   onDelete?: (id: string) => void;
   className?: string;
+  searchQuery?: string;
   readOnly?: boolean;
 }
 
-export const JobOfferCard: React.FC<JobOfferCardProps> = ({
-  offer,
-  viewMode = 'grid',
-  onClick,
-  onEdit,
-  onDelete,
-  className = '',
-  readOnly = false,
-}) => {
-  const router = useRouter();
-  const t = useTranslations('cardJob');
-  const tCat = useTranslations('Categories');
+export const JobOfferCard = memo<JobOfferCardProps>(
+  ({
+    offer,
+    viewMode = 'grid',
+    onClick,
+    onEdit,
+    onDelete,
+    className = '',
+    searchQuery = '',
+    readOnly = false,
+  }) => {
+    const router = useRouter();
+    const t = useTranslations('cardJob');
+    const tCat = useTranslations('Categories');
 
-  // Preparar imágenes
-  const images = React.useMemo(() => {
-    if (offer.allImages && offer.allImages.length > 0) return offer.allImages;
-    if (offer.photos && offer.photos.length > 0) return offer.photos;
-    if (offer.imagenUrl) return [offer.imagenUrl];
-    return [];
-  }, [offer]);
+    // Preparar imágenes
+    const images = React.useMemo(() => {
+      const imageArray = [];
 
-  const {
-    currentIndex,
-    isHovered,
-    isTouching,
-    elementRef,
-    handleMouseEnter,
-    handleMouseLeave,
-    handlePrevImage,
-    handleNextImage,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-  } = useImageCarousel(offer._id, images.length);
+      if (offer.allImages && offer.allImages.length > 0) {
+        imageArray.push(...offer.allImages);
+      } else if (offer.photos && offer.photos.length > 0) {
+        imageArray.push(...offer.photos);
+      } else if (offer.imagenUrl) {
+        imageArray.push(offer.imagenUrl);
+      }
 
-  const handleWhatsAppClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const cleanPhone = offer.contactPhone.replace(/\D/g, '');
-    window.open(`https://wa.me/${cleanPhone}`, '_blank');
-  };
+      // Filtrar y validar imágenes
+      return imageArray.filter((img) => {
+        if (!img || typeof img !== 'string') return false;
 
-  const handleFixerClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (offer.fixerId) {
-      router.push(`/fixer/${offer.fixerId}`);
-    }
-  };
+        const trimmed = img.trim();
+        if (trimmed.length === 0) return false;
 
-  const handleCardClick = () => {
-    if (onClick) onClick(offer);
-  };
+        // Validar que sea una URL válida
+        try {
+          new URL(trimmed);
+          return true;
+        } catch {
+          // Si no es URL válida pero es una ruta relativa, permitir
+          return trimmed.startsWith('/') || trimmed.startsWith('./');
+        }
+      });
+    }, [offer.allImages, offer.photos, offer.imagenUrl]);
 
-  const isDashboardMode = !!onEdit || !!onDelete;
-  const totalImages = images.length;
+    const {
+      currentIndex,
+      isHovered,
+      isTouching,
+      elementRef,
+      handleMouseEnter,
+      handleMouseLeave,
+      handlePrevImage,
+      handleNextImage,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
+    } = useImageCarousel(offer._id, images.length);
 
-  // Render Image Carousel
-  const renderImageCarousel = () => (
-    <div
-      className={`relative overflow-hidden transition-transform ${isTouching ? 'scale-[0.98]' : 'scale-100'} ${viewMode === 'grid' ? 'h-48 w-full' : 'w-64 h-48 flex-shrink-0'}`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onClick={handleCardClick}
-    >
-      {images.length > 0 ? (
-        images.map((img, idx) => (
-          <Image
-            key={idx}
-            src={img.startsWith('http') || img.startsWith('/') ? img : `/${img}`}
-            alt={offer.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className={`object-cover transition-all duration-500 ${idx === currentIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
-            priority={idx === 0}
-          />
-        ))
-      ) : (
-        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-          <span className="text-sm">No image</span>
-        </div>
-      )}
+    const handleWhatsAppClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const cleanPhone = offer.contactPhone.replace(/\D/g, '');
+        const message = encodeURIComponent(
+          `Hola ${offer.fixerName}, vi tu oferta "${offer.title}" y me interesa.`,
+        );
+        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+      },
+      [offer.contactPhone, offer.fixerName, offer.title],
+    );
 
-      {/* Navigation Arrows */}
-      {totalImages > 1 && isHovered && (
-        <>
-          <button
-            onClick={handlePrevImage}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg transition-all z-20 hover:scale-110 active:scale-95"
-          >
-            <ChevronLeft className="w-4 h-4 text-gray-800" />
-          </button>
-          <button
-            onClick={handleNextImage}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg transition-all z-20 hover:scale-110 active:scale-95"
-          >
-            <ChevronRight className="w-4 h-4 text-gray-800" />
-          </button>
-        </>
-      )}
+    const handleFixerClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (offer.fixerId) {
+          // Si quieres mantener el console.log(offer), debes incluir 'offer' en las dependencias.
+          // Si eliminas el console.log, podrías dejar solo [offer.fixerId, router]
+          console.log(offer);
+          console.log('Navigating to fixer with ID:', offer.fixerId);
+          router.push(`/fixer/${offer.fixerId}`);
+        }
+      },
+      // CORRECCIÓN: Se agregó 'offer' aquí porque se usa dentro del console.log
+      [offer, router],
+    );
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    const handleCardClick = useCallback(() => {
+      if (onClick) onClick(offer);
+    }, [onClick, offer]);
 
-      {/* Indicators */}
-      {totalImages > 1 && (
-        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
-          {Array.from({ length: totalImages }).map((_, idx) => (
-            <div
-              key={idx}
-              className={`h-1 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-white shadow-lg' : 'w-1.5 bg-white/60'}`}
-            />
-          ))}
-        </div>
-      )}
+    const handleEditClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onEdit) onEdit(offer);
+      },
+      [onEdit, offer],
+    );
 
-      {/* Badges */}
-      <div className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium shadow-sm border border-primary">
-        <MapPin className="w-3.5 h-3.5 text-primary" />
-        <span className="text-gray-700">{offer.city}</span>
-      </div>
+    const handleDeleteClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onDelete) onDelete(offer._id);
+      },
+      [onDelete, offer._id],
+    );
 
-      {viewMode === 'grid' && (
-        <div className="absolute right-3 top-3 rounded-lg bg-white/90 backdrop-blur-sm px-3 py-1.5 text-sm font-semibold shadow-sm border border-primary/20">
-          <span className="text-primary">{offer.price?.toLocaleString()} Bs</span>
-        </div>
-      )}
-    </div>
-  );
+    const isDashboardMode = !!onEdit || !!onDelete;
+    const totalImages = images.length;
 
-  // Render Content
-  const renderContent = () => (
-    <div className={`flex flex-col ${viewMode === 'grid' ? 'p-4' : 'flex-1 p-4 relative'}`}>
-      {viewMode === 'list' && (
-        <div className="absolute right-4 top-4 rounded-lg bg-white/90 backdrop-blur-sm px-3 py-1.5 text-sm font-semibold shadow-sm border border-primary/20">
-          <span className="text-primary">{offer.price?.toLocaleString()} Bs</span>
-        </div>
-      )}
+    // Render Image Carousel
+    const renderImageCarousel = () => (
+      <div
+        className={`relative overflow-hidden transition-transform ${isTouching ? 'scale-[0.98]' : 'scale-100'} ${viewMode === 'grid' ? 'h-48 w-full' : 'w-64 h-full flex-shrink-0'}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={handleCardClick}
+      >
+        {images.length > 0 ? (
+          images.map((img, idx) => {
+            // Double-check en tiempo de render
+            if (!img || typeof img !== 'string') return null;
 
-      <div className={viewMode === 'list' ? 'mb-2 pr-32' : ''}>
-        <h3 className="text-base font-semibold text-gray-900 truncate group-hover:text-primary transition-colors">
-          {offer.title}
-        </h3>
-        <p className="mt-1.5 text-sm text-gray-500 line-clamp-2 leading-relaxed">
-          {offer.description}
-        </p>
-      </div>
-
-      <div className="mt-2 flex items-center justify-between">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-            {offer.category ? tCat(offer.category) : t('uncategorized')}
-          </span>
-          {offer.tags && offer.tags.length > 0 && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-              {offer.tags[0]}
-            </span>
-          )}
-        </div>
-        <span className="text-xs text-gray-400 font-medium ml-auto">
-          {new Date(offer.createdAt).toLocaleDateString()}
-        </span>
-      </div>
-    </div>
-  );
-
-  // Render Footer (Fixer Info or Actions)
-  const renderFooter = () => {
-    if (isDashboardMode && !readOnly) {
-      return (
-        <div className="border-t border-gray-100 p-3 flex items-center justify-end gap-2 bg-gray-50/50">
-          {onEdit && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(offer);
-              }}
-              className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-              title="Editar"
-            >
-              <Edit2 className="w-4 h-4" />
-            </button>
-          )}
-          {onDelete && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(offer._id);
-              }}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors"
-              title="Eliminar"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      );
-    }
-
-    if (readOnly) return null;
-
-    return (
-      <div className="border-t border-gray-100 p-3 flex items-center justify-between gap-3">
-        <div
-          className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={handleFixerClick}
-        >
-          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100">
-            {offer.fixerPhoto ? (
+            return (
               <Image
-                src={offer.fixerPhoto}
-                alt={offer.fixerName}
-                width={36}
-                height={36}
-                className="w-full h-full object-cover"
+                key={idx}
+                src={img}
+                alt={offer.title}
+                fill
+                sizes={
+                  viewMode === 'grid'
+                    ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                    : '16rem'
+                }
+                className={`object-cover transition-all duration-500 ${idx === currentIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
+                style={{ position: 'absolute' }}
+                priority={idx === 0}
+                onError={(e) => {
+                  console.warn(`Failed to load image: ${img}`, e);
+                }}
               />
-            ) : (
-              <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
-                {offer.fixerName?.[0]?.toUpperCase() || 'U'}
-              </div>
-            )}
+            );
+          })
+        ) : (
+          <div className='w-full h-full bg-gray-100 flex items-center justify-center text-gray-400'>
+            <span className='text-sm'>No image</span>
           </div>
+        )}
 
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {offer.fixerName || t('defaultUserName')}
-            </p>
-            {offer.rating && (
-              <div className="flex items-center gap-1 mt-0.5">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-xs font-semibold text-gray-600">
-                  {offer.rating.toFixed(1)}
-                </span>
-              </div>
-            )}
+        {/* Navigation Arrows */}
+        {totalImages > 1 && isHovered && (
+          <>
+            <button
+              onClick={handlePrevImage}
+              className='absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg transition-all z-20 hover:scale-110 active:scale-95'
+            >
+              <ChevronLeft className='w-4 h-4 text-gray-800' />
+            </button>
+            <button
+              onClick={handleNextImage}
+              className='absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-lg transition-all z-20 hover:scale-110 active:scale-95'
+            >
+              <ChevronRight className='w-4 h-4 text-gray-800' />
+            </button>
+          </>
+        )}
+
+        {/* Overlay */}
+        <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+
+        {/* Indicators */}
+        {totalImages > 1 && (
+          <div className='absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10'>
+            {Array.from({ length: totalImages }).map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-6 bg-white shadow-lg' : 'w-1.5 bg-white/60'}`}
+              />
+            ))}
           </div>
+        )}
+
+        {/* Badges */}
+        <div className='absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium shadow-sm border border-primary'>
+          <MapPin className='w-3.5 h-3.5 text-primary' />
+          <span className='text-gray-700'>{offer.city}</span>
         </div>
 
-        <button
-          onClick={handleWhatsAppClick}
-          className="flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full transition-all shadow-sm flex items-center gap-2 px-3 py-2"
-          aria-label={t('contactWhatsApp')}
-        >
-          <MessageCircle className="w-4 h-4 text-white" />
-          <span className="text-white text-xs font-medium">{offer.contactPhone}</span>
-        </button>
+        {viewMode === 'grid' && (
+          <div className='absolute right-3 top-3 rounded-lg bg-white/90 backdrop-blur-sm px-3 py-1.5 text-sm font-semibold shadow-sm border border-primary/20'>
+            <span className='text-primary'>{offer.price?.toLocaleString()} Bs</span>
+          </div>
+        )}
       </div>
     );
-  };
 
-  return (
-    <div
-      ref={elementRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`group relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-xl hover:border-primary hover:-translate-y-1 ${
-        viewMode === 'list' ? 'flex flex-row' : ''
-      } ${className}`}
-    >
-      <div onClick={handleCardClick} className="cursor-pointer contents">
-        {renderImageCarousel()}
-        {renderContent()}
-      </div>
-      {viewMode === 'grid' && renderFooter()}
-      {viewMode === 'list' && (
-        <div className="flex flex-col justify-end p-4 border-l border-gray-100">
-          {renderFooter()}
+    // Render Content
+    const renderContent = () => (
+      <div className={`flex flex-col ${viewMode === 'grid' ? 'p-4' : 'flex-1 p-4 relative'}`}>
+        {viewMode === 'list' && (
+          <div className='absolute right-4 top-4 rounded-lg bg-white/90 backdrop-blur-sm px-3 py-1.5 text-sm font-semibold shadow-sm border border-primary/20'>
+            <span className='text-primary'>{offer.price?.toLocaleString()} Bs</span>
+          </div>
+        )}
+
+        <div className={viewMode === 'list' ? 'mb-2 pr-32' : ''}>
+          <h3
+            className={`text-base font-semibold text-gray-900 group-hover:text-primary transition-colors ${viewMode === 'grid' ? 'truncate' : 'text-left'}`}
+          >
+            <SearchHighlight text={offer.title} searchQuery={searchQuery} />
+          </h3>
+          <p className='mt-1.5 text-sm text-gray-500 line-clamp-2 leading-relaxed'>
+            <SearchHighlight text={offer.description} searchQuery={searchQuery} />
+          </p>
         </div>
-      )}
-    </div>
-  );
-};
+
+        <div className='mt-2 flex items-center justify-between'>
+          <div className='flex items-center gap-2 flex-wrap'>
+            <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary'>
+              {offer.category ? tCat(offer.category) : ''}
+            </span>
+            {offer.tags && offer.tags.length > 0 && (
+              <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600'>
+                {offer.tags[0]}
+              </span>
+            )}
+          </div>
+          <span className='text-xs text-gray-400 font-medium ml-auto'>
+            {new Date(offer.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+    );
+
+    // Render Footer
+    const renderFooter = () => {
+      if (isDashboardMode && !readOnly) {
+        return (
+          <div className='border-t border-gray-100 p-3 flex items-center justify-end gap-2 bg-gray-50/50'>
+            {onEdit && (
+              <button
+                onClick={handleEditClick}
+                className='p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors'
+                title='Editar'
+              >
+                <Edit2 className='w-4 h-4' />
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={handleDeleteClick}
+                className='p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors'
+                title='Eliminar'
+              >
+                <Trash2 className='w-4 h-4' />
+              </button>
+            )}
+          </div>
+        );
+      }
+
+      if (readOnly) return null;
+
+      return (
+        <div className='border-t border-gray-100 p-3 flex items-center justify-between gap-3'>
+          <div
+            className='flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity'
+            onClick={handleFixerClick}
+          >
+            <div className='w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-gray-100'>
+              {offer.fixerPhoto ? (
+                <Image
+                  src={offer.fixerPhoto}
+                  alt={offer.fixerName}
+                  width={36}
+                  height={36}
+                  className='w-full h-full object-cover'
+                />
+              ) : (
+                <div className='w-full h-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold'>
+                  {offer.fixerName?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
+            </div>
+
+            <div className='min-w-0 flex-1'>
+              <p className='text-sm font-medium text-gray-900 truncate'>
+                {offer.fixerName || t('defaultUserName')}
+              </p>
+              {offer.rating && (
+                <div className='flex items-center gap-1 mt-0.5'>
+                  <Star className='w-3.5 h-3.5 fill-amber-400 text-amber-400' />
+                  <span className='text-xs font-semibold text-gray-600'>
+                    {offer.rating.toFixed(1)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={handleWhatsAppClick}
+            className='flex-shrink-0 bg-primary hover:bg-primary/90 rounded-full transition-all shadow-sm flex items-center gap-2 px-3 py-2'
+            aria-label={t('contactWhatsApp')}
+          >
+            <MessageCircle className='w-4 h-4 text-white' />
+            <span className='text-white text-xs font-medium'>{offer.contactPhone}</span>
+          </button>
+        </div>
+      );
+    };
+
+    // Return
+    return (
+      <div
+        ref={elementRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className={`group relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:shadow-xl hover:border-primary hover:-translate-y-1 ${
+          viewMode === 'list' ? 'flex flex-row' : ''
+        } ${className}`}
+      >
+        {viewMode === 'grid' ? (
+          <>
+            <div onClick={handleCardClick} className='cursor-pointer contents'>
+              {renderImageCarousel()}
+              {renderContent()}
+            </div>
+            {renderFooter()}
+          </>
+        ) : (
+          <>
+            <div onClick={handleCardClick} className='cursor-pointer'>
+              {renderImageCarousel()}
+            </div>
+            {/* Contenedor vertical para contenido + footer */}
+            <div className='flex flex-col flex-1'>
+              <div onClick={handleCardClick} className='cursor-pointer flex-1'>
+                {renderContent()}
+              </div>
+              {renderFooter()}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.offer._id === nextProps.offer._id &&
+      prevProps.viewMode === nextProps.viewMode &&
+      prevProps.searchQuery === nextProps.searchQuery &&
+      prevProps.readOnly === nextProps.readOnly &&
+      prevProps.className === nextProps.className
+      // No comparar onClick, onEdit, onDelete porque son memoizados en el padre
+    );
+  },
+);
+
+JobOfferCard.displayName = 'JobOfferCard';

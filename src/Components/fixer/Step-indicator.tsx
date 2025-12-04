@@ -5,7 +5,7 @@ interface StepIndicatorProps {
 
 export function StepIndicator({ step, total }: StepIndicatorProps) {
   return (
-    <div className="mb-6 flex items-center justify-center gap-2">
+    <div className='mb-6 flex items-center justify-center gap-2'>
       {Array.from({ length: total }).map((_, i) => (
         <span
           key={i}

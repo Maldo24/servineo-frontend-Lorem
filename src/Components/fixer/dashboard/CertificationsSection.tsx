@@ -2,44 +2,105 @@
 
 import { useState } from 'react';
 import { PillButton } from '../Pill-button';
-import { Plus, Edit2, Trash2, Award, ExternalLink, Calendar, Building2 } from 'lucide-react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Award,
+  ExternalLink,
+  Calendar,
+  Building2,
+  Loader2,
+} from 'lucide-react';
 import { ICertification } from '@/types/fixer-profile';
 import { Modal } from '@/Components/Modal';
 import { useForm } from 'react-hook-form';
-
-const MOCK_CERTS: ICertification[] = [
-  {
-    _id: '1',
-    fixerId: 'fixer1',
-    name: 'Técnico en Instalaciones Eléctricas',
-    institution: 'INFOCAL',
-    issueDate: '2023-05-15',
-    expiryDate: '2026-05-15',
-    credentialId: 'INFO-2023-001',
-    credentialUrl: 'https://example.com/cert',
-    createdAt: new Date().toISOString(),
-  },
-];
+import NotificationModal from '@/Components/Modal-notifications';
+import { useTranslations } from 'next-intl';
+import {
+  useGetCertificationsByFixerQuery,
+  useCreateCertificationMutation,
+  useUpdateCertificationMutation,
+  useDeleteCertificationMutation,
+} from '@/app/redux/services/certifications';
 
 interface CertificationsSectionProps {
   readOnly?: boolean;
+  fixerId?: string;
 }
 
-export function CertificationsSection({ readOnly = false }: CertificationsSectionProps) {
-  const [certs, setCerts] = useState<ICertification[]>(MOCK_CERTS);
+interface NotificationState {
+  isOpen: boolean;
+  type: 'success' | 'error' | 'info' | 'warning';
+  title: string;
+  message: string;
+  onConfirm?: () => void;
+}
+
+export function CertificationsSection({ readOnly = false, fixerId }: CertificationsSectionProps) {
+  const t = useTranslations('CertificationsSection');
+
+  const { data: certs = [], isLoading } = useGetCertificationsByFixerQuery(fixerId || '', {
+    skip: !fixerId,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const [createCertification, { isLoading: isCreating }] = useCreateCertificationMutation();
+  const [updateCertification, { isLoading: isUpdating }] = useUpdateCertificationMutation();
+  const [deleteCertification, { isLoading: isDeleting }] = useDeleteCertificationMutation();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<ICertification | null>(null);
 
+  const [notification, setNotification] = useState<NotificationState>({
+    isOpen: false,
+    type: 'info',
+    title: '',
+    message: '',
+    onConfirm: undefined,
+  });
+
   const { register, handleSubmit, reset, setValue } = useForm<ICertification>();
+
+  const closeNotification = () => {
+    setNotification((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const showSuccess = (message: string) => {
+    setNotification({
+      isOpen: true,
+      type: 'success',
+      title: t('notifications.success'),
+      message,
+      onConfirm: undefined,
+    });
+  };
+
+  const showError = (message: string) => {
+    setNotification({
+      isOpen: true,
+      type: 'error',
+      title: t('notifications.error'),
+      message,
+      onConfirm: undefined,
+    });
+  };
 
   const handleOpenModal = (cert?: ICertification) => {
     if (readOnly) return;
+
     if (cert) {
       setEditingCert(cert);
       setValue('name', cert.name);
       setValue('institution', cert.institution);
-      setValue('issueDate', cert.issueDate.split('T')[0]);
-      setValue('expiryDate', cert.expiryDate.split('T')[0]);
+      setValue(
+        'issueDate',
+        cert.issueDate ? new Date(cert.issueDate).toISOString().split('T')[0] : '',
+      );
+      setValue(
+        'expiryDate',
+        cert.expiryDate ? new Date(cert.expiryDate).toISOString().split('T')[0] : '',
+      );
       setValue('credentialId', cert.credentialId);
       setValue('credentialUrl', cert.credentialUrl);
     } else {
@@ -62,103 +123,171 @@ export function CertificationsSection({ readOnly = false }: CertificationsSectio
     reset();
   };
 
-  const onSubmit = (data: ICertification) => {
-    if (editingCert) {
-      setCerts((prev) => prev.map((c) => (c._id === editingCert._id ? { ...c, ...data } : c)));
-    } else {
-      const newCert: ICertification = {
-        ...data,
-        _id: Date.now().toString(),
-        fixerId: 'fixer1',
-        createdAt: new Date().toISOString(),
-      };
-      setCerts((prev) => [...prev, newCert]);
+  const onSubmit = async (data: ICertification) => {
+    if (!fixerId) return;
+
+    try {
+      if (editingCert && editingCert._id) {
+        await updateCertification({
+          id: editingCert._id,
+          data: { ...data, fixerId },
+        }).unwrap();
+        showSuccess(t('notifications.updateSuccess'));
+      } else {
+        await createCertification({
+          ...data,
+          fixerId,
+        }).unwrap();
+        showSuccess(t('notifications.createSuccess'));
+      }
+      handleCloseModal();
+    } catch (error) {
+      console.error(error);
+      showError(t('notifications.saveError'));
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDeleteClick = (id: string) => {
     if (readOnly) return;
-    if (confirm('¿Estás seguro de eliminar esta certificación?')) {
-      setCerts((prev) => prev.filter((c) => c._id !== id));
+
+    setNotification({
+      isOpen: true,
+      type: 'warning',
+      title: t('notifications.deleteTitle'),
+      message: t('notifications.deleteMessage'),
+      onConfirm: () => confirmDelete(id),
+    });
+  };
+
+  const confirmDelete = async (id: string) => {
+    try {
+      await deleteCertification(id).unwrap();
+      setTimeout(() => {
+        showSuccess(t('notifications.deleteSuccess'));
+      }, 300);
+    } catch (error) {
+      console.error(error);
+      setTimeout(() => {
+        showError(t('notifications.deleteError'));
+      }, 300);
     }
   };
+
+  if (!fixerId) {
+    return <div className='p-4 text-center text-gray-500'>{t('errors.noFixerProfile')}</div>;
+  }
+
+  if (isLoading)
+    return (
+      <div className='p-4 text-center flex justify-center'>
+        <Loader2 className='animate-spin h-6 w-6' />
+      </div>
+    );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-          <Award className="h-5 w-5 text-blue-600" />
-          {readOnly ? 'Certificaciones' : 'Mis Certificaciones'}
+    <div className='space-y-6'>
+      {/* Encabezado */}
+      <div className='flex items-center justify-between'>
+        <h2 className='text-xl font-semibold text-gray-900 flex items-center gap-2'>
+          <Award className='h-5 w-5 text-blue-600' />
+          {readOnly ? t('titles.certifications') : t('titles.myCertifications')}
         </h2>
         {!readOnly && (
           <PillButton
             onClick={() => handleOpenModal()}
-            className="bg-primary text-white hover:bg-blue-800 flex items-center gap-2"
+            className='bg-primary text-white hover:bg-blue-800 flex items-center gap-2'
           >
-            <Plus className="h-4 w-4" />
-            Agregar Certificación
+            <Plus className='h-4 w-4' />
+            {t('buttons.addCertification')}
           </PillButton>
         )}
       </div>
 
-      <div className="grid gap-4">
+      {/* Lista de Certificaciones */}
+      <div className='grid gap-4'>
+        {certs.length === 0 && (
+          <div className='text-gray-500 text-center py-8 border border-dashed border-gray-300 rounded-lg bg-gray-50'>
+            {t('empty')}
+          </div>
+        )}
+
         {certs.map((cert) => (
           <div
             key={cert._id}
-            className="group relative bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-all hover:border-blue-200"
+            className='group relative bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-all hover:border-blue-200'
           >
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex gap-4">
-                <div className="h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-blue-600">
-                  <Award className="h-6 w-6" />
+            <div className='flex justify-between items-start gap-4'>
+              <div className='flex gap-4 w-full'>
+                {/* Icono */}
+                <div className='h-12 w-12 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-blue-600 border border-blue-100'>
+                  <Award className='h-6 w-6' />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 text-lg leading-tight">{cert.name}</h3>
-                  <div className="flex items-center gap-2 text-gray-600 mt-1">
-                    <Building2 className="h-4 w-4" />
+
+                {/* Contenido */}
+                <div className='flex-1'>
+                  <h3 className='font-semibold text-gray-900 text-lg leading-tight'>{cert.name}</h3>
+                  <div className='flex items-center gap-2 text-gray-600 mt-1 font-medium'>
+                    <Building2 className='h-4 w-4' />
                     <span>{cert.institution}</span>
                   </div>
 
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 mt-3 text-sm text-gray-500">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="h-4 w-4" />
-                      <span>Emitido: {new Date(cert.issueDate).toLocaleDateString()}</span>
+                  <div className='flex flex-wrap gap-x-6 gap-y-2 mt-3 text-sm text-gray-500'>
+                    <div className='flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded'>
+                      <Calendar className='h-3.5 w-3.5' />
+                      <span>
+                        {t('card.issued')}:{' '}
+                        {new Date(cert.issueDate).toLocaleDateString(undefined, {
+                          timeZone: 'UTC',
+                        })}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="h-4 w-4" />
-                      <span>Vence: {new Date(cert.expiryDate).toLocaleDateString()}</span>
-                    </div>
+                    {cert.expiryDate && (
+                      <div className='flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded'>
+                        <Calendar className='h-3.5 w-3.5' />
+                        <span>
+                          {t('card.expires')}:{' '}
+                          {new Date(cert.expiryDate).toLocaleDateString(undefined, {
+                            timeZone: 'UTC',
+                          })}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {cert.credentialUrl && (
                     <a
                       href={cert.credentialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-sm mt-3 font-medium"
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 hover:underline text-sm mt-3 font-medium transition-colors'
                     >
-                      Ver credencial <ExternalLink className="h-3 w-3" />
+                      {t('card.viewCredential')} <ExternalLink className='h-3 w-3' />
                     </a>
                   )}
                 </div>
               </div>
 
+              {/* Botones de acción */}
               {!readOnly && (
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className='flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 md:static md:opacity-100'>
                   <button
                     onClick={() => handleOpenModal(cert)}
-                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
-                    title="Editar"
+                    className='p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors'
+                    title={t('tooltips.edit')}
                   >
-                    <Edit2 className="h-4 w-4" />
+                    <Edit2 className='h-4 w-4' />
                   </button>
                   <button
-                    onClick={() => handleDelete(cert._id!)}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
-                    title="Eliminar"
+                    onClick={() => cert._id && handleDeleteClick(cert._id)}
+                    disabled={isDeleting}
+                    className='p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50'
+                    title={t('tooltips.delete')}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    {isDeleting ? (
+                      <Loader2 className='h-4 w-4 animate-spin' />
+                    ) : (
+                      <Trash2 className='h-4 w-4' />
+                    )}
                   </button>
                 </div>
               )}
@@ -167,91 +296,125 @@ export function CertificationsSection({ readOnly = false }: CertificationsSectio
         ))}
       </div>
 
+      {/* Modal Formulario */}
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
-        title={editingCert ? 'Editar Certificación' : 'Nueva Certificación'}
-        size="lg"
+        title={editingCert ? t('modal.editTitle') : t('modal.newTitle')}
+        size='lg'
+        closeOnOverlayClick={!isCreating && !isUpdating}
+        className='rounded-2xl border-primary border-2'
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre de la Certificación
-            </label>
-            <input
-              {...register('name', { required: 'El nombre es requerido' })}
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Ej: Técnico Electricista"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Institución Emisora
-            </label>
-            <input
-              {...register('institution', { required: 'La institución es requerida' })}
-              className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              placeholder="Ej: INFOCAL"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+        <Modal.Header className='text-center text-primary'>
+          {editingCert ? t('modal.editTitle') : t('modal.newTitle')}
+        </Modal.Header>
+        <Modal.Body>
+          <form id='certificationForm' onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de Emisión
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.name.label')}
               </label>
               <input
-                type="date"
-                {...register('issueDate', { required: true })}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                {...register('name', { required: true })}
+                className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3'
+                placeholder={t('form.name.placeholder')}
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha de Vencimiento
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.institution.label')}
               </label>
               <input
-                type="date"
-                {...register('expiryDate', { required: true })}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                {...register('institution', { required: true })}
+                className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3'
+                placeholder={t('form.institution.placeholder')}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('form.issueDate.label')}
+                </label>
+                <input
+                  type='date'
+                  {...register('issueDate', { required: true })}
+                  className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3 bg-white'
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  {t('form.expiryDate.label')}{' '}
+                  <span className='text-gray-400 font-normal'>({t('form.optional')})</span>
+                </label>
+                <input
+                  type='date'
+                  {...register('expiryDate')}
+                  className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3 bg-white'
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ID Credencial</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.credentialId.label')}{' '}
+                <span className='text-gray-400 font-normal'>({t('form.optional')})</span>
+              </label>
               <input
                 {...register('credentialId')}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Opcional"
+                className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3'
+                placeholder={t('form.credentialId.placeholder')}
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL Credencial</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                {t('form.credentialUrl.label')}{' '}
+                <span className='text-gray-400 font-normal'>({t('form.optional')})</span>
+              </label>
               <input
                 {...register('credentialUrl')}
-                className="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                placeholder="https://..."
+                type='url'
+                className='w-full rounded-lg border-primary border focus:outline-none py-2 px-3'
+                placeholder={t('form.credentialUrl.placeholder')}
               />
             </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <PillButton
-              type="button"
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className='flex justify-end gap-2'>
+            <button
+              type='button'
               onClick={handleCloseModal}
-              className="bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className='border border-primary py-2 px-4 rounded-2xl text-primary hover:text-white hover:bg-primary transition-colors'
             >
-              Cancelar
-            </PillButton>
-            <PillButton type="submit" className="bg-primary text-white hover:bg-blue-800">
-              Guardar
+              {t('buttons.cancel')}
+            </button>
+            <PillButton
+              type='submit'
+              form='certificationForm'
+              className='bg-primary text-white hover:bg-blue-800'
+              disabled={isCreating || isUpdating}
+            >
+              {(isCreating || isUpdating) && <Loader2 className='animate-spin h-4 w-4 mr-2' />}
+              {isCreating || isUpdating ? t('buttons.saving') : t('buttons.save')}
             </PillButton>
           </div>
-        </form>
+        </Modal.Footer>
       </Modal>
+
+      {/* Modal de Notificaciones */}
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+        onConfirm={notification.onConfirm}
+        confirmText={t('buttons.delete')}
+        cancelText={t('buttons.cancel')}
+      />
     </div>
   );
 }

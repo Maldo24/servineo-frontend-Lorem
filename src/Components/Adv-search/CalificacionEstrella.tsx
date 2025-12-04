@@ -12,13 +12,13 @@ export const NoResultsMessage: React.FC<NoResultsMessageProps> = ({ search }) =>
   const trimmed = search?.trim();
 
   return (
-    <div className="text-center py-12">
-      <p className="text-gray-500 text-xl font-roboto font-normal">
+    <div className='text-center py-12'>
+      <p className='text-gray-500 text-xl font-roboto font-normal'>
         {t('noResults')}
         {trimmed && (
           <>
             {' '}
-            {t('for')} <span className="font-bold">&quot;{trimmed}&quot;</span>
+            {t('for')} <span className='font-bold'>&quot;{trimmed}&quot;</span>
           </>
         )}
       </p>
@@ -41,6 +41,10 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
   const totalStars = 5;
   const subScales = 9; // .1 - .9
 
+  // Limitar el valor entre 1 y 5
+  const clampedValue = value != null ? Math.min(5, Math.max(1, value)) : null;
+  const mainStarValue = clampedValue ? Math.floor(clampedValue) : null;
+
   const handleMainStarClick = (star: number) => {
     setSelectedMainStar(star);
     setShowModal(true);
@@ -56,31 +60,29 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
     setSelectedMainStar(null);
   };
 
-  const mainStarValue = value ? Math.floor(value) : null;
-
   return (
-    <div className="relative">
-      <h3 className="text-base mb-2">{t('label')}</h3>
+    <div className='relative'>
+      <h3 className='text-base mb-2'>{t('label')}</h3>
 
       {/* Estrellas principales */}
-      <div className="bg-white rounded-lg border border-gray-300 p-4 w-fit">
-        <div className="flex items-center gap-2">
+      <div className='bg-white rounded-lg border border-gray-300 p-4 w-fit'>
+        <div className='flex items-center gap-2'>
           {Array.from({ length: totalStars }, (_, idx) => {
             const starNumber = idx + 1;
             const filled = (hoverStar ?? mainStarValue ?? 0) >= starNumber;
             return (
               <button
                 key={starNumber}
-                type="button"
+                type='button'
                 onClick={() => handleMainStarClick(starNumber)}
                 onMouseEnter={() => setHoverStar(starNumber)}
                 onMouseLeave={() => setHoverStar(null)}
-                className="transition-transform hover:scale-110 active:scale-95 touch-manipulation"
+                className='transition-transform hover:scale-110 active:scale-95 touch-manipulation'
               >
                 <Star
                   size={30}
                   fill={filled ? '#fbbf24' : '#ffffff'}
-                  stroke="#000000"
+                  stroke='#000000'
                   strokeWidth={2}
                 />
               </button>
@@ -88,9 +90,9 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
           })}
         </div>
 
-        {value && (
-          <div className="mt-2 text-sm text-gray-600 text-center">
-            {value.toFixed(1)} {t('stars')}
+        {clampedValue && (
+          <div className='mt-2 text-sm text-gray-600 text-center'>
+            {clampedValue.toFixed(1)} {t('stars')}
           </div>
         )}
       </div>
@@ -100,7 +102,7 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
         <>
           {/* CLIC FUERA PARA CERRAR */}
           <div
-            className="fixed inset-0 z-[9998]"
+            className='fixed inset-0 z-[9998]'
             onClick={() => {
               setShowModal(false);
               setSelectedMainStar(null);
@@ -108,22 +110,22 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
           />
 
           {/* CUADRO DE OPCIONES */}
-          <div className="absolute mt-2 right-0 translate-x-[160px] bg-white rounded-lg border-2 border-gray-300 shadow-xl p-3 w-64 max-h-[60vh] z-[9999]">
-            <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-200">
-              <h3 className="text-sm font-semibold">{t('label')}</h3>
+          <div className='absolute mt-2 right-0 translate-x-[160px] bg-white rounded-lg border-2 border-gray-300 shadow-xl p-3 w-64 max-h-[60vh] z-[9999]'>
+            <div className='flex items-center justify-between mb-2 pb-2 border-b border-gray-200'>
+              <h3 className='text-sm font-semibold'>{t('label')}</h3>
               <button
                 onClick={() => {
                   setShowModal(false);
                   setSelectedMainStar(null);
                 }}
-                className="text-black-600 hover:text-black-800 text-xs font-bold"
+                className='text-black-600 hover:text-black-800 text-xs font-bold'
               >
                 ✖
               </button>
             </div>
 
             {/* CONTENEDOR CON SCROLL */}
-            <div className="overflow-y-auto max-h-32">
+            <div className='overflow-y-auto max-h-32'>
               {/* .0 */}
               <button
                 onClick={() => handleSubScaleClick(0)}
@@ -133,8 +135,8 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
                   hoverSubStar === 0 ? 'bg-gray-100' : 'hover:bg-gray-50'
                 }`}
               >
-                <Star size={18} fill="#fbbf24" stroke="#000000" strokeWidth={2} />
-                <span className="font-medium text-base">{selectedMainStar}.0</span>
+                <Star size={18} fill='#fbbf24' stroke='#000000' strokeWidth={2} />
+                <span className='font-medium text-base'>{selectedMainStar}.0</span>
               </button>
 
               {/* .1 - .9 */}
@@ -150,8 +152,8 @@ const CalificacionEstrella: React.FC<Props> = ({ value = null, onChange }) => {
                       hoverSubStar === subNumber ? 'bg-gray-100' : 'hover:bg-gray-50'
                     }`}
                   >
-                    <Star size={18} fill="#fbbf24" stroke="#000000" strokeWidth={2} />
-                    <span className="font-medium text-base">
+                    <Star size={18} fill='#fbbf24' stroke='#000000' strokeWidth={2} />
+                    <span className='font-medium text-base'>
                       {selectedMainStar}.{subNumber}
                     </span>
                   </button>
