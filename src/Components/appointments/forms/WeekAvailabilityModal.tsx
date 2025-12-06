@@ -162,7 +162,7 @@ export const WeekAvailabilityModal = forwardRef<
           },
         );
 
-        if (response.data.updated) {
+        if ((response.data as any).updated) {
           showMessage({
             message: 'Días guardados correctamente',
             type: 'success',

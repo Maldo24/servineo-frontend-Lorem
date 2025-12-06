@@ -169,8 +169,8 @@ export default function MobileWeekView({
         }),
       ]);
 
-      const currentRequesterFixerSchedules = currentRequesterResponse.data;
-      const otherRequesterFixerSchedules = otherRequesterResponse.data;
+      const currentRequesterFixerSchedules = currentRequesterResponse.data as Schedule[];
+      const otherRequesterFixerSchedules = otherRequesterResponse.data as Schedule[];
 
       const fixerSchedules: Schedule[] = combineSchedules(
         currentRequesterFixerSchedules,

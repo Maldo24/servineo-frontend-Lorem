@@ -38,12 +38,14 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
     }
 
     async function fetchData() {
-      if (!fixer_id || fixer_id === '' || fixer_id === 'undefined') {
-        console.warn('fixer_id no válido:', fixer_id);
+      // ✅ VALIDACIÓN MEJORADA: evitar llamadas con IDs inválidos
+      if (!fixer_id || fixer_id === '' || fixer_id === 'undefined' || fixer_id === 'placeholder') {
+        console.warn('[useSixMonthsAppointments] fixer_id no válido, saltando fetch:', fixer_id);
         setLoading(false);
         return;
       }
 
+      console.log('[useSixMonthsAppointments] Iniciando fetch con fixer_id:', fixer_id);
       setLoading(true);
       try {
         const [appointmentsData, availabilityData] = await Promise.all([
@@ -55,9 +57,10 @@ export default function useSixMonthsAppointments(fixer_id: string, date: Date) {
         setAppointmentsDis(availabilityData);
         setError(null);
         hasFetched.current = true;
+        console.log('[useSixMonthsAppointments] ✅ Datos cargados exitosamente');
       } catch (err) {
         setError('Error al cargar los datos');
-        console.error('Error en fetchData:', err);
+        console.error('[useSixMonthsAppointments] ❌ Error en fetchData:', err);
         setAppointments([]);
         setAppointmentsDis({
           lunes: [],

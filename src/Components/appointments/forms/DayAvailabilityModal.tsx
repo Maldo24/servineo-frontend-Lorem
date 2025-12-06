@@ -83,7 +83,7 @@ export const DayAvailabilityModal = forwardRef<
           availabilityData[day] = [...selectedHours];
         });
 
-        const response = await axios.put(
+        const response = await axios.put<{ updated?: boolean }>(
           `${API}/api/crud_update/appointments/update_fixer_availability`,
           {
             fixer_id: fixerId,
@@ -91,7 +91,7 @@ export const DayAvailabilityModal = forwardRef<
           },
         );
 
-        if (response.data.updated) {
+        if (response.data?.updated) {
           showMessage({
             message: 'Horas guardadas correctamente',
             type: 'success',
