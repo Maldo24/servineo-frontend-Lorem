@@ -55,6 +55,7 @@ export interface IJobOffer {
   contactPhone: string;
   photos: string[]; // URLs que vienen del back
   rating: number;
+  status?: boolean; // Estado activo/inactivo de la oferta
   createdAt: string;
   updatedAt: string;
   __v?: number;

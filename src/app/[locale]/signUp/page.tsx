@@ -5,10 +5,12 @@ import RegistroGoogle from './registrar/registroServicios/registroGoogle';
 import RegistroForm from './registrar/registroServicios/page';
 import GithubButton from '@/Components/requester/botonRegistro/buttonGithub';
 import DiscordButton from '@/Components/requester/botonRegistro/buttonDiscord';
+import ReCaptchaForm from '@/Components/requester/botonRegistro/recaptcha';
 import NotificationModal from '@/Components/Modal-notifications';
 import { useTranslations } from 'next-intl';
 export default function SignUp() {
-  const [captchaValid] = useState(true);
+  const t = useTranslations('SignUpRegister');
+   const [captchaValid, setCaptchaValid] = useState(false);
   const [notification, setNotification] = useState({
     isOpen: false,
     type: 'info' as 'success' | 'error' | 'info' | 'warning',
@@ -57,6 +59,9 @@ export default function SignUp() {
             <GithubButton onNotify={handleNotify} captchaValid={captchaValid} />
 
             <DiscordButton onNotify={handleNotify} captchaValid={captchaValid} />
+          </div>
+          <div className='mt-5'>
+            <ReCaptchaForm onVerified={(success) => setCaptchaValid(success)} />
           </div>
 
           <div className='flex items-start mt-5 text-sm text-gray-600'>

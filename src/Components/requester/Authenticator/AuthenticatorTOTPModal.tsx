@@ -54,7 +54,7 @@ export default function AuthenticatorTOTPModal({
 
     try {
       setLoading(true);
-      const res: ApiResponse<VerifyTOTPData> = await api.post('/2fa-ingresar/verify-totp', {
+      const res: ApiResponse<VerifyTOTPData> = await api.post('/api/editProfile/verify-totp', {
         email,
         code,
       });

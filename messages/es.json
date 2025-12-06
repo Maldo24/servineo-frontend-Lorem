@@ -279,7 +279,8 @@
     "perPage": "por página",
     "previous": "Anterior",
     "next": "Siguiente",
-    "showingResults": "Mostrando {start} - {end} de {total} resultados"
+    "showingResults": "Mostrando {start} - {end} de {total} resultados",
+    "page": "Página"
   },
   "sortBy": {
     "featured": "Destacados",
@@ -1078,7 +1079,19 @@
       "deleteMessage": "Esta acción no se puede deshacer.",
       "deleted": "Eliminado",
       "deleteSuccess": "Oferta eliminada.",
-      "deleteError": "No se pudo eliminar la oferta."
+      "deleteError": "No se pudo eliminar la oferta.",
+      "statusChanged": "Estado Cambiado",
+      "statusChangedSuccess": "Estado de la oferta actualizado correctamente.",
+      "statusChangeError": "No se pudo cambiar el estado de la oferta.",
+      "promoCreated": "Promoción creada",
+      "promoCreatedSuccess": "Promoción guardada correctamente.",
+      "promoCreateError": "No se pudo crear la promoción."
+    },
+    "filters": {
+      "all": "Todas las Ofertas",
+      "active": "Activas",
+      "inactive": "Inactivas",
+      "noResults": "No se encontraron ofertas con este filtro."
     },
     "confirmButton": "Confirmar",
     "deleteConfirmation": "¿Estás seguro de eliminar esta oferta?"

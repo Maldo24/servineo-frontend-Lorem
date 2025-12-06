@@ -622,7 +622,9 @@ export default function JobOffersPage() {
       scrollRestoredRef.current = true;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const backendSort = getSortValue(option);
+      // Cuando se cambia el orden, resetear la paginación a la página 1
       dispatch(setSortBy(backendSort));
+      dispatch(resetPagination());
     },
     [dispatch],
   );

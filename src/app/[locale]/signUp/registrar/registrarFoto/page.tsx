@@ -76,11 +76,17 @@ export default function FotoPerfil() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        // 🔥 Guardar token actualizado con la foto nueva
+        if (data.token) {
+          localStorage.setItem('servineo_token', data.token);
+        }
+
         handleNotify({
           type: 'success',
           title: '¡Éxito!',
           message: 'Foto actualizada correctamente',
         });
+
         setTimeout(() => router.push('/signUp/registrar/registrarUbicacion'), 1000);
       } else {
         handleNotify({

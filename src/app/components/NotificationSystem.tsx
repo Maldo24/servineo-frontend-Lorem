@@ -115,12 +115,45 @@ const isSaldoNotification = (notification: INotification): boolean => {
   return tipoLower.includes('saldo');
 };
 
+const filterNotificationsByRole = (
+  notifications: INotification[],
+  role: 'fixer' | 'requester'
+): INotification[] =>
+  notifications.filter((notification) => {
+    const tipoLower = notification.tipo?.trim().toLowerCase();
+
+    if (role === 'requester') {
+      return !isSaldoNotification(notification) && notification.saldo === undefined;
+    }
+
+    if (tipoLower === 'desconexion 2 dias') {
+      return false;
+    }
+
+    return true;
+  });
+
 interface NotificationSystemProps {
   userId?: string;
   userName?: string;
   isAuthenticated?: boolean;
   userRole?: 'fixer' | 'requester'; // NUEVO: rol del usuario
 }
+
+const normalizeApiBase = (rawBase?: string | null): string => {
+  const fallback = 'http://localhost:8000';
+  const sanitized = (rawBase && rawBase.trim()) || fallback;
+  const withoutTrailingSlash = sanitized.replace(/\/+$/, '');
+  if (withoutTrailingSlash.endsWith('/api')) {
+    return withoutTrailingSlash;
+  }
+  return `${withoutTrailingSlash}/api`;
+};
+
+const API_BASE_URL = normalizeApiBase(process.env.NEXT_PUBLIC_API_URL);
+const NOTIFICATIONS_API_URL = `${API_BASE_URL}/notifications`;
+const OFFERS_COUNT_API_URL = `${API_BASE_URL}/offers/count-since`;
+const PROMOTIONS_COUNT_API_URL = `${API_BASE_URL}/promotions/count-since`;
 
 // Función para enmascarar datos sensibles
 const maskSensitiveData = (text: string | undefined): string => {
@@ -148,7 +181,7 @@ const maskSensitiveData = (text: string | undefined): string => {
 }
 
 export default function NotificationSystem({ userId, userName, isAuthenticated, userRole = 'requester' }: NotificationSystemProps) {
-  const API_URL = `http://localhost:8000/api/notifications`;
+  const API_URL = NOTIFICATIONS_API_URL;
   const [offersCountMap, setOffersCountMap] = useState<{ [key: string]: number }>({});
   const [promotionsCountMap, setPromotionsCountMap] = useState<{ [key: string]: number }>({});
   const router = useRouter();
@@ -178,6 +211,10 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   const canRequestProtectedData = Boolean(authToken && userId);
   const displayName = userName?.split(' ')[0] ?? userId ?? (userRole === 'fixer' ? 'fixer' : 'requester');
   const showLoginPrompt = !canRequestProtectedData;
+  const storageKey = useCallback(
+    (base: string) => (userId ? `${base}_${userId}` : `${base}_anonymous`),
+    [userId]
+  );
 
   const modalRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -187,36 +224,62 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
   // Cargar estado persistido al montar
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      let loadedReadNotifications = new Set<string>();
-      
-      const savedRead = localStorage.getItem('read_notifications');
-      if (savedRead) {
-        try {
-          const readIds = JSON.parse(savedRead);
-          loadedReadNotifications = new Set(readIds);
-          setReadNotifications(loadedReadNotifications);
-        } catch (e) {
-          console.error('Error loading read notifications:', e);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(notifications));
         }
-      }
 
-      const savedNotifications = localStorage.getItem('cached_notifications');
-      if (savedNotifications) {
-        try {
-          const cached = JSON.parse(savedNotifications);
-          setNotifications(cached);
-        } catch (e) {
-          console.error('Error loading cached notifications:', e);
-        }
-      }
+    setReadNotifications(new Set());
+    setNotifications([]);
+    setUnreadCount(0);
+    setPage(1);
 
-      const savedPage = localStorage.getItem('notification_page');
-      if (savedPage) {
-        setPage(parseInt(savedPage, 10));
+    let loadedReadNotifications = new Set<string>();
+
+    const savedRead = localStorage.getItem(storageKey('read_notifications'));
+    if (savedRead) {
+      try {
+        const readIds = JSON.parse(savedRead);
+        loadedReadNotifications = new Set(readIds);
+        setReadNotifications(loadedReadNotifications);
+      } catch (e) {
+        console.error('Error loading read notifications:', e);
       }
     }
-  }, []);
+
+    const savedNotifications = localStorage.getItem(storageKey('cached_notifications'));
+    if (savedNotifications) {
+      try {
+        const cached = JSON.parse(savedNotifications);
+        setNotifications(filterNotificationsByRole(cached, userRole));
+      } catch (e) {
+        console.error('Error loading cached notifications:', e);
+      }
+    }
+
+    const savedPage = localStorage.getItem(storageKey('notification_page'));
+    if (savedPage) {
+      setPage(parseInt(savedPage, 10));
+    }
+  }, [storageKey, userRole]);
+
+  useEffect(() => {
+    setNotifications((prev) => {
+      const filtered = filterNotificationsByRole(prev, userRole);
+      if (filtered.length === prev.length) {
+        let isSame = true;
+        for (let i = 0; i < filtered.length; i += 1) {
+          if (filtered[i] !== prev[i]) {
+            isSame = false;
+            break;
+          }
+        }
+        if (isSame) {
+          return prev;
+        }
+      }
+      return filtered;
+    });
+  }, [userRole]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -327,13 +390,15 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('notification_filter', filter);
-      localStorage.setItem('read_notifications', JSON.stringify(Array.from(readNotifications)));
-      localStorage.setItem('notification_page', page.toString());
+      localStorage.setItem(storageKey('read_notifications'), JSON.stringify(Array.from(readNotifications)));
+      localStorage.setItem(storageKey('notification_page'), page.toString());
       if (notifications.length > 0) {
-        localStorage.setItem('cached_notifications', JSON.stringify(notifications));
+        localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(notifications));
+      } else {
+        localStorage.removeItem(storageKey('cached_notifications'));
       }
     }
-  }, [filter, readNotifications, page, notifications]);
+  }, [filter, readNotifications, page, notifications, storageKey]);
 
   // Función para cargar solo el contador de notificaciones no leídas según el filtro activo
   const fetchUnreadCount = useCallback(async (currentFilter: string = filter) => {
@@ -349,9 +414,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
       }
 
       const data: INotification[] = await response.json();
-      const sanitizedData = userRole === 'requester'
-        ? data.filter((n) => !isSaldoNotification(n) && n.saldo === undefined)
-        : data;
+      const sanitizedData = filterNotificationsByRole(data, userRole);
 
       // Aplicar filtro si no es 'todos'
       let filteredData = sanitizedData;
@@ -396,13 +459,11 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
     } catch (err: unknown) {
       console.error('Error fetching unread count:', err);
       if (typeof window !== 'undefined') {
-        const cached = localStorage.getItem('cached_notifications');
+        const cached = localStorage.getItem(storageKey('cached_notifications'));
         if (cached) {
           try {
             const cachedData: INotification[] = JSON.parse(cached);
-            const sanitizedCached = userRole === 'requester'
-              ? cachedData.filter((n: INotification) => !isSaldoNotification(n) && n.saldo === undefined)
-              : cachedData;
+            const sanitizedCached = filterNotificationsByRole(cachedData, userRole);
             let filteredCached = sanitizedCached;
             if (currentFilter !== 'todos' && currentFilter !== 'no_leidas') {
               filteredCached = sanitizedCached.filter((n: INotification) => {
@@ -431,7 +492,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         }
       }
     }
-  }, [readNotifications, filter, authorizedFetch, canRequestProtectedData, API_URL, userRole]);
+  }, [readNotifications, filter, authorizedFetch, canRequestProtectedData, API_URL, userRole, storageKey]);
 
   const fetchNotifications = useCallback(
     async (
@@ -465,9 +526,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         }
 
         const data: INotification[] = await response.json();
-        const sanitizedData = userRole === 'requester'
-          ? data.filter((n) => !isSaldoNotification(n) && n.saldo === undefined)
-          : data;
+        const sanitizedData = filterNotificationsByRole(data, userRole);
 
         let filteredData = sanitizedData;
         if (currentFilter !== 'todos') {
@@ -539,7 +598,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         setPage(currentPage);
 
         if (typeof window !== 'undefined') {
-          localStorage.setItem('cached_notifications', JSON.stringify(paginatedData));
+          localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(paginatedData));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
@@ -547,11 +606,11 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         console.error('Error fetching notifications:', err);
         
         if (typeof window !== 'undefined') {
-          const cached = localStorage.getItem('cached_notifications');
+          const cached = localStorage.getItem(storageKey('cached_notifications'));
           if (cached) {
             try {
               const cachedData = JSON.parse(cached);
-              setNotifications(cachedData);
+              setNotifications(filterNotificationsByRole(cachedData, userRole));
             } catch (e) {
               console.error('Error loading cached data:', e);
             }
@@ -567,7 +626,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         setShowSkeleton(false);
       }
     },
-    [readNotifications, authorizedFetch, canRequestProtectedData, API_URL, userRole]
+    [readNotifications, authorizedFetch, canRequestProtectedData, API_URL, userRole, storageKey]
   );
 
   const loadMore = useCallback(() => {
@@ -620,7 +679,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
       const fechaCreacion = notification.creado || notification.createdAt;
       if ((tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias') && fechaCreacion && userRole === 'requester') {
         if (offersCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:8000/api/offers/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${OFFERS_COUNT_API_URL}?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {
@@ -644,7 +703,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
       const fechaCreacion = notification.creado || notification.createdAt;
       if (tipoLower === 'desconexion 2 dias' && fechaCreacion && userRole === 'requester') {
         if (promotionsCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:8000/api/promotions/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${PROMOTIONS_COUNT_API_URL}?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {

@@ -10,6 +10,7 @@ import { useGetUserByIdQuery } from '@/app/redux/services/userApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '@/app/redux/slice/userSlice';
+import { resetFilters } from '@/app/redux/slice/jobOfert';
 import { IUser } from '@/types/user';
 import NotificationSystem from '@/app/components/NotificationSystem';
 
@@ -277,6 +278,7 @@ export default function TopMenu() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Fetch user data by ID
   const { data: fetchedUser } = useGetUserByIdQuery(userId ?? skipToken);
 
   useEffect(() => {
@@ -285,6 +287,30 @@ export default function TopMenu() {
       setIsLogged(true);
     }
   }, [fetchedUser, dispatch]);
+
+  // Logout function with job offers cleanup
+  const logout = () => {
+    localStorage.removeItem('servineo_token');
+    localStorage.removeItem('servineo_user');
+    
+    // Limpiar estado y persistencia de job offers al cerrar sesión
+    try {
+      dispatch(resetFilters());
+    } catch (e) {
+      // no bloquear logout si falla el dispatch
+      console.error('Error resetting job offers state on logout', e);
+    }
+    
+    try {
+      // Eliminar query string para evitar que se restaure search/page desde la URL
+      const path = window.location.pathname;
+      window.history.replaceState(null, '', path);
+    } catch (e) {
+      // ignore
+    }
+    
+    window.location.reload();
+  };
 
   const handleLogoClick = () => {
     if (typeof window === 'undefined') return;
@@ -301,12 +327,9 @@ export default function TopMenu() {
       const email = raw ? (JSON.parse(raw)?.email ?? '') : '';
       if (email) sessionStorage.setItem('prefill_email', email);
     } catch {}
-    localStorage.removeItem('servineo_token');
-    localStorage.removeItem('servineo_user');
-    dispatch(setUser(null));
-    setProfileMenuOpen(false);
-    setIsLogged(false);
-    router.push('/');
+    
+    // Usar la función logout que incluye limpieza de filtros
+    logout();
   };
 
   /* ---------- Render ---------- */

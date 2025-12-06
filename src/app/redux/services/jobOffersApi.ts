@@ -52,6 +52,49 @@ interface FilterCountsParams {
   maxRating?: number;
 }
 
+// ===== HELPER: OBTENER USERID =====
+function getUserId(): string | null {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const userStr = localStorage.getItem('servineo_user');
+    if (!userStr) return null;
+    
+    const userData = JSON.parse(userStr);
+    return userData._id || userData.id || null;
+  } catch (error) {
+    console.warn('Error parsing servineo_user:', error);
+    return null;
+  }
+}
+
+// ===== HELPER: OBTENER O CREAR SESSIONID =====
+function getOrCreateSessionId(): string {
+  if (typeof window === 'undefined') return '';
+  
+  const userId = getUserId();
+  if (userId) return ''; // No necesitamos sessionId si hay userId
+  
+  let sid = localStorage.getItem('search_sessionId');
+  if (!sid) {
+    sid = `anon-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    localStorage.setItem('search_sessionId', sid);
+  }
+  return sid;
+}
+
+// ===== HELPER: OBTENER IDENTIFICADOR =====
+function getIdentifier(): { userId?: string; sessionId?: string } {
+  const userId = getUserId();
+  
+  if (userId) {
+    return { userId };
+  }
+  
+  const sessionId = getOrCreateSessionId();
+  return { sessionId };
+}
+
 // Extender el baseApi con endpoints específicos de ofertas
 export const jobOffersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -59,6 +102,14 @@ export const jobOffersApi = baseApi.injectEndpoints({
     getOffers: builder.query<OfferResponse, OfferParams>({
       query: (params) => {
         const urlParams = new URLSearchParams();
+
+        // ===== AGREGAR IDENTIFICADOR =====
+        const identifier = getIdentifier();
+        if (identifier.userId) {
+          urlParams.append('userId', identifier.userId);
+        } else if (identifier.sessionId) {
+          urlParams.append('sessionId', identifier.sessionId);
+        }
 
         if (params.search?.trim()) urlParams.append('search', params.search);
         if (params.filters?.range?.length)
@@ -83,7 +134,8 @@ export const jobOffersApi = baseApi.injectEndpoints({
         urlParams.append('page', String(params.page || 1));
         urlParams.append('limit', String(params.limit || 10));
 
-        return `/devmaster/offers?${urlParams.toString()}`;
+        const url = `/devmaster/offers?${urlParams.toString()}`;
+        return url;
       },
       providesTags: ['JobOffer'],
     }),
@@ -95,7 +147,8 @@ export const jobOffersApi = baseApi.injectEndpoints({
           sortBy: 'recent',
           page: '1',
           limit: String(limit),
-          status: 'true', // Filtrar solo ofertas activas
+          status: 'true',
+          record: 'false', // No guardar estas búsquedas en historial
         });
         if (category && category !== 'Todos') params.append('category', category);
         return `/devmaster/offers?${params.toString()}`;
@@ -153,7 +206,7 @@ export const jobOffersApi = baseApi.injectEndpoints({
       },
     }),
 
-    // 5. Filter Counts (AGREGADO SIGUIENDO TU MISMO FORMATO)
+    // 5. Filter Counts
     getFilterCounts: builder.query<FilterCountsResponse, FilterCountsParams>({
       query: (params) => {
         const urlParams = new URLSearchParams();

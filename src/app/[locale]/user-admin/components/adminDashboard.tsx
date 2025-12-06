@@ -249,7 +249,7 @@ export default function AdminDashboard() {
           <button
             onClick={() =>
               window.open(
-                'https://servineo-frontend-bytes-bandidos.vercel.app/es/adminStatistic',
+                'https://servineo.app/es/adminStatistic',
                 '_self',
               )
             }
@@ -270,7 +270,7 @@ export default function AdminDashboard() {
           <button
             onClick={() =>
               window.open(
-                'https://servineo-frontend-bytes-bandidos.vercel.app/es/tracking-appointments',
+                'https://servineo.app/es/tracking-appointments',
                 '_self',
               )
             }

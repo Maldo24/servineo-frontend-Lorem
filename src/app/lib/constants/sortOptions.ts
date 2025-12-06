@@ -32,12 +32,10 @@ export const sortMapInverse: Record<string, string> = Object.fromEntries(
   Object.entries(sortMap).map(([key, value]) => [value, key]),
 );
 
-// Función helper para obtener el valor backend (siempre los mismos valores)
 export const getSortValue = (backendValue: string): string => {
   return backendValue || SORT_OPTIONS.RECIENTES;
 };
-
-// Función helper para obtener el nombre de visualización
+// funcion helper 
 export const getSortDisplayName = (backendValue: string): string => {
   return sortMapInverse[backendValue] || 'Los más recientes';
 };
