@@ -203,7 +203,7 @@ export const JobOfferCard = memo<JobOfferCardProps>(
       const handleClickOutside = () => {
         if (isMenuOpen) setIsMenuOpen(false);
       };
-      
+
       if (isMenuOpen) {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
@@ -399,7 +399,7 @@ export const JobOfferCard = memo<JobOfferCardProps>(
                   >
                     <MoreVertical className='w-4 h-4' />
                   </button>
-                  
+
                   {/* Dropdown Menu */}
                   {isMenuOpen && (
                     <div className='absolute right-0 bottom-full mb-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50'>
@@ -440,7 +440,12 @@ export const JobOfferCard = memo<JobOfferCardProps>(
                               viewBox='0 0 24 24'
                               xmlns='http://www.w3.org/2000/svg'
                             >
-                              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 4v16m8-8H4' />
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M12 4v16m8-8H4'
+                              />
                             </svg>
                             Crear promoción
                           </button>

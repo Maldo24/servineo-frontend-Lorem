@@ -18,7 +18,7 @@ export default function ChartsSection() {
   });
 
   // Carga inicial. Se desactiva exhaustiveness porque `loadCharts` está definida abajo
-   
+
   useEffect(() => {
     loadCharts();
   }, []);
