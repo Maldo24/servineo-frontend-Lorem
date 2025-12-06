@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 
 // src/app/payment/pages/centro-de-pagos/page.tsx
 
@@ -11,10 +11,10 @@ import CentroPagos from '../../../../Components/payment/CentroPagos';
 // 2. Crea un componente de Carga (Fallback)
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="text-center">
-        <Loader2 className="animate-spin text-blue-600 mx-auto mb-4" size={48} />
-        <p className="text-gray-600">Cargando Centro de Pagos...</p>
+    <div className='min-h-screen bg-gray-100 flex items-center justify-center'>
+      <div className='text-center'>
+        <Loader2 className='animate-spin text-blue-600 mx-auto mb-4' size={48} />
+        <p className='text-gray-600'>Cargando Centro de Pagos...</p>
       </div>
     </div>
   );

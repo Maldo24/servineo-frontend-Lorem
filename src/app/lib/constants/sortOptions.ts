@@ -35,7 +35,7 @@ export const sortMapInverse: Record<string, string> = Object.fromEntries(
 export const getSortValue = (backendValue: string): string => {
   return backendValue || SORT_OPTIONS.RECIENTES;
 };
-// funcion helper 
+// funcion helper
 export const getSortDisplayName = (backendValue: string): string => {
   return sortMapInverse[backendValue] || 'Los más recientes';
 };

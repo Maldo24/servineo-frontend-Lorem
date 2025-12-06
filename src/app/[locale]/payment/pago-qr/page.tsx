@@ -1,4 +1,4 @@
-import PayWithQr from "@/Components/payment/PayWithQr";
+import PayWithQr from '@/Components/payment/PayWithQr';
 
 export default function PagoQrPage() {
   return <PayWithQr />;

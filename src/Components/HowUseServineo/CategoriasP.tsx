@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Droplets } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
 const services = [
   {
     name: 'Plomería',
@@ -66,7 +67,6 @@ export const CategoriasP = () => {
   const t = useTranslations('CategoriasPopulares');
   const router = useRouter();
 
-  // Tomar las 8 categorías más populares (ordenadas por demanda)
   const categoriasPopulares = services.sort((a, b) => b.demand - a.demand).slice(0, 8);
 
   return (
@@ -77,7 +77,6 @@ export const CategoriasP = () => {
         <h3 className='text-center text-gray-500'> {t('subtitle2')} </h3>
       </div>
 
-      {/* Grid de categorías */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl'>
         {categoriasPopulares.map((service, index) => (
           <div
@@ -119,7 +118,6 @@ export const CategoriasP = () => {
         ))}
       </div>
 
-      {/* Botón para ver todas las categorías */}
       <Link
         href='/servicios'
         className='mt-4 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg hover:shadow-xl'

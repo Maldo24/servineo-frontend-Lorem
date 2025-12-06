@@ -26,7 +26,6 @@ interface AddCardModalProps {
 }
 // --- FIN DE LA CORRECCIÓN ---
 
-
 // 3. APLICA LA INTERFAZ Y DESESTRUCTURA LAS PROPS
 export default function AddCardModal({
   userId,
@@ -34,8 +33,9 @@ export default function AddCardModal({
   jobId,
   amount,
   onClose,
-  onCardAdded
-}: AddCardModalProps) { // <-- ESTA LÍNEA ES LA CORRECTA
+  onCardAdded,
+}: AddCardModalProps) {
+  // <-- ESTA LÍNEA ES LA CORRECTA
 
   const stripe = useStripe();
   const elements = useElements();
@@ -45,7 +45,6 @@ export default function AddCardModal({
   const [cardHolder, setCardHolder] = useState('');
   const [isValidHolder, setIsValidHolder] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-
 
   const handleCardHolderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -134,7 +133,6 @@ export default function AddCardModal({
         setSuccessMessage('');
         onClose();
       }, 2000);
-
     } catch (err: unknown) {
       console.error(err);
       if (err instanceof Error) {
@@ -148,40 +146,40 @@ export default function AddCardModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50'>
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
-        className="bg-[#2B6AE0] text-black p-6 rounded-2xl shadow-2xl w-96 relative"
+        className='bg-[#2B6AE0] text-black p-6 rounded-2xl shadow-2xl w-96 relative'
       >
-        <h2 className="text-xl font-bold mb-3 text-center"> Agregar nueva tarjeta</h2>
-        <p className="text-center mb-4 text-black">
-          Monto a pagar: <strong className="text-[#2BDDE0]">{amount} BOB</strong>
+        <h2 className='text-xl font-bold mb-3 text-center'> Agregar nueva tarjeta</h2>
+        <p className='text-center mb-4 text-black'>
+          Monto a pagar: <strong className='text-[#2BDDE0]'>{amount} BOB</strong>
         </p>
 
         {errorMessage && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 p-2 mb-4 rounded-md text-sm text-center">
+          <div className='bg-red-500/20 border border-red-500 text-red-300 p-2 mb-4 rounded-md text-sm text-center'>
             {errorMessage}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className='space-y-4'>
           <div>
-            <label className="block mb-2 text-sm font-semibold text-black">
+            <label className='block mb-2 text-sm font-semibold text-black'>
               Nombre de titular*
             </label>
             <input
-              type="text"
+              type='text'
               value={cardHolder}
               onChange={handleCardHolderChange}
-              placeholder="Ej: Juan Pérez"
-              className="w-full bg-[#E5E7EB] border-gray-200 rounded-xl px-3 py-2 text-black outline-none"
+              placeholder='Ej: Juan Pérez'
+              className='w-full bg-[#E5E7EB] border-gray-200 rounded-xl px-3 py-2 text-black outline-none'
               required
             />
           </div>
 
-          <div className="p-3 rounded-xl bg-[#E5E7EB] border text-black border-gray-700">
+          <div className='p-3 rounded-xl bg-[#E5E7EB] border text-black border-gray-700'>
             <CardElement
               options={{
                 hidePostalCode: true,
@@ -197,31 +195,32 @@ export default function AddCardModal({
             />
           </div>
 
-          <label className="flex items-center gap-2 text-sm text-black mt-2">
+          <label className='flex items-center gap-2 text-sm text-black mt-2'>
             <input
-              type="checkbox"
+              type='checkbox'
               checked={saveCard}
               onChange={(e) => setSaveCard(e.target.checked)}
-              className="accent-blue-500"
+              className='accent-blue-500'
             />
             Guardar tarjeta para futuros pagos
           </label>
 
-          <div className="flex justify-between mt-6">
+          <div className='flex justify-between mt-6'>
             <button
-              type="button"
+              type='button'
               onClick={onClose}
-              className="px-4 py-2 bg-[#D1D5DB] hover:bg-[#2BDDE0] rounded-xl transition-all"
+              className='px-4 py-2 bg-[#D1D5DB] hover:bg-[#2BDDE0] rounded-xl transition-all'
             >
               Cancelar
             </button>
             <button
-              type="submit"
+              type='submit'
               disabled={!stripe || loading || !isValidHolder}
-              className={`px-5 py-2 rounded-xl font-semibold transition-all ${!stripe || loading || !isValidHolder
-                ? 'bg-[#D1D5DB] cursor-not-allowed'
-                : 'bg-[#D1D5DB] hover:bg-[#2BDDE0]'
-                }`}
+              className={`px-5 py-2 rounded-xl font-semibold transition-all ${
+                !stripe || loading || !isValidHolder
+                  ? 'bg-[#D1D5DB] cursor-not-allowed'
+                  : 'bg-[#D1D5DB] hover:bg-[#2BDDE0]'
+              }`}
             >
               {loading ? 'Procesando...' : 'Pagar'}
             </button>
@@ -236,7 +235,7 @@ export default function AddCardModal({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } }}
             exit={{ opacity: 0, y: -20, transition: { duration: 0.6, ease: 'easeIn' } }}
-            className="absolute top-10 bg-[#2BDDE0] text-white px-6 py-3 rounded-xl shadow-xl text-center"
+            className='absolute top-10 bg-[#2BDDE0] text-white px-6 py-3 rounded-xl shadow-xl text-center'
           >
             {successMessage}
           </motion.div>

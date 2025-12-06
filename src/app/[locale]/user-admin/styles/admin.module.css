@@ -416,41 +416,40 @@
   .dashboard {
     padding: 1rem;
   }
-  
+
   .dashboardHeader {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
   .chartsGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .modulesGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .chartsHeader {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .dateControls {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .adminLoginContainer {
     padding: 1rem;
   }
-  
+
   .loginForm {
     padding: 1.5rem;
   }
 }
-
 
 /* Sección de métricas */
 .metricsSection {
@@ -668,16 +667,16 @@
     gap: 1rem;
     text-align: center;
   }
-  
+
   .headerActions {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .distributionGrid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .metricsGrid {
     grid-template-columns: 1fr;
   }
@@ -687,7 +686,7 @@
   .distributionGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .metricValue {
     font-size: 2.5rem;
   }

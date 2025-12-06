@@ -56,330 +56,330 @@ const translationDictionary: { [key: string]: { en: string; es: string } } = {
   tablet: { en: 'tablet', es: 'tablet' },
   // Nuevas palabras para agregar al diccionario
 
-techero: { en: 'roofer', es: 'techero' },
+  techero: { en: 'roofer', es: 'techero' },
 
-mecanico: { en: 'mechanic', es: 'mecanico' },
+  mecanico: { en: 'mechanic', es: 'mecanico' },
 
-muros: { en: 'walls', es: 'muros' },
-walls: { en: 'walls', es: 'muros' },
+  muros: { en: 'walls', es: 'muros' },
+  walls: { en: 'walls', es: 'muros' },
 
-negocio: { en: 'business', es: 'negocio' },
-business: { en: 'business', es: 'negocio' },
+  negocio: { en: 'business', es: 'negocio' },
+  business: { en: 'business', es: 'negocio' },
 
-experiencia: { en: 'experience', es: 'experiencia' },
-experience: { en: 'experience', es: 'experiencia' },
+  experiencia: { en: 'experience', es: 'experiencia' },
+  experience: { en: 'experience', es: 'experiencia' },
 
-tecnica: { en: 'technique', es: 'tecnica' },
-técnica: { en: 'technique', es: 'técnica' },
-technique: { en: 'technique', es: 'tecnica' },
+  tecnica: { en: 'technique', es: 'tecnica' },
+  técnica: { en: 'technique', es: 'técnica' },
+  technique: { en: 'technique', es: 'tecnica' },
 
-trabajos: { en: 'jobs', es: 'trabajos' },
-jobs: { en: 'jobs', es: 'trabajos' },
+  trabajos: { en: 'jobs', es: 'trabajos' },
+  jobs: { en: 'jobs', es: 'trabajos' },
 
-avanzado: { en: 'advanced', es: 'avanzado' },
-advanced: { en: 'advanced', es: 'avanzado' },
+  avanzado: { en: 'advanced', es: 'avanzado' },
+  advanced: { en: 'advanced', es: 'avanzado' },
 
-hogares: { en: 'homes', es: 'hogares' },
-homes: { en: 'homes', es: 'hogares' },
+  hogares: { en: 'homes', es: 'hogares' },
+  homes: { en: 'homes', es: 'hogares' },
 
-consulta: { en: 'consultation', es: 'consulta' },
-consultation: { en: 'consultation', es: 'consulta' },
+  consulta: { en: 'consultation', es: 'consulta' },
+  consultation: { en: 'consultation', es: 'consulta' },
 
-paredes: { en: 'walls', es: 'paredes' },
+  paredes: { en: 'walls', es: 'paredes' },
 
-electrodomesticos: { en: 'appliances', es: 'electrodomesticos' },
+  electrodomesticos: { en: 'appliances', es: 'electrodomesticos' },
 
-potosi: { en: 'potosi', es: 'potosi' },
+  potosi: { en: 'potosi', es: 'potosi' },
 
-tecnico: { en: 'technician', es: 'tecnico' },
+  tecnico: { en: 'technician', es: 'tecnico' },
 
-tuberia: { en: 'pipe', es: 'tuberia' },
-tubería: { en: 'pipe', es: 'tubería' },
-pipe: { en: 'pipe', es: 'tuberia' },
+  tuberia: { en: 'pipe', es: 'tuberia' },
+  tubería: { en: 'pipe', es: 'tubería' },
+  pipe: { en: 'pipe', es: 'tuberia' },
 
-reparador: { en: 'repairman', es: 'reparador' },
-repairman: { en: 'repairman', es: 'reparador' },
+  reparador: { en: 'repairman', es: 'reparador' },
+  repairman: { en: 'repairman', es: 'reparador' },
 
-latinoamerica: { en: 'latin america', es: 'latinoamerica' },
-latinoamérica: { en: 'latin america', es: 'latinoamérica' },
-'latin america': { en: 'latin america', es: 'latinoamerica' },
+  latinoamerica: { en: 'latin america', es: 'latinoamerica' },
+  latinoamérica: { en: 'latin america', es: 'latinoamérica' },
+  'latin america': { en: 'latin america', es: 'latinoamerica' },
 
-garaje: { en: 'garage', es: 'garaje' },
-garage: { en: 'garage', es: 'garaje' },
+  garaje: { en: 'garage', es: 'garaje' },
+  garage: { en: 'garage', es: 'garaje' },
 
-cochera: { en: 'garage', es: 'cochera' },
+  cochera: { en: 'garage', es: 'cochera' },
 
-velero: { en: 'sailboat', es: 'velero' },
-sailboat: { en: 'sailboat', es: 'velero' },
+  velero: { en: 'sailboat', es: 'velero' },
+  sailboat: { en: 'sailboat', es: 'velero' },
 
-vasos: { en: 'glasses', es: 'vasos' },
-glasses: { en: 'glasses', es: 'vasos' },
+  vasos: { en: 'glasses', es: 'vasos' },
+  glasses: { en: 'glasses', es: 'vasos' },
 
-maestro: { en: 'master', es: 'maestro' },
-master: { en: 'master', es: 'maestro' },
+  maestro: { en: 'master', es: 'maestro' },
+  master: { en: 'master', es: 'maestro' },
 
-chambeador: { en: 'worker', es: 'chambeador' },
-worker: { en: 'worker', es: 'chambeador' },
+  chambeador: { en: 'worker', es: 'chambeador' },
+  worker: { en: 'worker', es: 'chambeador' },
 
-guante: { en: 'glove', es: 'guante' },
-glove: { en: 'glove', es: 'guante' },
+  guante: { en: 'glove', es: 'guante' },
+  glove: { en: 'glove', es: 'guante' },
 
-manopla: { en: 'mitten', es: 'manopla' },
-mitten: { en: 'mitten', es: 'manopla' },
+  manopla: { en: 'mitten', es: 'manopla' },
+  mitten: { en: 'mitten', es: 'manopla' },
 
-mañana: { en: 'tomorrow', es: 'mañana' },
-tomorrow: { en: 'tomorrow', es: 'mañana' },
+  mañana: { en: 'tomorrow', es: 'mañana' },
+  tomorrow: { en: 'tomorrow', es: 'mañana' },
 
-diablo: { en: 'devil', es: 'diablo' },
-devil: { en: 'devil', es: 'diablo' },
+  diablo: { en: 'devil', es: 'diablo' },
+  devil: { en: 'devil', es: 'diablo' },
 
-electrico: { en: 'electric', es: 'electrico' },
-eléctrico: { en: 'electric', es: 'eléctrico' },
+  electrico: { en: 'electric', es: 'electrico' },
+  eléctrico: { en: 'electric', es: 'eléctrico' },
 
-bateria: { en: 'battery', es: 'bateria' },
-batería: { en: 'battery', es: 'batería' },
-battery: { en: 'battery', es: 'bateria' },
+  bateria: { en: 'battery', es: 'bateria' },
+  batería: { en: 'battery', es: 'batería' },
+  battery: { en: 'battery', es: 'bateria' },
 
-horno: { en: 'oven', es: 'horno' },
-oven: { en: 'oven', es: 'horno' },
+  horno: { en: 'oven', es: 'horno' },
+  oven: { en: 'oven', es: 'horno' },
 
-pan: { en: 'bread', es: 'pan' },
-bread: { en: 'bread', es: 'pan' },
+  pan: { en: 'bread', es: 'pan' },
+  bread: { en: 'bread', es: 'pan' },
 
-piña: { en: 'pineapple', es: 'piña' },
-pineapple: { en: 'pineapple', es: 'piña' },
+  piña: { en: 'pineapple', es: 'piña' },
+  pineapple: { en: 'pineapple', es: 'piña' },
 
-copa: { en: 'cup', es: 'copa' },
-cup: { en: 'cup', es: 'copa' },
+  copa: { en: 'cup', es: 'copa' },
+  cup: { en: 'cup', es: 'copa' },
 
-cañon: { en: 'canyon', es: 'cañon' },
-cañón: { en: 'canyon', es: 'cañón' },
-canyon: { en: 'canyon', es: 'cañon' },
+  cañon: { en: 'canyon', es: 'cañon' },
+  cañón: { en: 'canyon', es: 'cañón' },
+  canyon: { en: 'canyon', es: 'cañon' },
 
-mapa: { en: 'map', es: 'mapa' },
-map: { en: 'map', es: 'mapa' },
+  mapa: { en: 'map', es: 'mapa' },
+  map: { en: 'map', es: 'mapa' },
 
-vuelo: { en: 'flight', es: 'vuelo' },
-flight: { en: 'flight', es: 'vuelo' },
+  vuelo: { en: 'flight', es: 'vuelo' },
+  flight: { en: 'flight', es: 'vuelo' },
 
-vidrieria: { en: 'glasswork', es: 'vidrieria' },
-vidrería: { en: 'glasswork', es: 'vidrería' },
-glasswork: { en: 'glasswork', es: 'vidrieria' },
+  vidrieria: { en: 'glasswork', es: 'vidrieria' },
+  vidrería: { en: 'glasswork', es: 'vidrería' },
+  glasswork: { en: 'glasswork', es: 'vidrieria' },
 
-texturas: { en: 'textures', es: 'texturas' },
-textures: { en: 'textures', es: 'texturas' },
+  texturas: { en: 'textures', es: 'texturas' },
+  textures: { en: 'textures', es: 'texturas' },
 
-blanco: { en: 'white', es: 'blanco' },
-white: { en: 'white', es: 'blanco' },
+  blanco: { en: 'white', es: 'blanco' },
+  white: { en: 'white', es: 'blanco' },
 
-mesero: { en: 'waiter', es: 'mesero' },
-waiter: { en: 'waiter', es: 'mesero' },
+  mesero: { en: 'waiter', es: 'mesero' },
+  waiter: { en: 'waiter', es: 'mesero' },
 
-ingeniero: { en: 'engineer', es: 'ingeniero' },
-engineer: { en: 'engineer', es: 'ingeniero' },
+  ingeniero: { en: 'engineer', es: 'ingeniero' },
+  engineer: { en: 'engineer', es: 'ingeniero' },
 
-sanista: { en: 'plumber', es: 'sanista' },
+  sanista: { en: 'plumber', es: 'sanista' },
 
-repara: { en: 'repairs', es: 'repara' },
-repairs: { en: 'repairs', es: 'repara' },
+  repara: { en: 'repairs', es: 'repara' },
+  repairs: { en: 'repairs', es: 'repara' },
 
-soleado: { en: 'sunny', es: 'soleado' },
-sunny: { en: 'sunny', es: 'soleado' },
+  soleado: { en: 'sunny', es: 'soleado' },
+  sunny: { en: 'sunny', es: 'soleado' },
 
-calor: { en: 'heat', es: 'calor' },
-heat: { en: 'heat', es: 'calor' },
+  calor: { en: 'heat', es: 'calor' },
+  heat: { en: 'heat', es: 'calor' },
 
-frio: { en: 'cold', es: 'frio' },
-frío: { en: 'cold', es: 'frío' },
-cold: { en: 'cold', es: 'frio' },
+  frio: { en: 'cold', es: 'frio' },
+  frío: { en: 'cold', es: 'frío' },
+  cold: { en: 'cold', es: 'frio' },
 
-japon: { en: 'japan', es: 'japon' },
-japón: { en: 'japan', es: 'japón' },
-japan: { en: 'japan', es: 'japon' },
+  japon: { en: 'japan', es: 'japon' },
+  japón: { en: 'japan', es: 'japón' },
+  japan: { en: 'japan', es: 'japon' },
 
-papa: { en: 'potato', es: 'papa' },
-potato: { en: 'potato', es: 'papa' },
+  papa: { en: 'potato', es: 'papa' },
+  potato: { en: 'potato', es: 'papa' },
 
-jamon: { en: 'ham', es: 'jamon' },
-jamón: { en: 'ham', es: 'jamón' },
-ham: { en: 'ham', es: 'jamon' },
+  jamon: { en: 'ham', es: 'jamon' },
+  jamón: { en: 'ham', es: 'jamón' },
+  ham: { en: 'ham', es: 'jamon' },
 
-cometa: { en: 'kite', es: 'cometa' },
-kite: { en: 'kite', es: 'cometa' },
+  cometa: { en: 'kite', es: 'cometa' },
+  kite: { en: 'kite', es: 'cometa' },
 
-poder: { en: 'power', es: 'poder' },
-power: { en: 'power', es: 'poder' },
+  poder: { en: 'power', es: 'poder' },
+  power: { en: 'power', es: 'poder' },
 
-techista: { en: 'roofer', es: 'techista' },
+  techista: { en: 'roofer', es: 'techista' },
 
-fallo: { en: 'failure', es: 'fallo' },
-failure: { en: 'failure', es: 'fallo' },
+  fallo: { en: 'failure', es: 'fallo' },
+  failure: { en: 'failure', es: 'fallo' },
 
-nadie: { en: 'nobody', es: 'nadie' },
-nobody: { en: 'nobody', es: 'nadie' },
+  nadie: { en: 'nobody', es: 'nadie' },
+  nobody: { en: 'nobody', es: 'nadie' },
 
-cine: { en: 'cinema', es: 'cine' },
-cinema: { en: 'cinema', es: 'cine' },
+  cine: { en: 'cinema', es: 'cine' },
+  cinema: { en: 'cinema', es: 'cine' },
 
-accion: { en: 'action', es: 'accion' },
-acción: { en: 'action', es: 'acción' },
-action: { en: 'action', es: 'accion' },
+  accion: { en: 'action', es: 'accion' },
+  acción: { en: 'action', es: 'acción' },
+  action: { en: 'action', es: 'accion' },
 
-pais: { en: 'country', es: 'pais' },
-país: { en: 'country', es: 'país' },
-country: { en: 'country', es: 'pais' },
+  pais: { en: 'country', es: 'pais' },
+  país: { en: 'country', es: 'país' },
+  country: { en: 'country', es: 'pais' },
 
-minero: { en: 'miner', es: 'minero' },
-miner: { en: 'miner', es: 'minero' },
+  minero: { en: 'miner', es: 'minero' },
+  miner: { en: 'miner', es: 'minero' },
 
-valor: { en: 'value', es: 'valor' },
-value: { en: 'value', es: 'valor' },
+  valor: { en: 'value', es: 'valor' },
+  value: { en: 'value', es: 'valor' },
 
-dinero: { en: 'money', es: 'dinero' },
-money: { en: 'money', es: 'dinero' },
+  dinero: { en: 'money', es: 'dinero' },
+  money: { en: 'money', es: 'dinero' },
 
-vidrios: { en: 'glass', es: 'vidrios' },
+  vidrios: { en: 'glass', es: 'vidrios' },
 
-cuento: { en: 'story', es: 'cuento' },
-story: { en: 'story', es: 'cuento' },
+  cuento: { en: 'story', es: 'cuento' },
+  story: { en: 'story', es: 'cuento' },
 
-desagüe: { en: 'drain', es: 'desagüe' },
-desague: { en: 'drain', es: 'desague' },
-drain: { en: 'drain', es: 'desagüe' },
+  desagüe: { en: 'drain', es: 'desagüe' },
+  desague: { en: 'drain', es: 'desague' },
+  drain: { en: 'drain', es: 'desagüe' },
 
-cuartos: { en: 'rooms', es: 'cuartos' },
-rooms: { en: 'rooms', es: 'cuartos' },
+  cuartos: { en: 'rooms', es: 'cuartos' },
+  rooms: { en: 'rooms', es: 'cuartos' },
 
-clean: { en: 'clean', es: 'limpio' },
-limpio: { en: 'clean', es: 'limpio' },
+  clean: { en: 'clean', es: 'limpio' },
+  limpio: { en: 'clean', es: 'limpio' },
 
-diseño: { en: 'design', es: 'diseño' },
-design: { en: 'design', es: 'diseño' },
+  diseño: { en: 'design', es: 'diseño' },
+  design: { en: 'design', es: 'diseño' },
 
-glassworker: { en: 'glassworker', es: 'vidriero' },
+  glassworker: { en: 'glassworker', es: 'vidriero' },
 
-cerrajeria: { en: 'locksmithing', es: 'cerrajeria' },
-cerrajería: { en: 'locksmithing', es: 'cerrajería' },
-locksmithing: { en: 'locksmithing', es: 'cerrajeria' },
+  cerrajeria: { en: 'locksmithing', es: 'cerrajeria' },
+  cerrajería: { en: 'locksmithing', es: 'cerrajería' },
+  locksmithing: { en: 'locksmithing', es: 'cerrajeria' },
 
-pisos: { en: 'floors', es: 'pisos' },
-floors: { en: 'floors', es: 'pisos' },
+  pisos: { en: 'floors', es: 'pisos' },
+  floors: { en: 'floors', es: 'pisos' },
 
-luces: { en: 'lights', es: 'luces' },
-lights: { en: 'lights', es: 'luces' },
+  luces: { en: 'lights', es: 'luces' },
+  lights: { en: 'lights', es: 'luces' },
 
-extensiones: { en: 'extensions', es: 'extensiones' },
-extensions: { en: 'extensions', es: 'extensiones' },
+  extensiones: { en: 'extensions', es: 'extensiones' },
+  extensions: { en: 'extensions', es: 'extensiones' },
 
-paneles: { en: 'panels', es: 'paneles' },
-panels: { en: 'panels', es: 'paneles' },
+  paneles: { en: 'panels', es: 'paneles' },
+  panels: { en: 'panels', es: 'paneles' },
 
-terreno: { en: 'land', es: 'terreno' },
-land: { en: 'land', es: 'terreno' },
+  terreno: { en: 'land', es: 'terreno' },
+  land: { en: 'land', es: 'terreno' },
 
-terrenos: { en: 'lands', es: 'terrenos' },
-lands: { en: 'lands', es: 'terrenos' },
+  terrenos: { en: 'lands', es: 'terrenos' },
+  lands: { en: 'lands', es: 'terrenos' },
 
-musica: { en: 'music', es: 'musica' },
-música: { en: 'music', es: 'música' },
-music: { en: 'music', es: 'musica' },
+  musica: { en: 'music', es: 'musica' },
+  música: { en: 'music', es: 'música' },
+  music: { en: 'music', es: 'musica' },
 
-plantas: { en: 'plants', es: 'plantas' },
-plants: { en: 'plants', es: 'plantas' },
+  plantas: { en: 'plants', es: 'plantas' },
+  plants: { en: 'plants', es: 'plantas' },
 
-reparaciones: { en: 'repairs', es: 'reparaciones' },
+  reparaciones: { en: 'repairs', es: 'reparaciones' },
 
-manejo: { en: 'handling', es: 'manejo' },
-handling: { en: 'handling', es: 'manejo' },
+  manejo: { en: 'handling', es: 'manejo' },
+  handling: { en: 'handling', es: 'manejo' },
 
-bienvenido: { en: 'welcome', es: 'bienvenido' },
-welcome: { en: 'welcome', es: 'bienvenido' },
+  bienvenido: { en: 'welcome', es: 'bienvenido' },
+  welcome: { en: 'welcome', es: 'bienvenido' },
 
-automaticos: { en: 'automatic', es: 'automaticos' },
+  automaticos: { en: 'automatic', es: 'automaticos' },
 
-hormigon: { en: 'concrete', es: 'hormigon' },
+  hormigon: { en: 'concrete', es: 'hormigon' },
 
-baño: { en: 'bathroom', es: 'baño' },
-bathroom: { en: 'bathroom', es: 'baño' },
+  baño: { en: 'bathroom', es: 'baño' },
+  bathroom: { en: 'bathroom', es: 'baño' },
 
-cable: { en: 'cable', es: 'cable' },
+  cable: { en: 'cable', es: 'cable' },
 
-fonteneria: { en: 'plumbing', es: 'fonteneria' },
-fontanería: { en: 'plumbing', es: 'fontanería' },
+  fonteneria: { en: 'plumbing', es: 'fonteneria' },
+  fontanería: { en: 'plumbing', es: 'fontanería' },
 
-techos: { en: 'roofs', es: 'techos' },
-roofs: { en: 'roofs', es: 'techos' },
+  techos: { en: 'roofs', es: 'techos' },
+  roofs: { en: 'roofs', es: 'techos' },
 
-levantamiento: { en: 'survey', es: 'levantamiento' },
-survey: { en: 'survey', es: 'levantamiento' },
+  levantamiento: { en: 'survey', es: 'levantamiento' },
+  survey: { en: 'survey', es: 'levantamiento' },
 
-dinamica: { en: 'dynamic', es: 'dinamica' },
-dinámica: { en: 'dynamic', es: 'dinámica' },
-dynamic: { en: 'dynamic', es: 'dinamica' },
+  dinamica: { en: 'dynamic', es: 'dinamica' },
+  dinámica: { en: 'dynamic', es: 'dinámica' },
+  dynamic: { en: 'dynamic', es: 'dinamica' },
 
-muebles: { en: 'furniture', es: 'muebles' },
-furniture: { en: 'furniture', es: 'muebles' },
+  muebles: { en: 'furniture', es: 'muebles' },
+  furniture: { en: 'furniture', es: 'muebles' },
 
-interiores: { en: 'interiors', es: 'interiores' },
-interiors: { en: 'interiors', es: 'interiores' },
+  interiores: { en: 'interiors', es: 'interiores' },
+  interiors: { en: 'interiors', es: 'interiores' },
 
-prueba: { en: 'test', es: 'prueba' },
-test: { en: 'test', es: 'prueba' },
+  prueba: { en: 'test', es: 'prueba' },
+  test: { en: 'test', es: 'prueba' },
 
-ruido: { en: 'noise', es: 'ruido' },
-noise: { en: 'noise', es: 'ruido' },
+  ruido: { en: 'noise', es: 'ruido' },
+  noise: { en: 'noise', es: 'ruido' },
 
-instalaciones: { en: 'facilities', es: 'instalaciones' },
-facilities: { en: 'facilities', es: 'instalaciones' },
+  instalaciones: { en: 'facilities', es: 'instalaciones' },
+  facilities: { en: 'facilities', es: 'instalaciones' },
 
-gamer: { en: 'gamer', es: 'gamer' },
+  gamer: { en: 'gamer', es: 'gamer' },
 
-filtro: { en: 'filter', es: 'filtro' },
-filter: { en: 'filter', es: 'filtro' },
+  filtro: { en: 'filter', es: 'filtro' },
+  filter: { en: 'filter', es: 'filtro' },
 
-pintores: { en: 'painters', es: 'pintores' },
-painters: { en: 'painters', es: 'pintores' },
+  pintores: { en: 'painters', es: 'pintores' },
+  painters: { en: 'painters', es: 'pintores' },
 
-linux: { en: 'linux', es: 'linux' },
+  linux: { en: 'linux', es: 'linux' },
 
-cesped: { en: 'lawn', es: 'cesped' },
-césped: { en: 'lawn', es: 'césped' },
-lawn: { en: 'lawn', es: 'cesped' },
+  cesped: { en: 'lawn', es: 'cesped' },
+  césped: { en: 'lawn', es: 'césped' },
+  lawn: { en: 'lawn', es: 'cesped' },
 
-jardineria: { en: 'gardening', es: 'jardineria' },
+  jardineria: { en: 'gardening', es: 'jardineria' },
 
-carpinteria: { en: 'carpentry', es: 'carpinteria' },
+  carpinteria: { en: 'carpentry', es: 'carpinteria' },
 
-patineta: { en: 'skateboard', es: 'patineta' },
-skateboard: { en: 'skateboard', es: 'patineta' },
+  patineta: { en: 'skateboard', es: 'patineta' },
+  skateboard: { en: 'skateboard', es: 'patineta' },
 
-techeria: { en: 'roofing', es: 'techeria' },
-techería: { en: 'roofing', es: 'techería' },
-roofing: { en: 'roofing', es: 'techeria' },
+  techeria: { en: 'roofing', es: 'techeria' },
+  techería: { en: 'roofing', es: 'techería' },
+  roofing: { en: 'roofing', es: 'techeria' },
 
-pulidor: { en: 'polisher', es: 'pulidor' },
-polisher: { en: 'polisher', es: 'pulidor' },
+  pulidor: { en: 'polisher', es: 'pulidor' },
+  polisher: { en: 'polisher', es: 'pulidor' },
 
-flores: { en: 'flowers', es: 'flores' },
-flowers: { en: 'flowers', es: 'flores' },
+  flores: { en: 'flowers', es: 'flores' },
+  flowers: { en: 'flowers', es: 'flores' },
 
-puertas: { en: 'doors', es: 'puertas' },
-doors: { en: 'doors', es: 'puertas' },
+  puertas: { en: 'doors', es: 'puertas' },
+  doors: { en: 'doors', es: 'puertas' },
 
-auto: { en: 'car', es: 'auto' },
+  auto: { en: 'car', es: 'auto' },
 
-poda: { en: 'pruning', es: 'poda' },
-pruning: { en: 'pruning', es: 'poda' },
+  poda: { en: 'pruning', es: 'poda' },
+  pruning: { en: 'pruning', es: 'poda' },
 
-carpiteria: { en: 'carpentry', es: 'carpiteria' },
+  carpiteria: { en: 'carpentry', es: 'carpiteria' },
 
-tarija: { en: 'tarija', es: 'tarija' },
+  tarija: { en: 'tarija', es: 'tarija' },
 
-constructor: { en: 'builder', es: 'constructor' },
-builder: { en: 'builder', es: 'constructor' },
+  constructor: { en: 'builder', es: 'constructor' },
+  builder: { en: 'builder', es: 'constructor' },
 
-casas: { en: 'houses', es: 'casas' },
-houses: { en: 'houses', es: 'casas' },
+  casas: { en: 'houses', es: 'casas' },
+  houses: { en: 'houses', es: 'casas' },
   // Servicios del hogar
   limpieza: { en: 'cleaning', es: 'limpieza' },
   cleaning: { en: 'cleaning', es: 'limpieza' }, // ⭐ INVERSA

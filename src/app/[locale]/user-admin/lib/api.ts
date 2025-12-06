@@ -33,11 +33,10 @@ export const adminAPI = {
     return response.json();
   },
 
-
   // NUEVO: Obtener estadísticas REALES de usuarios
   getUserStats: async (token: string) => {
     console.log('📊 Obteniendo estadísticas REALES de usuarios...');
-    
+
     try {
       const response = await fetch(`${API_BASE}/api/admin/user-stats`, {
         headers: {
@@ -45,17 +44,17 @@ export const adminAPI = {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('✅ Estadísticas REALES recibidas:', data);
       return data;
     } catch (error) {
       console.error('❌ Error obteniendo estadísticas REALES:', error);
-      
+
       // Fallback a los datos reales que ya conocemos
       return {
         success: true,
@@ -65,15 +64,14 @@ export const adminAPI = {
             requester: 110,
             fixer: 41,
             visitor: 0,
-            admin: 1
+            admin: 1,
           },
           timestamp: new Date().toISOString(),
-          note: 'Datos de respaldo (conexión fallida)'
-        }
+          note: 'Datos de respaldo (conexión fallida)',
+        },
       };
     }
   },
-
 
   // SOLO gráficos de sesiones (lo que funciona)
   getSessionStartChart: async (token: string, date: string, endDate?: string) => {
