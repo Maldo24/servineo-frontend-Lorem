@@ -31,7 +31,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const url = `${API_BASE}/api/controlC/2fa${endpoint}`;
+  const url = `${API_BASE}/api/editProfile${endpoint}`;
 
   const response = await fetch(url, {
     ...options,
@@ -83,7 +83,9 @@ export async function verifyToken(token: string): Promise<ApiResponse> {
     // 💥 SI EL BACKEND INDICA BLOQUEO (423)
     // ------------------------------------------------------
     if (status === 423) {
-      const e = new Error((data?.message as string) || 'Cuenta bloqueada temporalmente.') as ApiError;
+      const e = new Error(
+        (data?.message as string) || 'Cuenta bloqueada temporalmente.',
+      ) as ApiError;
       e.locked = true;
       e.lockedUntil = (data?.lockedUntil as string) ?? undefined;
       e.retryAfterSeconds = (data?.retryAfterSeconds as number) ?? undefined;

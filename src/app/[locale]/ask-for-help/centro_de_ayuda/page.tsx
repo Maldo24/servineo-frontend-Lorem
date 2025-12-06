@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Search, HelpCircle, Users } from 'lucide-react';
+import WhatsappBanner from "@/Components/ask_for_help/WhatsappBanner";
 
 interface Suggestion {
   id: number;
@@ -352,6 +353,7 @@ const CentroDeAyuda: React.FC = () => {
             )}
           </main>
         </div>
+        <WhatsappBanner />
       </div>
     </div>
   );

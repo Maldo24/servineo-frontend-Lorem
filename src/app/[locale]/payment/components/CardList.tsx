@@ -200,8 +200,8 @@ export default function CardList({
                             {/* Logo */}             {' '}
               <div className='flex justify-between items-center mb-6'>
                                {' '}
-                <p className='text-lg font-semibold tracking-wide uppercase'>{card.brand}</p>
-                               {' '}
+                <p className='text-lg font-semibold tracking-wide uppercase'>{card.brand}</p>       
+                       {' '}
                 <img
                   src={
                     card.brand?.toLowerCase() === 'visa'

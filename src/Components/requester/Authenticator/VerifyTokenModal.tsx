@@ -74,18 +74,17 @@ export default function VerifyTokenModal({ open, onClose, onVerify, loading }: P
        * Normalizamos el error recibido en un objeto con propiedades opcionales.
        * No usamos `any`. Usamos `unknown` y lo casteamos a un tipo seguro.
        */
-      const e = err as
-        | (Record<string, unknown> & {
-            message?: string;
-            status?: number;
-            data?: Record<string, unknown> | null;
-            // campos que puede incluir tu backend/enriquecimiento
-            locked?: boolean;
-            lockedUntil?: string;
-            retryAfterSeconds?: number;
-            attemptsLeft?: number;
-            attempts?: number;
-          });
+      const e = err as Record<string, unknown> & {
+        message?: string;
+        status?: number;
+        data?: Record<string, unknown> | null;
+        // campos que puede incluir tu backend/enriquecimiento
+        locked?: boolean;
+        lockedUntil?: string;
+        retryAfterSeconds?: number;
+        attemptsLeft?: number;
+        attempts?: number;
+      };
 
       // LOCKED (423 en backend -> err.locked true)
       if (e?.locked) {
@@ -94,13 +93,15 @@ export default function VerifyTokenModal({ open, onClose, onVerify, loading }: P
           secondsUntil((e.lockedUntil as string | undefined) ?? null);
         const minutes = retrySeconds ? Math.ceil(retrySeconds / 60) : null;
 
-        msg = (e?.message as string) || 'Tu cuenta está temporalmente bloqueada por demasiados intentos.';
+        msg =
+          (e?.message as string) ||
+          'Tu cuenta está temporalmente bloqueada por demasiados intentos.';
         setLockedInfo(
           minutes
             ? `Podrás volver a intentar en aproximadamente ${minutes} minuto(s).`
             : retrySeconds
-            ? `Podrás volver a intentar en aproximadamente ${retrySeconds} segundos.`
-            : null
+              ? `Podrás volver a intentar en aproximadamente ${retrySeconds} segundos.`
+              : null,
         );
       }
       // TOKEN INVÁLIDO (pero no bloqueado): attemptsLeft presente
@@ -123,8 +124,8 @@ export default function VerifyTokenModal({ open, onClose, onVerify, loading }: P
             minutes
               ? `Podrás volver a intentar en aproximadamente ${minutes} minuto(s).`
               : retrySeconds
-              ? `Podrás volver a intentar en aproximadamente ${retrySeconds} segundos.`
-              : null
+                ? `Podrás volver a intentar en aproximadamente ${retrySeconds} segundos.`
+                : null,
           );
         } else if (status === 400 && typeof (data?.attemptsLeft as unknown) === 'number') {
           msg = (data?.message as string) || 'Token inválido.';
@@ -145,47 +146,47 @@ export default function VerifyTokenModal({ open, onClose, onVerify, loading }: P
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40'>
       <form
         onSubmit={handleSubmit}
         className={`bg-white rounded-lg w-[420px] p-6 shadow-lg border transition-all duration-300 ${
           shake ? 'animate-shake border-red-400' : ''
         }`}
       >
-        <h3 className="text-lg font-semibold mb-2">Ingresa el código de autenticador</h3>
-        <p className="text-sm text-gray-600 mb-4">Introduce los 6 dígitos que muestra tu app de autenticación.</p>
+        <h3 className='text-lg font-semibold mb-2'>Ingresa el código de autenticador</h3>
+        <p className='text-sm text-gray-600 mb-4'>
+          Introduce los 6 dígitos que muestra tu app de autenticación.
+        </p>
 
         <input
           autoFocus
-          inputMode="numeric"
-          pattern="[0-9]*"
+          inputMode='numeric'
+          pattern='[0-9]*'
           value={code}
           onChange={handleChange}
           className={`w-full p-2 border rounded mb-2 font-mono text-lg text-center tracking-widest transition-all ${
             errorMsg ? 'border-red-500 bg-red-50' : 'border-gray-300'
           }`}
-          placeholder="••••••"
+          placeholder='••••••'
         />
 
         {errorMsg && (
-          <div className="text-red-600 text-sm mb-1 text-center font-medium">{errorMsg}</div>
+          <div className='text-red-600 text-sm mb-1 text-center font-medium'>{errorMsg}</div>
         )}
 
         {/* NUEVO: intentos restantes */}
         {attemptsLeft !== null && attemptsLeft >= 0 && (
-          <div className="text-xs text-center text-red-500 mb-1">
-            Intentos restantes: <span className="font-semibold">{attemptsLeft}</span>
+          <div className='text-xs text-center text-red-500 mb-1'>
+            Intentos restantes: <span className='font-semibold'>{attemptsLeft}</span>
           </div>
         )}
 
         {/* NUEVO: info de bloqueo */}
-        {lockedInfo && (
-          <div className="text-xs text-center text-red-500 mb-2">{lockedInfo}</div>
-        )}
+        {lockedInfo && <div className='text-xs text-center text-red-500 mb-2'>{lockedInfo}</div>}
 
-        <div className="flex justify-end gap-3 mt-2">
+        <div className='flex justify-end gap-3 mt-2'>
           <button
-            type="button"
+            type='button'
             onClick={() => {
               setCode('');
               setErrorMsg(null);
@@ -193,12 +194,16 @@ export default function VerifyTokenModal({ open, onClose, onVerify, loading }: P
               setLockedInfo(null);
               onClose();
             }}
-            className="px-3 py-2 rounded border text-sm bg-white text-gray-700"
+            className='px-3 py-2 rounded border text-sm bg-white text-gray-700'
             disabled={loading}
           >
             Cancelar
           </button>
-          <button type="submit" className="px-4 py-2 rounded text-sm bg-indigo-600 text-white" disabled={loading}>
+          <button
+            type='submit'
+            className='px-4 py-2 rounded text-sm bg-indigo-600 text-white'
+            disabled={loading}
+          >
             {loading ? 'Verificando...' : 'Verificar'}
           </button>
         </div>

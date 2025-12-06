@@ -9,8 +9,8 @@ const BotonWhatsapp = () => {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  const numerowhapi = '59178194834';
-  const mensaje = '';
+  const numerowhapi = '59176107373';
+  const mensaje = "Servineo - Escríbenos tu problema para que la IA te ayude";
   const encodedMessage = encodeURIComponent(mensaje);
   const whatsappUrl = `https://wa.me/${numerowhapi}?text=${encodedMessage}`;
 
@@ -28,7 +28,7 @@ const BotonWhatsapp = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`${API_URL}/verify-captcha`, {
+      const response = await fetch(`${API_URL}/api/devon/verify-captcha`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
@@ -92,6 +92,7 @@ const BotonWhatsapp = () => {
             <ReCAPTCHA
               ref={recaptchaRef}
               sitekey={
+                process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3 ||
                 process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2 ||
                 process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ||
                 ''

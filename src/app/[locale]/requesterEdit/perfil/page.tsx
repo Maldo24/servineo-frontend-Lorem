@@ -517,7 +517,7 @@ export default function MiPerfilPage() {
                     />
                   </div>
                 </div>
-
+              {/* 
                 <div className='mt-5'>
                   <label className='text-sm font-semibold text-[#16203A]'>Correo electrónico</label>
                   <input
@@ -525,7 +525,7 @@ export default function MiPerfilPage() {
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
                   />
-                </div>
+                </div>*/}
 
                 {/* BOTÓN GUARDAR */}
                 <button
@@ -537,7 +537,7 @@ export default function MiPerfilPage() {
                 </button>
               </div>
 
-              {/* =================== 🔔 NOTIFICACIONES =================== */}
+              {/* =================== 🔔 NOTIFICACIONES =================== 
               <div className='p-7 bg-white rounded-2xl border shadow-md mb-10'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
                   <div className='flex items-center gap-4'>
@@ -560,7 +560,7 @@ export default function MiPerfilPage() {
                     {notifications ? 'Activadas' : 'Desactivadas'}
                   </button>
                 </div>
-              </div>
+              </div>*/}
 
               {/* ===================== 🛡️ SEGURIDAD ===================== */}
               <div className='p-7 bg-white rounded-2xl border shadow mb-10'>

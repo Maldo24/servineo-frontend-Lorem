@@ -48,16 +48,15 @@ export default function AdminDashboard() {
         // Cargar estadísticas REALES de usuarios
         console.log('🔄 Cargando estadísticas REALES...');
         const statsResponse = await adminAPI.getUserStats(token);
-        
+
         if (statsResponse.success && statsResponse.data) {
           setUserStats(statsResponse.data);
           setLastUpdated(new Date(statsResponse.data.timestamp).toLocaleTimeString());
           console.log('✅ Datos REALES cargados:', statsResponse.data);
         }
-        
       } catch (error) {
         console.error('❌ Error cargando datos:', error);
-        
+
         // Datos de respaldo (los reales que ya conocemos)
         setUserStats({
           totalUsers: 152,
@@ -65,10 +64,10 @@ export default function AdminDashboard() {
             requester: 110,
             fixer: 41,
             visitor: 0,
-            admin: 1
+            admin: 1,
           },
           timestamp: new Date().toISOString(),
-          note: 'Datos en caché (error de conexión)'
+          note: 'Datos en caché (error de conexión)',
         });
       } finally {
         setLoading(false);
@@ -93,7 +92,7 @@ export default function AdminDashboard() {
     try {
       console.log('🔄 Actualizando estadísticas...');
       const statsResponse = await adminAPI.getUserStats(token);
-      
+
       if (statsResponse.success && statsResponse.data) {
         setUserStats(statsResponse.data);
         setLastUpdated(new Date(statsResponse.data.timestamp).toLocaleTimeString());
@@ -131,13 +130,9 @@ export default function AdminDashboard() {
         <div className={styles.sectionHeader}>
           <h2>👥 Estadísticas de Usuarios</h2>
           <div className={styles.headerActions}>
-            {lastUpdated && (
-              <span className={styles.lastUpdated}>
-                Actualizado: {lastUpdated}
-              </span>
-            )}
-            <button 
-              onClick={handleRefreshStats} 
+            {lastUpdated && <span className={styles.lastUpdated}>Actualizado: {lastUpdated}</span>}
+            <button
+              onClick={handleRefreshStats}
               className={styles.refreshButton}
               disabled={statsLoading}
             >
@@ -145,7 +140,7 @@ export default function AdminDashboard() {
             </button>
           </div>
         </div>
-        
+
         <div className={styles.metricsGrid}>
           <div className={styles.metricCard}>
             <h3>Total de Usuarios</h3>
@@ -156,9 +151,7 @@ export default function AdminDashboard() {
                 userStats?.totalUsers?.toLocaleString() || '0'
               )}
             </div>
-            <div className={styles.metricDescription}>
-              Usuarios registrados en el sistema
-            </div>
+            <div className={styles.metricDescription}>Usuarios registrados en el sistema</div>
           </div>
         </div>
 
@@ -171,12 +164,10 @@ export default function AdminDashboard() {
                 <span className={styles.roleIcon}>👤</span>
                 <span className={styles.roleName}>Requesters</span>
               </div>
-              <div className={styles.roleCount}>
-                {userStats?.usersByRole?.requester || 0}
-              </div>
+              <div className={styles.roleCount}>{userStats?.usersByRole?.requester || 0}</div>
               <div className={styles.rolePercentage}>
-                {userStats?.totalUsers 
-                  ? `${Math.round(((userStats.usersByRole?.requester || 0) / userStats.totalUsers) * 100)}%` 
+                {userStats?.totalUsers
+                  ? `${Math.round(((userStats.usersByRole?.requester || 0) / userStats.totalUsers) * 100)}%`
                   : '0%'}
               </div>
             </div>
@@ -186,12 +177,10 @@ export default function AdminDashboard() {
                 <span className={styles.roleIcon}>🛠️</span>
                 <span className={styles.roleName}>Fixers</span>
               </div>
-              <div className={styles.roleCount}>
-                {userStats?.usersByRole?.fixer || 0}
-              </div>
+              <div className={styles.roleCount}>{userStats?.usersByRole?.fixer || 0}</div>
               <div className={styles.rolePercentage}>
-                {userStats?.totalUsers 
-                  ? `${Math.round(((userStats.usersByRole?.fixer || 0) / userStats.totalUsers) * 100)}%` 
+                {userStats?.totalUsers
+                  ? `${Math.round(((userStats.usersByRole?.fixer || 0) / userStats.totalUsers) * 100)}%`
                   : '0%'}
               </div>
             </div>
@@ -201,12 +190,10 @@ export default function AdminDashboard() {
                 <span className={styles.roleIcon}>👁️</span>
                 <span className={styles.roleName}>Visitors</span>
               </div>
-              <div className={styles.roleCount}>
-                {userStats?.usersByRole?.visitor || 0}
-              </div>
+              <div className={styles.roleCount}>{userStats?.usersByRole?.visitor || 0}</div>
               <div className={styles.rolePercentage}>
-                {userStats?.totalUsers 
-                  ? `${Math.round(((userStats.usersByRole?.visitor || 0) / userStats.totalUsers) * 100)}%` 
+                {userStats?.totalUsers
+                  ? `${Math.round(((userStats.usersByRole?.visitor || 0) / userStats.totalUsers) * 100)}%`
                   : '0%'}
               </div>
             </div>
@@ -216,12 +203,10 @@ export default function AdminDashboard() {
                 <span className={styles.roleIcon}>⚡</span>
                 <span className={styles.roleName}>Admins</span>
               </div>
-              <div className={styles.roleCount}>
-                {userStats?.usersByRole?.admin || 0}
-              </div>
+              <div className={styles.roleCount}>{userStats?.usersByRole?.admin || 0}</div>
               <div className={styles.rolePercentage}>
-                {userStats?.totalUsers 
-                  ? `${Math.round(((userStats.usersByRole?.admin || 0) / userStats.totalUsers) * 100)}%` 
+                {userStats?.totalUsers
+                  ? `${Math.round(((userStats.usersByRole?.admin || 0) / userStats.totalUsers) * 100)}%`
                   : '0%'}
               </div>
             </div>
@@ -247,12 +232,7 @@ export default function AdminDashboard() {
 
         <div className={styles.modulesGrid}>
           <button
-            onClick={() =>
-              window.open(
-                'https://servineo-frontend-bytes-bandidos.vercel.app/es/adminStatistic',
-                '_self',
-              )
-            }
+            onClick={() => window.open('https://servineo.app/es/adminStatistic', '_self')}
             className={styles.moduleButton}
           >
             <div className={styles.moduleIcon}>📊</div>
@@ -268,12 +248,7 @@ export default function AdminDashboard() {
           </button>
 
           <button
-            onClick={() =>
-              window.open(
-                'https://servineo-frontend-bytes-bandidos.vercel.app/es/tracking-appointments',
-                '_self',
-              )
-            }
+            onClick={() => window.open('https://servineo.app/es/tracking-appointments', '_self')}
             className={styles.moduleButton}
           >
             <div className={styles.moduleIcon}>📍</div>

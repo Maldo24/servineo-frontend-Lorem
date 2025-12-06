@@ -24,14 +24,14 @@ export const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle }) => {
   const { bg, text } = getCategoryClasses(faq.categoria.toLowerCase());
 
   return (
-    <div className='border border-gray-200 rounded-lg shadow-sm overflow-hidden'>
+    <div className="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       <button
-        className='w-full text-left p-4 flex justify-between items-center focus:outline-none bg-white hover:bg-gray-50 transition duration-150'
+        className="w-full text-left p-4 flex justify-between items-center focus:outline-none bg-white hover:bg-gray-50 transition duration-150"
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={`faq-answer-${faq._id}`}
       >
-        <div className='flex-1 pr-4'>
+        <div className="flex-1 pr-4">
           <span
             className={`
               text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider 
@@ -40,7 +40,7 @@ export const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle }) => {
           >
             {faq.categoria}
           </span>
-          <div className='text-base font-semibold text-gray-800'>{faq.pregunta}</div>
+          <div className="text-base font-semibold text-gray-800">{faq.pregunta}</div>
         </div>
 
         <span
@@ -56,10 +56,12 @@ export const FAQItem: React.FC<FAQItemProps> = ({ faq, isOpen, onToggle }) => {
       {isOpen && (
         <div
           id={`faq-answer-${faq._id}`}
-          className='p-4 pt-0 border-t border-gray-100 text-gray-600 transition-all duration-300'
-          role='region'
+          className="p-4 pt-0 border-t border-gray-100 text-gray-600 transition-all duration-300"
+          role="region"
         >
-          <div className='pt-3'>{faq.respuesta}</div>
+          <div className="pt-3 whitespace-pre-line">
+            {faq.respuesta}
+          </div>
         </div>
       )}
     </div>

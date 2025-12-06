@@ -1,24 +1,37 @@
-import { ForumThread, ForumWithComments } from './forum.types';
+import { ForumThread, ForumWithComments } from "./forum.types";
 
 // Usamos SOLO lo que ya tienes en el .env:
 // NEXT_PUBLIC_API_URL=http://localhost:8000  (la última línea es la que manda)
 // Igual que en otros archivos de tu proyecto, le agregamos /api acá.
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
+const RAW_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Normalizamos:
+// - Si es "http://localhost:8000"      → "http://localhost:8000/api"
+// - Si algún día fuera "http://localhost:8000/api" → se queda igual
+const API_BASE_URL = (() => {
+  const trimmed = RAW_API_URL.replace(/\/+$/, '');
+
+  if (trimmed.endsWith('/api/devon')) {
+    return `${trimmed}/devon`;
+  }
+  return `${trimmed}/api/devon`;
+})();
 
 // ---------- LISTAR FOROS ----------
 export async function listForums(): Promise<ForumThread[]> {
   const url = `${API_BASE_URL}/forums`;
-  console.log('[ForumService] GET', url);
+  console.log("[ForumService] GET", url);
 
   const res = await fetch(url, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
+    method: "GET",
+    headers: { Accept: "application/json" },
   });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    console.error('Error al cargar el foro:', res.status, text);
-    throw new Error('Error al cargar el foro');
+    const text = await res.text().catch(() => "");
+    console.error("Error al cargar el foro:", res.status, text);
+    throw new Error("Error al cargar el foro");
   }
 
   return res.json();
@@ -28,44 +41,47 @@ export async function listForums(): Promise<ForumThread[]> {
 export async function createForum(input: {
   titulo: string;
   descripcion: string;
-  categoria: 'problemas' | 'servicios' | 'consejos' | 'general';
+  categoria: "problemas" | "servicios" | "consejos" | "general";
 }): Promise<ForumThread> {
   // El token de acceso se guarda como "servineo_token" en localStorage
-  const token = typeof window !== 'undefined' ? localStorage.getItem('servineo_token') : null;
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("servineo_token")
+      : null;
 
   if (!token) {
-    console.error('[ForumService] No se encontró servineo_token en localStorage');
-    throw new Error('Debes iniciar sesión para crear una publicación');
+    console.error("[ForumService] No se encontró servineo_token en localStorage");
+    throw new Error("Debes iniciar sesión para crear una publicación");
   }
 
   const url = `${API_BASE_URL}/forums`;
-  console.log('[ForumService] POST', url, input);
+  console.log("[ForumService] POST", url, input);
 
   const res = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`, // 👈 el backend espera esto
     },
     // IMPORTANTE: sin credentials: "include" para evitar el error CORS con "*"
     body: JSON.stringify(input),
   });
 
-  const text = await res.text().catch(() => '');
+  const text = await res.text().catch(() => "");
 
   if (res.status === 401) {
-    console.error('Error 401 al crear foro:', text);
-    throw new Error('Debes iniciar sesión para crear una publicación');
+    console.error("Error 401 al crear foro:", text);
+    throw new Error("Debes iniciar sesión para crear una publicación");
   }
 
   if (res.status === 409) {
-    console.error('Error 409 al crear foro:', text);
-    throw new Error('No se puede crear la publicación (conflicto)');
+    console.error("Error 409 al crear foro:", text);
+    throw new Error("No se puede crear la publicación (conflicto)");
   }
 
   if (!res.ok) {
-    console.error('Error al crear el foro:', res.status, text);
-    throw new Error('Error al crear la publicación');
+    console.error("Error al crear el foro:", res.status, text);
+    throw new Error("Error al crear la publicación");
   }
 
   try {
@@ -76,60 +92,68 @@ export async function createForum(input: {
 }
 
 // ---------- OBTENER FORO CON COMENTARIOS ----------
-export async function getForumWithComments(forumId: string): Promise<ForumWithComments> {
+export async function getForumWithComments(
+  forumId: string,
+): Promise<ForumWithComments> {
   const url = `${API_BASE_URL}/forums/${forumId}`;
-  console.log('[ForumService] GET', url);
+  console.log("[ForumService] GET", url);
 
   const res = await fetch(url, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
+    method: "GET",
+    headers: { Accept: "application/json" },
   });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    console.error('Error al cargar la publicación:', res.status, text);
-    throw new Error('Error al cargar la publicación');
+    const text = await res.text().catch(() => "");
+    console.error("Error al cargar la publicación:", res.status, text);
+    throw new Error("Error al cargar la publicación");
   }
 
   return res.json();
 }
 
 // ---------- AGREGAR COMENTARIO ----------
-export async function addCommentToForum(forumId: string, contenido: string) {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('servineo_token') : null;
+export async function addCommentToForum(
+  forumId: string,
+  contenido: string,
+) {
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("servineo_token")
+      : null;
 
   if (!token) {
-    console.error('[ForumService] No se encontró servineo_token al comentar');
-    throw new Error('Debes iniciar sesión para comentar');
+    console.error("[ForumService] No se encontró servineo_token al comentar");
+    throw new Error("Debes iniciar sesión para comentar");
   }
 
   const url = `${API_BASE_URL}/forums/${forumId}/comments`;
-  console.log('[ForumService] POST comment', url, { contenido });
+  console.log("[ForumService] POST comment", url, { contenido });
 
   const res = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ contenido }),
   });
 
-  const text = await res.text().catch(() => '');
+  const text = await res.text().catch(() => "");
 
   if (res.status === 401) {
-    console.error('Error 401 al comentar:', text);
-    throw new Error('Debes iniciar sesión para comentar');
+    console.error("Error 401 al comentar:", text);
+    throw new Error("Debes iniciar sesión para comentar");
   }
 
   if (res.status === 409) {
-    console.error('Error 409 al comentar:', text);
-    throw new Error('Este hilo está bloqueado para nuevos comentarios');
+    console.error("Error 409 al comentar:", text);
+    throw new Error("Este hilo está bloqueado para nuevos comentarios");
   }
 
   if (!res.ok) {
-    console.error('Error al agregar el comentario:', res.status, text);
-    throw new Error('Error al agregar el comentario');
+    console.error("Error al agregar el comentario:", res.status, text);
+    throw new Error("Error al agregar el comentario");
   }
 
   try {

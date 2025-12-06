@@ -14,10 +14,8 @@ interface FixerMarkerProps {
 const palette = {
   popupBg: '#FFFFFF',
   popupShadow: '0 6px 18px rgba(0,0,0,0.2)',
-  whatsappBg: '#2B6AE0',
-  whatsappHover: '#3B7BDD',
-  profileBg: '#4B3FE8',
-  profileHover: '#6B3FE8',
+  buttonBg: '#2B6AE0', // color principal para ambos botones
+  buttonHover: '#3B7BDD', // hover para ambos botones
   buttonText: '#FFFFFF',
   iconBorderBusy: '#ff4444',
   textColor: '#2B6AE0',
@@ -108,8 +106,8 @@ export default function FixerMarker({ fixer }: FixerMarkerProps) {
               width={46}
               height={46}
               style={{
-                borderRadius: '50%', // mantiene el círculo
-                objectFit: 'cover', // recorta y ajusta la imagen dentro del círculo
+                borderRadius: '50%',
+                objectFit: 'cover',
                 width: '46px',
                 height: '46px',
                 border: `4px solid ${fixer.available ? style.color : palette.iconBorderBusy}`,
@@ -138,7 +136,7 @@ export default function FixerMarker({ fixer }: FixerMarkerProps) {
               style={{
                 flex: 1,
                 padding: '8px 0',
-                background: fixer.available ? palette.whatsappBg : '#ccc',
+                background: fixer.available ? palette.buttonBg : '#ccc',
                 color: palette.buttonText,
                 borderRadius: '12px',
                 fontWeight: 600,
@@ -150,10 +148,10 @@ export default function FixerMarker({ fixer }: FixerMarkerProps) {
                 fontFamily: "'Roboto', sans-serif",
               }}
               onMouseOver={(e) => {
-                if (fixer.available) e.currentTarget.style.background = palette.whatsappHover;
+                if (fixer.available) e.currentTarget.style.background = palette.buttonHover;
               }}
               onMouseOut={(e) => {
-                if (fixer.available) e.currentTarget.style.background = palette.whatsappBg;
+                if (fixer.available) e.currentTarget.style.background = palette.buttonBg;
               }}
             >
               WhatsApp
@@ -164,19 +162,25 @@ export default function FixerMarker({ fixer }: FixerMarkerProps) {
               style={{
                 flex: 1,
                 padding: '8px 0',
-                background: palette.profileBg,
+                background: fixer.available ? palette.buttonBg : '#ccc',
                 color: palette.buttonText,
                 borderRadius: '12px',
                 fontWeight: 600,
                 fontSize: '13px',
-                cursor: 'pointer',
+                cursor: fixer.available ? 'pointer' : 'not-allowed',
                 border: 'none',
                 transition: 'background 0.3s',
                 fontFamily: "'Roboto', sans-serif",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.background = palette.profileHover)}
-              onMouseOut={(e) => (e.currentTarget.style.background = palette.profileBg)}
-              onClick={() => router.push(`/fixer/${fixer.id}`)}
+              onMouseOver={(e) => {
+                if (fixer.available) e.currentTarget.style.background = palette.buttonHover;
+              }}
+              onMouseOut={(e) => {
+                if (fixer.available) e.currentTarget.style.background = palette.buttonBg;
+              }}
+              onClick={() => {
+                if (fixer.available) router.push(`/fixer/${fixer.id}`);
+              }}
             >
               Ver perfil
             </button>

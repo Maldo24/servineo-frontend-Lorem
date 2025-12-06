@@ -23,7 +23,7 @@ export const FAQCategoryFilter: React.FC<FAQCategoryFilterProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className='flex flex-wrap gap-2 mb-8 border-b border-gray-200'>
+    <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-200">
       {categories.map((category) => {
         const isActive = selectedCategory === category.value;
         const buttonClasses = isActive
@@ -41,7 +41,7 @@ export const FAQCategoryFilter: React.FC<FAQCategoryFilterProps> = ({
             `}
             aria-pressed={isActive}
           >
-            <span className='whitespace-nowrap'>{category.label}</span>
+            <span className="whitespace-nowrap">{category.label}</span>
           </button>
         );
       })}

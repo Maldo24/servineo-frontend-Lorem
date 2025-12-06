@@ -2,7 +2,8 @@
 import { FAQ, FAQResponse } from './faq.types';
 
 // Leemos SOLO lo que ya existe en el .env
-const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const RAW_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Normalizamos:
 // - Si es "http://localhost:8000"      → "http://localhost:8000/api"
@@ -10,13 +11,11 @@ const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_BASE_URL = (() => {
   const trimmed = RAW_API_URL.replace(/\/+$/, '');
 
-  if (trimmed.endsWith('/api')) {
-    return trimmed;
+  if (trimmed.endsWith('/api/devon')) {
+    return `${trimmed}/devon`;
   }
-  return `${trimmed}/api`;
+  return `${trimmed}/api/devon`;
 })();
-
-console.log('[FAQService] API_BASE_URL =', API_BASE_URL);
 
 export class FAQService {
   private baseURL: string;
@@ -62,12 +61,15 @@ export class FAQService {
   }
 
   async searchFAQs(query: string): Promise<FAQ[]> {
-    const response = await fetch(`${this.baseURL}/faqs/search?q=${encodeURIComponent(query)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${this.baseURL}/faqs/search?q=${encodeURIComponent(query)}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     const data: FAQResponse = await response.json();
 

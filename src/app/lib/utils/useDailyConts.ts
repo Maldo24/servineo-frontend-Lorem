@@ -45,12 +45,14 @@ export default function useDailyConts({ date, fixer_id }: useDailyContsProps) {
         }
 
         async function fetchData() {
-            if (!fixer_id || fixer_id === '' || fixer_id === 'undefined') {
-                console.warn('fixer_id no válido:', fixer_id);
+            // ✅ VALIDACIÓN MEJORADA: evitar llamadas con IDs inválidos
+            if (!fixer_id || fixer_id === '' || fixer_id === 'undefined' || fixer_id === 'placeholder') {
+                console.warn('[useDailyConts] fixer_id no válido, saltando fetch:', fixer_id);
                 setLoading(false);
                 return;
             }
 
+            console.log('[useDailyConts] Iniciando fetch con fixer_id:', fixer_id);
             setLoading(true);
             setError(null);
 
@@ -64,8 +66,9 @@ export default function useDailyConts({ date, fixer_id }: useDailyContsProps) {
                 setAppointmentsDis(disabledData);
                 setError(null);
                 hasFetched.current = true;
+                console.log('[useDailyConts] ✅ Datos cargados exitosamente');
             } catch (err) {
-                console.error('Error fetching schedules:', err);
+                console.error('[useDailyConts] ❌ Error fetching schedules:', err);
                 setError('Error al cargar los datos');
                 setCount(null);
                 setAppointmentsDis({

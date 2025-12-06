@@ -40,7 +40,7 @@ export default function DispositivosVinculados() {
     if (!user) return;
     try {
       setCargandoDispositivos(true);
-      const res = await fetch(`${API_URL}/devices/${user.id}`);
+      const res = await fetch(`${API_URL}/api/editProfile/${user.id}`);
       if (!res.ok) throw new Error('Error en la respuesta del backend');
       const data = await res.json();
       setDispositivos(data);
@@ -55,12 +55,12 @@ export default function DispositivosVinculados() {
   const registrarDispositivo = useCallback(async () => {
     if (!user) return;
     const { os, type } = detectarDispositivo();
-    console.log("Registrando dispositivo:", { 
-    userId: user.id, 
-    userAgent: navigator.userAgent 
-  });
+    console.log('Registrando dispositivo:', {
+      userId: user.id,
+      userAgent: navigator.userAgent,
+    });
     try {
-      const res = await fetch(`${API_URL}/devices/register`, {
+      const res = await fetch(`${API_URL}/api/editProfile/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -71,7 +71,7 @@ export default function DispositivosVinculados() {
         }),
       });
       const data = await res.json();
-      console.log("Respuesta del backend:", data);
+      console.log('Respuesta del backend:', data);
 
       if (!res.ok) return toast.error(data.message || 'Error al registrar dispositivo');
       obtenerDispositivos();
@@ -83,11 +83,11 @@ export default function DispositivosVinculados() {
 
   const cerrarSesionDispositivo = async (_id: string) => {
     try {
-      await fetch(`${API_URL}/devices/${_id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/editProfile/${_id}`, { method: 'DELETE' });
       toast.success('Sesión cerrada correctamente ✓');
       setModalVisible(null);
 
-      const dispositivoActual = dispositivos.find(d => d.userAgent === navigator.userAgent);
+      const dispositivoActual = dispositivos.find((d) => d.userAgent === navigator.userAgent);
       if (dispositivoActual?._id === _id) {
         logout?.();
         router.push('/login');
@@ -103,10 +103,10 @@ export default function DispositivosVinculados() {
   const cerrarTodasSesiones = async () => {
     try {
       const userAgent = navigator.userAgent;
-      const dispositivoActual = dispositivos.find(d => d.userAgent === navigator.userAgent);
+      const dispositivoActual = dispositivos.find((d) => d.userAgent === navigator.userAgent);
       if (!dispositivoActual) return toast.error('No se pudo identificar el dispositivo actual');
 
-      await fetch(`${API_URL}/devices/all/${user?.id}`, {
+      await fetch(`${API_URL}/api/editProfile/all/${user?.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ except: dispositivoActual._id }),
@@ -128,8 +128,8 @@ export default function DispositivosVinculados() {
     }
   }, [user, registrarDispositivo, obtenerDispositivos]);
 
-  if (loading) return <p className="text-center mt-10">Cargando usuario...</p>;
-  if (!user) return <p className="text-center mt-10">No hay usuario autenticado</p>;
+  if (loading) return <p className='text-center mt-10'>Cargando usuario...</p>;
+  if (!user) return <p className='text-center mt-10'>No hay usuario autenticado</p>;
 
   const iconoPorTipo = (type: string) => {
     switch (type) {
@@ -145,85 +145,87 @@ export default function DispositivosVinculados() {
   //if (cargandoDispositivos) return <p className='text-center text-gray-500'>Cargando dispositivos...</p>;
   //if (!dispositivos.length) return <p className='text-center text-gray-500'>No hay dispositivos vinculados</p>;
 
-return (
-  <div className='space-y-4 w-full'>
-
-    {/* BOTÓN ARRIBA, CENTRADO */}
-    <div className="flex justify-center mb-4">
-      <button
-        onClick={() => setModalCerrarTodas(true)}
-        className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition"
-      >
-        Cerrar sesión en todos los dispositivos
-      </button>
-    </div>
-
-    {dispositivos.map(dispositivo => (
-      <div key={dispositivo._id} className='flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow'>
-        <div className='flex items-center space-x-3'>
-          {iconoPorTipo(dispositivo.type)}
-          <div>
-            <p className='font-medium'>{dispositivo.os}</p>
-            <p className='text-xs text-gray-500'>
-              Último acceso: {new Date(dispositivo.lastLogin).toLocaleString()}
-            </p>
-          </div>
-        </div>
-
+  return (
+    <div className='space-y-4 w-full'>
+      {/* BOTÓN ARRIBA, CENTRADO */}
+      <div className='flex justify-center mb-4'>
         <button
-          onClick={() => setModalVisible(dispositivo._id)}
-          className='px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600'
+          onClick={() => setModalCerrarTodas(true)}
+          className='px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition'
         >
-          Cerrar sesión
+          Cerrar sesión en todos los dispositivos
         </button>
+      </div>
 
-        {modalVisible === dispositivo._id && (
-          <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-[9999]'>
-            <div className='bg-white p-6 rounded-lg shadow-lg w-80 text-center'>
-              <p className='mb-4'>¿Deseas cerrar sesión en este dispositivo?</p>
-              <div className='flex justify-around'>
-                <button
-                  onClick={() => setModalVisible(null)}
-                  className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => cerrarSesionDispositivo(dispositivo._id)}
-                  className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-                >
-                  Aceptar
-                </button>
-              </div>
+      {dispositivos.map((dispositivo) => (
+        <div
+          key={dispositivo._id}
+          className='flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow'
+        >
+          <div className='flex items-center space-x-3'>
+            {iconoPorTipo(dispositivo.type)}
+            <div>
+              <p className='font-medium'>{dispositivo.os}</p>
+              <p className='text-xs text-gray-500'>
+                Último acceso: {new Date(dispositivo.lastLogin).toLocaleString()}
+              </p>
             </div>
           </div>
-        )}
-      </div>
-    ))}
 
-    {modalCerrarTodas && (
-      <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-[9999]'>
-        <div className='bg-white p-6 rounded-lg shadow-lg w-80 text-center'>
-          <p className='mb-4 font-semibold'>
-            ¿Seguro que quieres cerrar todas las sesiones excepto esta?
-          </p>
-          <div className='flex justify-around'>
-            <button
-              onClick={() => setModalCerrarTodas(false)}
-              className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={cerrarTodasSesiones}
-              className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-            >
-              Sí, cerrar
-            </button>
+          <button
+            onClick={() => setModalVisible(dispositivo._id)}
+            className='px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600'
+          >
+            Cerrar sesión
+          </button>
+
+          {modalVisible === dispositivo._id && (
+            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-[9999]'>
+              <div className='bg-white p-6 rounded-lg shadow-lg w-80 text-center'>
+                <p className='mb-4'>¿Deseas cerrar sesión en este dispositivo?</p>
+                <div className='flex justify-around'>
+                  <button
+                    onClick={() => setModalVisible(null)}
+                    className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={() => cerrarSesionDispositivo(dispositivo._id)}
+                    className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+                  >
+                    Aceptar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {modalCerrarTodas && (
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm z-[9999]'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-80 text-center'>
+            <p className='mb-4 font-semibold'>
+              ¿Seguro que quieres cerrar todas las sesiones excepto esta?
+            </p>
+            <div className='flex justify-around'>
+              <button
+                onClick={() => setModalCerrarTodas(false)}
+                className='px-4 py-2 bg-gray-300 rounded hover:bg-gray-400'
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={cerrarTodasSesiones}
+                className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
+              >
+                Sí, cerrar
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 }

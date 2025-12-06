@@ -295,7 +295,7 @@ export default function ServicesSection({
                 aria-label={`Abrir detalles del servicio ${service.name}`}
                 data-service-card='true'
                 onKeyDown={(e) => handleCardKey(e, index, service.slug)}
-                onClick={() => router.push(`/services/${service.slug}`)}
+                onClick={() => router.push(`/servicios/${service.slug}`)}
                 onFocus={() => setActiveIndex(index)}
                 className='select-none bg-white p-8 rounded-xl shadow-lg border border-gray-200 transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 cursor-pointer'
               >

@@ -4,7 +4,7 @@ export enum FAQCategoria {
   PROBLEMAS = 'problemas',
   SERVICIOS = 'servicios',
   PAGOS = 'pagos',
-  GENERAL = 'general',
+  GENERAL = 'general'
 }
 
 export interface FAQ {
@@ -32,8 +32,8 @@ export interface UseFAQReturn {
   faqs: FAQ[];
   loading: boolean;
   error: string | null;
-  selectedCategory: FAQCategoria | 'all'; // ⬅️ AGREGAR
+  selectedCategory: FAQCategoria | 'all';  // ⬅️ AGREGAR
   searchFAQs: (query: string) => Promise<void>;
   fetchFAQs: () => Promise<void>;
-  filterByCategory: (category: FAQCategoria | 'all') => void; // ⬅️ AGREGAR
+  filterByCategory: (category: FAQCategoria | 'all') => void;  // ⬅️ AGREGAR
 }

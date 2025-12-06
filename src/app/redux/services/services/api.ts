@@ -219,4 +219,3 @@ export function vincularDiscord(
 
   window.addEventListener('message', handleMessage);
 }
-

@@ -52,7 +52,7 @@ export default function AuthenticatorCodigoModal({
 
     try {
       const res: ApiResponse<RecoveryCodeResponse> = await api.post(
-        '/codigos2fa/verify-recovery-code',
+        '/api/editProfile/verify-recovery-code',
         { email, codigo },
       );
 

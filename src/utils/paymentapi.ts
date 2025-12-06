@@ -29,25 +29,24 @@ export const getFixerId = (): string => {
 
   try {
     const userStr = localStorage.getItem('servineo_user');
-    
+
     if (!userStr) {
       console.error('❌ No se encontró servineo_user en localStorage. Usuario no autenticado.');
       return '';
     }
-    
+
     const user = JSON.parse(userStr);
-    
+
     // Intenta obtener el fixerId de diferentes posibles campos
     const fixerId = user?.fixerId || user?.fixer_id || user?.id || '';
-    
+
     if (!fixerId) {
       console.error('❌ El objeto user no contiene fixerId:', user);
       return '';
     }
-    
+
     console.log('✅ Fixer ID obtenido desde servineo_user:', fixerId);
     return fixerId;
-    
   } catch (error) {
     console.error('❌ Error al parsear servineo_user:', error);
     return '';
@@ -59,7 +58,7 @@ export const getFixerId = (): string => {
  */
 export const getUser = (): Record<string, unknown> | null => {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const userStr = localStorage.getItem('servineo_user');
     return userStr ? JSON.parse(userStr) : null;
@@ -90,33 +89,34 @@ export const isAuthenticated = (): boolean => {
 export const fetchPaymentSummary = async (jobId: string): Promise<PaymentSummary> => {
   const url = withBase(`/api/lab/payments/${jobId}/summary?t=${Date.now()}`);
   console.log('🔗 Llamando API:', url);
-  
+
   const res = await fetch(url, { cache: 'no-store' });
   console.log('📥 Status:', res.status);
-  
+
   if (!res.ok) throw new Error(`Error ${res.status}`);
-  
+
   const data = await res.json();
   console.log('✅ Datos:', data);
-  
+
   const d = data?.data ?? data;
 
-  const total = typeof d?.total === "number" 
-    ? d.total 
-    : typeof d?.amount?.total === "number" 
-    ? d.amount.total 
-    : 0;
+  const total =
+    typeof d?.total === 'number'
+      ? d.total
+      : typeof d?.amount?.total === 'number'
+        ? d.amount.total
+        : 0;
 
   // Detectar código expirado
   const backendExpired = d?.codeExpired === true;
   const manualExpired = d?.codeExpiresAt && new Date(d.codeExpiresAt) < new Date();
   const isExpired = backendExpired || manualExpired;
 
-  console.log("⏰ Verificación expiración:", {
+  console.log('⏰ Verificación expiración:', {
     backendExpired,
     codeExpiresAt: d?.codeExpiresAt,
     manualExpired,
-    isExpired
+    isExpired,
   });
 
   return {
@@ -136,18 +136,15 @@ export const fetchPaymentSummary = async (jobId: string): Promise<PaymentSummary
 /**
  * Confirma un pago con código
  */
-export const confirmPayment = async (
-  paymentId: string, 
-  code: string
-): Promise<PaymentResponse> => {
+export const confirmPayment = async (paymentId: string, code: string): Promise<PaymentResponse> => {
   const res = await fetch(withBase(`/api/lab/payments/${paymentId}/confirm`), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
   });
-  
+
   const resp = await res.json().catch(() => ({}));
-  
+
   return { res, resp };
 };
 
@@ -155,31 +152,31 @@ export const confirmPayment = async (
  * Obtiene trabajos de un fixer por estado (CON TIMEOUT)
  */
 export const fetchFixerJobs = async (
-  fixerId: string, 
-  status: 'pending' | 'paid'
+  fixerId: string,
+  status: 'pending' | 'paid',
 ): Promise<FetchFixerJobsResult> => {
   const url = withBase(`/api/lab/payments/by-fixer/${fixerId}/summary?status=${status}`);
   console.log(`🌐 Llamando API [${status}]:`, url);
-  
+
   try {
     // Timeout de 10 segundos
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
-    const res = await fetch(url, { 
+
+    const res = await fetch(url, {
       cache: 'no-store',
-      signal: controller.signal 
+      signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
-    
+
     console.log(`📡 Respuesta [${status}]: Status ${res.status}`);
-    
+
     if (!res.ok) {
       console.warn(`⚠️ API respondió con error ${res.status} para ${status}`);
       return { data: [] };
     }
-    
+
     const data = await res.json();
     console.log(`✅ Datos [${status}]:`, data);
     return data;
@@ -198,18 +195,18 @@ export const fetchFixerJobs = async (
  */
 export const fetchAllFixerJobs = async (fixerId: string): Promise<Trabajo[]> => {
   console.log('🔍 fetchAllFixerJobs llamado con fixerId:', fixerId);
-  
+
   if (!fixerId || fixerId.trim() === '') {
     console.error('❌ FixerId está vacío');
     throw new Error('FixerId no puede estar vacío');
   }
-  
+
   const isValidId = isValidObjectId(fixerId);
   console.log('🔑 ¿ID válido?', isValidId);
-  
+
   if (isValidId) {
     console.log('✅ ID válido, consultando API...');
-    
+
     try {
       // Timeout global de 15 segundos
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -236,15 +233,16 @@ export const fetchAllFixerJobs = async (fixerId: string): Promise<Trabajo[]> => 
         return [];
       }
 
-      const mapped = [...pendingArray, ...paidArray].map(x => {
+      const mapped = [...pendingArray, ...paidArray].map((x) => {
         // Manejo seguro de amount - puede venir como objeto o directamente como número
-        const total = typeof x.amount === 'object' && x.amount !== null
-          ? (x.amount.total || 0)
-          : typeof x.amount === 'number'
-          ? x.amount
-          : typeof x.total === 'number'
-          ? x.total
-          : 0;
+        const total =
+          typeof x.amount === 'object' && x.amount !== null
+            ? x.amount.total || 0
+            : typeof x.amount === 'number'
+              ? x.amount
+              : typeof x.total === 'number'
+                ? x.total
+                : 0;
 
         return {
           jobId: String(x.id),
@@ -252,8 +250,8 @@ export const fetchAllFixerJobs = async (fixerId: string): Promise<Trabajo[]> => 
           descripcion: `Monto: Bs. ${total.toFixed(2)}`,
           totalPagar: total,
           paymentStatus: x.status || 'pending',
-          fecha: x.createdAt 
-            ? new Date(x.createdAt).toISOString().slice(0, 10) 
+          fecha: x.createdAt
+            ? new Date(x.createdAt).toISOString().slice(0, 10)
             : new Date().toISOString().slice(0, 10),
         };
       });
@@ -262,44 +260,44 @@ export const fetchAllFixerJobs = async (fixerId: string): Promise<Trabajo[]> => 
       return mapped;
     } catch (error: unknown) {
       console.error('❌ Error en fetchAllFixerJobs:', error);
-      
+
       // Si es timeout o error de red, devolver datos de ejemplo
       if (error.message.includes('Timeout') || error.message.includes('fetch')) {
         console.log('⚠️ Usando datos de ejemplo debido a error de conexión');
         return [
-          { 
-            jobId: "DEMO-001", 
-            titulo: "Pago Demo 1 (Error de API)", 
-            descripcion: "No se pudo conectar al servidor", 
-            totalPagar: 150.00, 
-            paymentStatus: "pending", 
-            fecha: new Date().toISOString().slice(0, 10)
+          {
+            jobId: 'DEMO-001',
+            titulo: 'Pago Demo 1 (Error de API)',
+            descripcion: 'No se pudo conectar al servidor',
+            totalPagar: 150.0,
+            paymentStatus: 'pending',
+            fecha: new Date().toISOString().slice(0, 10),
           },
         ];
       }
-      
+
       throw error;
     }
   } else {
     console.log('⚠️ ID inválido, usando datos simulados');
-    await new Promise(r => setTimeout(r, 1000));
-    
+    await new Promise((r) => setTimeout(r, 1000));
+
     return [
-      { 
-        jobId: "SIM-001", 
-        titulo: "Pago Simulado 1", 
-        descripcion: "Trabajo de prueba", 
-        totalPagar: 250.00, 
-        paymentStatus: "pending", 
-        fecha: "2025-11-08" 
+      {
+        jobId: 'SIM-001',
+        titulo: 'Pago Simulado 1',
+        descripcion: 'Trabajo de prueba',
+        totalPagar: 250.0,
+        paymentStatus: 'pending',
+        fecha: '2025-11-08',
       },
-      { 
-        jobId: "SIM-002", 
-        titulo: "Pago Simulado 2", 
-        descripcion: "Trabajo completado", 
-        totalPagar: 180.50, 
-        paymentStatus: "paid", 
-        fecha: "2025-11-07" 
+      {
+        jobId: 'SIM-002',
+        titulo: 'Pago Simulado 2',
+        descripcion: 'Trabajo completado',
+        totalPagar: 180.5,
+        paymentStatus: 'paid',
+        fecha: '2025-11-07',
       },
     ];
   }
@@ -311,7 +309,7 @@ export const fetchAllFixerJobs = async (fixerId: string): Promise<Trabajo[]> => 
 export const formatTime = (milliseconds: number): string => {
   const minutes = Math.floor(milliseconds / 60000);
   const seconds = Math.floor((milliseconds % 60000) / 1000);
-  
+
   if (minutes > 0) {
     return `${minutes}m ${seconds}s`;
   }
@@ -325,7 +323,7 @@ export const formatTimeWithHours = (milliseconds: number): string => {
   const hours = Math.floor(milliseconds / 3600000);
   const minutes = Math.floor((milliseconds % 3600000) / 60000);
   const seconds = Math.floor((milliseconds % 60000) / 1000);
-  
+
   if (hours > 0) {
     return `${hours}h ${minutes}m ${seconds}s`;
   }

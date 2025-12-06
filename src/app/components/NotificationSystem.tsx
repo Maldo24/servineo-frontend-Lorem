@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,75 +6,75 @@ import { useRouter } from 'next/navigation';
 const BellIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    xmlns='http://www.w3.org/2000/svg'
+    width='24'
+    height='24'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
   >
-    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    <path d='M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9' />
+    <path d='M10.3 21a1.94 1.94 0 0 0 3.4 0' />
   </svg>
 );
 
 const FilterIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    xmlns='http://www.w3.org/2000/svg'
+    width='24'
+    height='24'
+    viewBox='0 0 24 24'
+    fill='none'
+    stroke='currentColor'
+    strokeWidth='2'
+    strokeLinecap='round'
+    strokeLinejoin='round'
   >
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    <polygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3' />
   </svg>
 );
 
 const SpinnerIcon = ({ className }: { className?: string }) => (
   <svg
     className={`animate-spin ${className}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
+    xmlns='http://www.w3.org/2000/svg'
+    fill='none'
+    viewBox='0 0 24 24'
   >
     <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
+      className='opacity-25'
+      cx='12'
+      cy='12'
+      r='10'
+      stroke='currentColor'
+      strokeWidth='4'
     ></circle>
     <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      className='opacity-75'
+      fill='currentColor'
+      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
     ></path>
   </svg>
 );
 
 // Skeleton Loader Component
 const SkeletonLoader = () => (
-  <div className="p-4 space-y-4">
+  <div className='p-4 space-y-4'>
     {[1, 2, 3].map((i) => (
-      <div key={i} className="animate-pulse">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-2 h-2 rounded-full bg-gray-300 mt-2"></div>
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="h-4 bg-gray-300 rounded w-20"></div>
-              <div className="h-3 bg-gray-300 rounded w-16"></div>
+      <div key={i} className='animate-pulse'>
+        <div className='flex items-start gap-3'>
+          <div className='flex-shrink-0 w-2 h-2 rounded-full bg-gray-300 mt-2'></div>
+          <div className='flex-1 space-y-2'>
+            <div className='flex items-center justify-between'>
+              <div className='h-4 bg-gray-300 rounded w-20'></div>
+              <div className='h-3 bg-gray-300 rounded w-16'></div>
             </div>
-            <div className="h-4 bg-gray-300 rounded w-full"></div>
-            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div className='h-4 bg-gray-300 rounded w-full'></div>
+            <div className='h-4 bg-gray-300 rounded w-3/4'></div>
           </div>
         </div>
       </div>
@@ -82,7 +82,14 @@ const SkeletonLoader = () => (
   </div>
 );
 
-type NotificationType = 'todos' | 'whatsapp' | 'email' | 'citas' | 'ofertas_promociones' | 'billetera' | 'no_leidas';
+type NotificationType =
+  | 'todos'
+  | 'whatsapp'
+  | 'email'
+  | 'citas'
+  | 'ofertas_promociones'
+  | 'billetera'
+  | 'no_leidas';
 
 interface INotification {
   _id: string;
@@ -115,6 +122,24 @@ const isSaldoNotification = (notification: INotification): boolean => {
   return tipoLower.includes('saldo');
 };
 
+const filterNotificationsByRole = (
+  notifications: INotification[],
+  role: 'fixer' | 'requester',
+): INotification[] =>
+  notifications.filter((notification) => {
+    const tipoLower = notification.tipo?.trim().toLowerCase();
+
+    if (role === 'requester') {
+      return !isSaldoNotification(notification) && notification.saldo === undefined;
+    }
+
+    if (tipoLower === 'desconexion 2 dias') {
+      return false;
+    }
+
+    return true;
+  });
+
 interface NotificationSystemProps {
   userId?: string;
   userName?: string;
@@ -122,33 +147,53 @@ interface NotificationSystemProps {
   userRole?: 'fixer' | 'requester'; // NUEVO: rol del usuario
 }
 
+const normalizeApiBase = (rawBase?: string | null): string => {
+  const fallback = 'http://localhost:8000';
+  const sanitized = (rawBase && rawBase.trim()) || fallback;
+  const withoutTrailingSlash = sanitized.replace(/\/+$/, '');
+  if (withoutTrailingSlash.endsWith('/api')) {
+    return withoutTrailingSlash;
+  }
+  return `${withoutTrailingSlash}/api`;
+};
+
+const API_BASE_URL = normalizeApiBase(process.env.NEXT_PUBLIC_API_URL);
+const NOTIFICATIONS_API_URL = `${API_BASE_URL}/notifications`;
+const OFFERS_COUNT_API_URL = `${API_BASE_URL}/offers/count-since`;
+const PROMOTIONS_COUNT_API_URL = `${API_BASE_URL}/promotions/count-since`;
+
 // Función para enmascarar datos sensibles
 const maskSensitiveData = (text: string | undefined): string => {
   if (!text) return '';
-  
+
   // Si parece un número de tarjeta (16 dígitos) o teléfono largo
   const cardPattern = /(\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?)(\d{4})/;
   const phonePattern = /(\d{4}[\s-]?\d{4}[\s-]?)(\d{4})/;
-  
+
   if (cardPattern.test(text)) {
     return text.replace(cardPattern, '**** **** **** $2');
   }
-  
+
   if (phonePattern.test(text) && text.length > 8) {
     const last4 = text.slice(-4);
     return `****${last4}`;
   }
-  
+
   // Si contiene números de más de 8 dígitos, enmascarar
   if (/\d{9,}/.test(text)) {
     return text.replace(/\d(?=\d{4})/g, '*');
   }
-  
-  return text;
-}
 
-export default function NotificationSystem({ userId, userName, isAuthenticated, userRole = 'requester' }: NotificationSystemProps) {
-  const API_URL = `http://localhost:8000/api/notifications`;
+  return text;
+};
+
+export default function NotificationSystem({
+  userId,
+  userName,
+  isAuthenticated,
+  userRole = 'requester',
+}: NotificationSystemProps) {
+  const API_URL = NOTIFICATIONS_API_URL;
   const [offersCountMap, setOffersCountMap] = useState<{ [key: string]: number }>({});
   const [promotionsCountMap, setPromotionsCountMap] = useState<{ [key: string]: number }>({});
   const router = useRouter();
@@ -165,9 +210,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [readNotifications, setReadNotifications] = useState<Set<string>>(
-    new Set()
-  );
+  const [readNotifications, setReadNotifications] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -176,8 +219,13 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const canRequestProtectedData = Boolean(authToken && userId);
-  const displayName = userName?.split(' ')[0] ?? userId ?? (userRole === 'fixer' ? 'fixer' : 'requester');
+  const displayName =
+    userName?.split(' ')[0] ?? userId ?? (userRole === 'fixer' ? 'fixer' : 'requester');
   const showLoginPrompt = !canRequestProtectedData;
+  const storageKey = useCallback(
+    (base: string) => (userId ? `${base}_${userId}` : `${base}_anonymous`),
+    [userId],
+  );
 
   const modalRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -188,35 +236,61 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   // Cargar estado persistido al montar
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      let loadedReadNotifications = new Set<string>();
-      
-      const savedRead = localStorage.getItem('read_notifications');
-      if (savedRead) {
-        try {
-          const readIds = JSON.parse(savedRead);
-          loadedReadNotifications = new Set(readIds);
-          setReadNotifications(loadedReadNotifications);
-        } catch (e) {
-          console.error('Error loading read notifications:', e);
-        }
-      }
+      localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(notifications));
+    }
 
-      const savedNotifications = localStorage.getItem('cached_notifications');
-      if (savedNotifications) {
-        try {
-          const cached = JSON.parse(savedNotifications);
-          setNotifications(cached);
-        } catch (e) {
-          console.error('Error loading cached notifications:', e);
-        }
-      }
+    setReadNotifications(new Set());
+    setNotifications([]);
+    setUnreadCount(0);
+    setPage(1);
 
-      const savedPage = localStorage.getItem('notification_page');
-      if (savedPage) {
-        setPage(parseInt(savedPage, 10));
+    let loadedReadNotifications = new Set<string>();
+
+    const savedRead = localStorage.getItem(storageKey('read_notifications'));
+    if (savedRead) {
+      try {
+        const readIds = JSON.parse(savedRead);
+        loadedReadNotifications = new Set(readIds);
+        setReadNotifications(loadedReadNotifications);
+      } catch (e) {
+        console.error('Error loading read notifications:', e);
       }
     }
-  }, []);
+
+    const savedNotifications = localStorage.getItem(storageKey('cached_notifications'));
+    if (savedNotifications) {
+      try {
+        const cached = JSON.parse(savedNotifications);
+        setNotifications(filterNotificationsByRole(cached, userRole));
+      } catch (e) {
+        console.error('Error loading cached notifications:', e);
+      }
+    }
+
+    const savedPage = localStorage.getItem(storageKey('notification_page'));
+    if (savedPage) {
+      setPage(parseInt(savedPage, 10));
+    }
+  }, [storageKey, userRole]);
+
+  useEffect(() => {
+    setNotifications((prev) => {
+      const filtered = filterNotificationsByRole(prev, userRole);
+      if (filtered.length === prev.length) {
+        let isSame = true;
+        for (let i = 0; i < filtered.length; i += 1) {
+          if (filtered[i] !== prev[i]) {
+            isSame = false;
+            break;
+          }
+        }
+        if (isSame) {
+          return prev;
+        }
+      }
+      return filtered;
+    });
+  }, [userRole]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -262,7 +336,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         headers,
       });
     },
-    [authToken]
+    [authToken],
   );
 
   const syncPendingNotifications = useCallback(async () => {
@@ -327,34 +401,38 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('notification_filter', filter);
-      localStorage.setItem('read_notifications', JSON.stringify(Array.from(readNotifications)));
-      localStorage.setItem('notification_page', page.toString());
+      localStorage.setItem(
+        storageKey('read_notifications'),
+        JSON.stringify(Array.from(readNotifications)),
+      );
+      localStorage.setItem(storageKey('notification_page'), page.toString());
       if (notifications.length > 0) {
-        localStorage.setItem('cached_notifications', JSON.stringify(notifications));
+        localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(notifications));
+      } else {
+        localStorage.removeItem(storageKey('cached_notifications'));
       }
     }
-  }, [filter, readNotifications, page, notifications]);
+  }, [filter, readNotifications, page, notifications, storageKey]);
 
   // Función para cargar solo el contador de notificaciones no leídas según el filtro activo
-  const fetchUnreadCount = useCallback(async (currentFilter: string = filter) => {
-    if (!canRequestProtectedData) {
-      setUnreadCount(0);
-      return;
-    }
-
-    try {
-      const response = await authorizedFetch(API_URL);
-      if (!response.ok) {
-        throw new Error('Error al cargar notificaciones');
+  const fetchUnreadCount = useCallback(
+    async (currentFilter: string = filter) => {
+      if (!canRequestProtectedData) {
+        setUnreadCount(0);
+        return;
       }
 
-      const data: INotification[] = await response.json();
-      const sanitizedData = userRole === 'requester'
-        ? data.filter((n) => !isSaldoNotification(n) && n.saldo === undefined)
-        : data;
+      try {
+        const response = await authorizedFetch(API_URL);
+        if (!response.ok) {
+          throw new Error('Error al cargar notificaciones');
+        }
 
-      // Aplicar filtro si no es 'todos'
-      let filteredData = sanitizedData;
+        const data: INotification[] = await response.json();
+        const sanitizedData = filterNotificationsByRole(data, userRole);
+
+        // Aplicar filtro si no es 'todos'
+        let filteredData = sanitizedData;
         if (currentFilter !== 'todos' && currentFilter !== 'no_leidas') {
           if (currentFilter === 'ofertas_promociones') {
             // Solo para requester
@@ -367,78 +445,89 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
             } else {
               filteredData = [];
             }
-        } else if (currentFilter === 'billetera') {
-          // Solo para fixer
-          if (userRole === 'fixer') {
-            filteredData = sanitizedData.filter((n) => n.tipo === 'billetera' || n.saldo !== undefined || isSaldoNotification(n));
+          } else if (currentFilter === 'billetera') {
+            // Solo para fixer
+            if (userRole === 'fixer') {
+              filteredData = sanitizedData.filter(
+                (n) => n.tipo === 'billetera' || n.saldo !== undefined || isSaldoNotification(n),
+              );
+            } else {
+              filteredData = [];
+            }
           } else {
-            filteredData = [];
+            filteredData = sanitizedData.filter((n) => {
+              if (currentFilter === 'citas' && n.appointment_id) return true;
+              if (n.notification_type) {
+                return n.notification_type === currentFilter;
+              }
+              if (n.tipo) {
+                return n.tipo === currentFilter;
+              }
+              return false;
+            });
           }
-        } else {
-          filteredData = sanitizedData.filter((n) => {
-            if (currentFilter === 'citas' && n.appointment_id) return true;
-            if (n.notification_type) {
-              return n.notification_type === currentFilter;
-            }
-            if (n.tipo) {
-              return n.tipo === currentFilter;
-            }
-            return false;
-          });
         }
-      }
 
-      // Calcular el total de notificaciones NO LEÍDAS según el filtro
-      const totalUnreadCount = filteredData.filter((n) => 
-        !(n.leido || readNotifications.has(n._id))
-      ).length;
-      setUnreadCount(totalUnreadCount);
-    } catch (err: unknown) {
-      console.error('Error fetching unread count:', err);
-      if (typeof window !== 'undefined') {
-        const cached = localStorage.getItem('cached_notifications');
-        if (cached) {
-          try {
-            const cachedData: INotification[] = JSON.parse(cached);
-            const sanitizedCached = userRole === 'requester'
-              ? cachedData.filter((n: INotification) => !isSaldoNotification(n) && n.saldo === undefined)
-              : cachedData;
-            let filteredCached = sanitizedCached;
-            if (currentFilter !== 'todos' && currentFilter !== 'no_leidas') {
-              filteredCached = sanitizedCached.filter((n: INotification) => {
-                if (currentFilter === 'citas' && n.appointment_id) return true;
-                if (currentFilter === 'ofertas_promociones' && userRole === 'requester') {
-                  if (!n.tipo || typeof n.tipo !== 'string') return false;
-                  const tipoLower = n.tipo.trim().toLowerCase();
-                  return tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias';
-                }
-                if (currentFilter === 'billetera' && userRole === 'fixer') return n.tipo === 'billetera' || n.saldo !== undefined || isSaldoNotification(n);
-                if (n.notification_type) {
-                  return n.notification_type === currentFilter;
-                }
-                if (n.tipo) {
-                  return n.tipo === currentFilter;
-                }
-                return false;
-              });
+        // Calcular el total de notificaciones NO LEÍDAS según el filtro
+        const totalUnreadCount = filteredData.filter(
+          (n) => !(n.leido || readNotifications.has(n._id)),
+        ).length;
+        setUnreadCount(totalUnreadCount);
+      } catch (err: unknown) {
+        console.error('Error fetching unread count:', err);
+        if (typeof window !== 'undefined') {
+          const cached = localStorage.getItem(storageKey('cached_notifications'));
+          if (cached) {
+            try {
+              const cachedData: INotification[] = JSON.parse(cached);
+              const sanitizedCached = filterNotificationsByRole(cachedData, userRole);
+              let filteredCached = sanitizedCached;
+              if (currentFilter !== 'todos' && currentFilter !== 'no_leidas') {
+                filteredCached = sanitizedCached.filter((n: INotification) => {
+                  if (currentFilter === 'citas' && n.appointment_id) return true;
+                  if (currentFilter === 'ofertas_promociones' && userRole === 'requester') {
+                    if (!n.tipo || typeof n.tipo !== 'string') return false;
+                    const tipoLower = n.tipo.trim().toLowerCase();
+                    return tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias';
+                  }
+                  if (currentFilter === 'billetera' && userRole === 'fixer')
+                    return (
+                      n.tipo === 'billetera' || n.saldo !== undefined || isSaldoNotification(n)
+                    );
+                  if (n.notification_type) {
+                    return n.notification_type === currentFilter;
+                  }
+                  if (n.tipo) {
+                    return n.tipo === currentFilter;
+                  }
+                  return false;
+                });
+              }
+              setUnreadCount(
+                filteredCached.filter(
+                  (n: INotification) => !(n.leido || readNotifications.has(n._id)),
+                ).length,
+              );
+            } catch (e) {
+              console.error('Error loading cached count:', e);
             }
-            setUnreadCount(filteredCached.filter((n: INotification) => 
-              !(n.leido || readNotifications.has(n._id))
-            ).length);
-          } catch (e) {
-            console.error('Error loading cached count:', e);
           }
         }
       }
-    }
-  }, [readNotifications, filter, authorizedFetch, canRequestProtectedData, API_URL, userRole]);
+    },
+    [
+      readNotifications,
+      filter,
+      authorizedFetch,
+      canRequestProtectedData,
+      API_URL,
+      userRole,
+      storageKey,
+    ],
+  );
 
   const fetchNotifications = useCallback(
-    async (
-      currentFilter: string,
-      currentPage: number = 1,
-      append: boolean = false
-    ) => {
+    async (currentFilter: string, currentPage: number = 1, append: boolean = false) => {
       if (!canRequestProtectedData) {
         setNotifications([]);
         setUnreadCount(0);
@@ -465,16 +554,12 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         }
 
         const data: INotification[] = await response.json();
-        const sanitizedData = userRole === 'requester'
-          ? data.filter((n) => !isSaldoNotification(n) && n.saldo === undefined)
-          : data;
+        const sanitizedData = filterNotificationsByRole(data, userRole);
 
         let filteredData = sanitizedData;
         if (currentFilter !== 'todos') {
           if (currentFilter === 'no_leidas') {
-            filteredData = sanitizedData.filter((n) => 
-              !(n.leido || readNotifications.has(n._id))
-            );
+            filteredData = sanitizedData.filter((n) => !(n.leido || readNotifications.has(n._id)));
           } else {
             filteredData = sanitizedData.filter((n) => {
               if (currentFilter === 'citas' && n.appointment_id) return true;
@@ -513,8 +598,8 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         });
 
         if (!append) {
-          const totalUnreadCount = sortedData.filter((n) => 
-            !(n.leido || readNotifications.has(n._id))
+          const totalUnreadCount = sortedData.filter(
+            (n) => !(n.leido || readNotifications.has(n._id)),
           ).length;
           setUnreadCount(totalUnreadCount);
         }
@@ -526,9 +611,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         if (append) {
           setNotifications((prev) => {
             const existingIds = new Set(prev.map((n) => n._id));
-            const newNotifications = paginatedData.filter(
-              (n) => !existingIds.has(n._id)
-            );
+            const newNotifications = paginatedData.filter((n) => !existingIds.has(n._id));
             return [...prev, ...newNotifications];
           });
         } else {
@@ -539,19 +622,19 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         setPage(currentPage);
 
         if (typeof window !== 'undefined') {
-          localStorage.setItem('cached_notifications', JSON.stringify(paginatedData));
+          localStorage.setItem(storageKey('cached_notifications'), JSON.stringify(paginatedData));
         }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
         setError(message || 'Error al cargar notificaciones');
         console.error('Error fetching notifications:', err);
-        
+
         if (typeof window !== 'undefined') {
-          const cached = localStorage.getItem('cached_notifications');
+          const cached = localStorage.getItem(storageKey('cached_notifications'));
           if (cached) {
             try {
               const cachedData = JSON.parse(cached);
-              setNotifications(cachedData);
+              setNotifications(filterNotificationsByRole(cachedData, userRole));
             } catch (e) {
               console.error('Error loading cached data:', e);
             }
@@ -567,7 +650,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
         setShowSkeleton(false);
       }
     },
-    [readNotifications, authorizedFetch, canRequestProtectedData, API_URL, userRole]
+    [readNotifications, authorizedFetch, canRequestProtectedData, API_URL, userRole, storageKey],
   );
 
   const loadMore = useCallback(() => {
@@ -583,7 +666,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     const currentTarget = observerTarget.current;
@@ -618,9 +701,13 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
     notifications.forEach((notification) => {
       const tipoLower = notification.tipo?.trim().toLowerCase();
       const fechaCreacion = notification.creado || notification.createdAt;
-      if ((tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias') && fechaCreacion && userRole === 'requester') {
+      if (
+        (tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias') &&
+        fechaCreacion &&
+        userRole === 'requester'
+      ) {
         if (offersCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:8000/api/offers/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${OFFERS_COUNT_API_URL}?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {
@@ -644,7 +731,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
       const fechaCreacion = notification.creado || notification.createdAt;
       if (tipoLower === 'desconexion 2 dias' && fechaCreacion && userRole === 'requester') {
         if (promotionsCountMap[notification._id] === undefined) {
-          fetch(`http://localhost:8000/api/promotions/count-since?date=${encodeURIComponent(fechaCreacion)}`)
+          fetch(`${PROMOTIONS_COUNT_API_URL}?date=${encodeURIComponent(fechaCreacion)}`)
             .then((res) => res.json())
             .then((data) => {
               if (data.success && typeof data.count === 'number') {
@@ -661,7 +748,6 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
     });
   }, [isOpen, notifications, promotionsCountMap, userRole]);
 
-
   const handleMarkAsRead = async (notification: INotification) => {
     if (!canRequestProtectedData) {
       return;
@@ -674,9 +760,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
     setReadNotifications((prev) => new Set(prev).add(notification._id));
     setNotifications((prev) =>
-      prev.map((n) =>
-        n._id === notification._id ? { ...n, leido: true } : n
-      )
+      prev.map((n) => (n._id === notification._id ? { ...n, leido: true } : n)),
     );
 
     try {
@@ -717,7 +801,11 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
     if (notification.tipo && typeof notification.tipo === 'string' && userRole === 'requester') {
       const tipoLower = notification.tipo.trim().toLowerCase();
-      if (tipoLower === 'oferta' || tipoLower === 'desconexion 2 dias' || filter === 'ofertas_promociones') {
+      if (
+        tipoLower === 'oferta' ||
+        tipoLower === 'desconexion 2 dias' ||
+        filter === 'ofertas_promociones'
+      ) {
         router.push(JOB_OFFERS_ROUTE);
         setIsOpen(false);
         return;
@@ -729,7 +817,13 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
       return;
     }
 
-    if ((notification.tipo === 'billetera' || notification.notification_type === 'billetera' || notification.saldo !== undefined || isSaldoNotification(notification)) && userRole === 'fixer') {
+    if (
+      (notification.tipo === 'billetera' ||
+        notification.notification_type === 'billetera' ||
+        notification.saldo !== undefined ||
+        isSaldoNotification(notification)) &&
+      userRole === 'fixer'
+    ) {
       router.push('/calendar');
       setIsOpen(false);
       return;
@@ -751,10 +845,7 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -765,12 +856,13 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
   }, [isOpen]);
 
   // Filtrar opciones del select según el rol del usuario
-  const availableFilters = userRole === 'fixer'
-    ? ['todos', 'no_leidas', 'whatsapp', 'email', 'citas', 'billetera'] // sin ofertas_promociones
-    : ['todos', 'no_leidas', 'whatsapp', 'email', 'citas', 'ofertas_promociones']; // sin billetera
+  const availableFilters =
+    userRole === 'fixer'
+      ? ['todos', 'no_leidas', 'whatsapp', 'email', 'citas', 'billetera'] // sin ofertas_promociones
+      : ['todos', 'no_leidas', 'whatsapp', 'email', 'citas', 'ofertas_promociones']; // sin billetera
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <button
         onClick={() => {
           setIsOpen((prev) => {
@@ -780,17 +872,17 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
             return !prev;
           });
         }}
-        className="relative p-2 rounded-full text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-        aria-label="Notificaciones"
+        className='relative p-2 rounded-full text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors'
+        aria-label='Notificaciones'
         aria-expanded={isOpen}
-        aria-haspopup="true"
-        role="button"
+        aria-haspopup='true'
+        role='button'
         tabIndex={0}
       >
-        <BellIcon className="w-6 h-6" />
+        <BellIcon className='w-6 h-6' />
         {unreadCount > 0 && (
           <span
-            className="absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center ring-2 ring-white font-bold"
+            className='absolute top-0 right-0 block h-5 w-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center ring-2 ring-white font-bold'
             aria-label={`${unreadCount} notificaciones no leídas`}
           >
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -800,56 +892,52 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 sm:absolute sm:inset-auto sm:top-full sm:left-0 sm:-translate-x-[65%] sm:mt-2 pointer-events-none"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Panel de notificaciones"
+          className='fixed inset-0 z-50 sm:absolute sm:inset-auto sm:top-full sm:left-0 sm:-translate-x-[65%] sm:mt-2 pointer-events-none'
+          role='dialog'
+          aria-modal='true'
+          aria-label='Panel de notificaciones'
         >
-          <div className="fixed inset-0 bg-black bg-opacity-50 sm:hidden pointer-events-auto" onClick={() => setIsOpen(false)} />
-          
+          <div
+            className='fixed inset-0 bg-black bg-opacity-50 sm:hidden pointer-events-auto'
+            onClick={() => setIsOpen(false)}
+          />
+
           <div
             ref={modalRef}
-            className="fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-auto sm:left-0 sm:-translate-x-[65%] bg-white rounded-t-2xl sm:rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-md max-h-[85vh] sm:max-h-[80vh] flex flex-col pointer-events-auto border-t sm:border border-gray-200"
+            className='fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-auto sm:left-0 sm:-translate-x-[65%] bg-white rounded-t-2xl sm:rounded-lg shadow-xl w-full sm:w-96 max-w-full sm:max-w-md max-h-[85vh] sm:max-h-[80vh] flex flex-col pointer-events-auto border-t sm:border border-gray-200'
           >
-            <div className="flex items-center justify-between p-4 sm:p-4 border-b border-gray-200 bg-gray-50">
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full sm:hidden" />
-              
-              <h2 className="text-lg font-semibold text-gray-900 mt-2 sm:mt-0">
-                Notificaciones
-              </h2>
+            <div className='flex items-center justify-between p-4 sm:p-4 border-b border-gray-200 bg-gray-50'>
+              <div className='absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full sm:hidden' />
+
+              <h2 className='text-lg font-semibold text-gray-900 mt-2 sm:mt-0'>Notificaciones</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded mt-2 sm:mt-0"
-                aria-label="Cerrar panel de notificaciones"
+                className='text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded mt-2 sm:mt-0'
+                aria-label='Cerrar panel de notificaciones'
                 tabIndex={0}
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                     strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+                    d='M6 18L18 6M6 6l12 12'
                   />
                 </svg>
               </button>
             </div>
 
-            <div className="p-3 sm:p-4 border-b border-gray-200 bg-white">
-              <div className="relative">
+            <div className='p-3 sm:p-4 border-b border-gray-200 bg-white'>
+              <div className='relative'>
                 <label
-                  htmlFor="notification-filter"
-                  className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700 mb-2"
+                  htmlFor='notification-filter'
+                  className='flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700 mb-2'
                 >
-                  <FilterIcon className="w-4 h-4 text-gray-500" />
+                  <FilterIcon className='w-4 h-4 text-gray-500' />
                   Filtrar por tipo
                 </label>
                 <select
-                  id="notification-filter"
+                  id='notification-filter'
                   value={filter}
                   onChange={(e) => {
                     setFilter(e.target.value as NotificationType);
@@ -859,29 +947,31 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
                     fetchUnreadCount(e.target.value);
                   }}
                   disabled={showLoginPrompt}
-                  className="w-full px-3 py-2.5 sm:py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  aria-label="Filtrar notificaciones por tipo"
+                  className='w-full px-3 py-2.5 sm:py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed'
+                  aria-label='Filtrar notificaciones por tipo'
                 >
-                  <option value="todos">Todos</option>
-                  <option value="no_leidas">No leídas</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="email">Email</option>
-                  <option value="citas">Citas</option>
-                  {userRole === 'requester' && <option value="ofertas_promociones">Ofertas y Promociones</option>}
-                  {userRole === 'fixer' && <option value="billetera">Billetera</option>}
+                  <option value='todos'>Todos</option>
+                  <option value='no_leidas'>No leídas</option>
+                  <option value='whatsapp'>WhatsApp</option>
+                  <option value='email'>Email</option>
+                  <option value='citas'>Citas</option>
+                  {userRole === 'requester' && (
+                    <option value='ofertas_promociones'>Ofertas y Promociones</option>
+                  )}
+                  {userRole === 'fixer' && <option value='billetera'>Billetera</option>}
                 </select>
-                <div className="absolute right-3 top-8 sm:top-9 pointer-events-none">
+                <div className='absolute right-3 top-8 sm:top-9 pointer-events-none'>
                   <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    className='w-5 h-5 text-gray-400'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
                       strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
+                      d='M19 9l-7 7-7-7'
                     />
                   </svg>
                 </div>
@@ -890,322 +980,367 @@ export default function NotificationSystem({ userId, userName, isAuthenticated, 
 
             <div
               ref={listRef}
-              className="flex-1 overflow-y-auto"
-              role="list"
-              aria-label="Lista de notificaciones"
+              className='flex-1 overflow-y-auto'
+              role='list'
+              aria-label='Lista de notificaciones'
             >
               {showLoginPrompt ? (
-                <div className="p-8 sm:p-8 text-center text-gray-600">
-                  <BellIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p className="text-base sm:text-lg font-semibold text-primary">INICIAR SESION ANTES</p>
-                  <p className="text-sm sm:text-base text-gray-500 mt-2">
+                <div className='p-8 sm:p-8 text-center text-gray-600'>
+                  <BellIcon className='w-12 h-12 mx-auto mb-4 text-gray-300' />
+                  <p className='text-base sm:text-lg font-semibold text-primary'>
+                    INICIAR SESION ANTES
+                  </p>
+                  <p className='text-sm sm:text-base text-gray-500 mt-2'>
                     Necesitas iniciar sesión para ver tus notificaciones personalizadas.
                   </p>
                 </div>
               ) : (
                 <>
                   {error && (
-                    <div className="p-4 text-center text-red-600 text-sm" role="alert">
+                    <div className='p-4 text-center text-red-600 text-sm' role='alert'>
                       {error}
                     </div>
                   )}
 
-                  {showSkeleton && loading && !loadingMore && (
-                    <SkeletonLoader />
-                  )}
+                  {showSkeleton && loading && !loadingMore && <SkeletonLoader />}
 
                   {!loading && !showSkeleton && notifications.length === 0 && (
-                    <div className="p-8 sm:p-8 text-center text-gray-500">
-                      <BellIcon className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                      <p className="text-sm sm:text-base">No hay notificaciones</p>
+                    <div className='p-8 sm:p-8 text-center text-gray-500'>
+                      <BellIcon className='w-12 h-12 mx-auto mb-2 text-gray-300' />
+                      <p className='text-sm sm:text-base'>No hay notificaciones</p>
                     </div>
                   )}
 
                   {notifications.map((notification) => {
-                const isRead = notification.leido || readNotifications.has(notification._id);
-                const tipoLower = notification.tipo?.trim().toLowerCase();
-                
-                // Para "desconexion 2 dias", crear AMBAS notificaciones (oferta y promociones) SOLO SI ES REQUESTER
-                if (tipoLower === 'desconexion 2 dias' && userRole === 'requester') {
-                  const nombre = displayName;
-                  const fechaCreacion = notification.creado || notification.createdAt;
-                  let cantidad = offersCountMap[notification._id];
-                  if (cantidad === undefined) cantidad = 0;
-                  if (cantidad === null) cantidad = 0;
-                  let cantidadPromos = promotionsCountMap?.[notification._id];
-                  if (cantidadPromos === undefined) cantidadPromos = 0;
-                  if (cantidadPromos === null) cantidadPromos = 0;
-                  
-                  return (
-                    <React.Fragment key={notification._id}>
-                      {/* Notificación de OFERTAS */}
-                      <div
-                        onClick={() => handleMarkAsRead(notification)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleMarkAsRead(notification);
-                          }
-                        }}
-                        className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
-                        }`}
-                        role="listitem"
-                        tabIndex={0}
-                        aria-label={`Notificación personalizada para ofertas: ${nombre}`}
-                      >
-                        <div className="flex items-start gap-2 sm:gap-3">
-                          <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`} aria-hidden="true" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1 gap-2">
-                              <span className="text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-orange-100 text-orange-800">OFERTA</span>
-                              <span className="text-[10px] sm:text-xs text-gray-500 flex-shrink-0">
-                                {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
-                              </span>
-                            </div>
-                            <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                              Hola {nombre}
-                            </p>
-                            <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                              {cantidad} nuevos trabajos públicos desde tu última visita
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Notificación de PROMOCIONES */}
-                      <div
-                        onClick={() => handleMarkAsRead(notification)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleMarkAsRead(notification);
-                          }
-                        }}
-                        className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
-                        }`}
-                        role="listitem"
-                        tabIndex={0}
-                        aria-label={`Notificación personalizada para promociones: ${nombre}`}
-                      >
-                        <div className="flex items-start gap-2 sm:gap-3">
-                          <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`} aria-hidden="true" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1 gap-2">
-                              <span className="text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-green-100 text-green-800">PROMOCIONES</span>
-                              <span className="text-[10px] sm:text-xs text-gray-500 flex-shrink-0">
-                                {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
-                              </span>
-                            </div>
-                            <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                              Hola {nombre}
-                            </p>
-                            <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                              {cantidadPromos} nuevas promociones desde tu última visita
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </React.Fragment>
-                  );
-                }
-                
-                // Para notificaciones de tipo "oferta" individuales SOLO SI ES REQUESTER
-                if ((tipoLower === 'oferta' || filter === 'ofertas_promociones') && userRole === 'requester') {
-                  const nombre = displayName;
-                  const fechaCreacion = notification.creado || notification.createdAt;
-                  let cantidad = offersCountMap[notification._id];
-                  if (cantidad === undefined) cantidad = 0;
-                  if (cantidad === null) cantidad = 0;
-                  
-                  return (
-                    <div
-                      key={notification._id}
-                      onClick={() => handleMarkAsRead(notification)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleMarkAsRead(notification);
-                        }
-                      }}
-                      className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
-                      }`}
-                      role="listitem"
-                      tabIndex={0}
-                      aria-label={`Notificación personalizada para ofertas: ${nombre}`}
-                    >
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`} aria-hidden="true" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1 gap-2">
-                            <span className="text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-orange-100 text-orange-800">OFERTA</span>
-                            <span className="text-[10px] sm:text-xs text-gray-500 flex-shrink-0">
-                              {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
-                            </span>
-                          </div>
-                          <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                            Hola {nombre}
-                          </p>
-                          <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                            {cantidad} nuevos trabajos públicos desde tu última visita
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
+                    const isRead = notification.leido || readNotifications.has(notification._id);
+                    const tipoLower = notification.tipo?.trim().toLowerCase();
 
-                // Para notificaciones de billetera SOLO SI ES FIXER
-                if ((notification.tipo === 'billetera' || notification.saldo !== undefined || isSaldoNotification(notification)) && userRole === 'fixer') {
-                  return (
-                    <div
-                      key={notification._id}
-                      onClick={() => handleMarkAsRead(notification)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleMarkAsRead(notification);
-                        }
-                      }}
-                      className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
-                      }`}
-                      role="listitem"
-                      tabIndex={0}
-                      aria-label={`Notificación de billetera`}
-                    >
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <div className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`} aria-hidden="true" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1 gap-2">
-                            <span className="text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-yellow-100 text-yellow-800">BILLETERA</span>
-                            <span className="text-[10px] sm:text-xs text-gray-500 flex-shrink-0">
-                              {notification.createdAt ? timeAgo(notification.createdAt) : notification.creado ? timeAgo(notification.creado) : 'Fecha no disponible'}
-                            </span>
-                          </div>
-                          <p className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
-                            {notification.message_content || `Tipo: ${notification.tipo}`}
-                          </p>
-                          {notification.saldo !== undefined && (
-                            <p className="text-[10px] sm:text-xs text-gray-600 mt-1">
-                              Saldo: {maskSensitiveData(notification.saldo.toString())}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
+                    // Para "desconexion 2 dias", crear AMBAS notificaciones (oferta y promociones) SOLO SI ES REQUESTER
+                    if (tipoLower === 'desconexion 2 dias' && userRole === 'requester') {
+                      const nombre = displayName;
+                      const fechaCreacion = notification.creado || notification.createdAt;
+                      let cantidad = offersCountMap[notification._id];
+                      if (cantidad === undefined) cantidad = 0;
+                      if (cantidad === null) cantidad = 0;
+                      let cantidadPromos = promotionsCountMap?.[notification._id];
+                      if (cantidadPromos === undefined) cantidadPromos = 0;
+                      if (cantidadPromos === null) cantidadPromos = 0;
 
-                // Notificaciones genéricas para todos
-                return (
-                  <div
-                    key={notification._id}
-                    onClick={() => handleMarkAsRead(notification)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleMarkAsRead(notification);
-                      }
-                    }}
-                    className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      isRead
-                        ? 'bg-white hover:bg-gray-50'
-                        : 'bg-blue-50 hover:bg-blue-100'
-                    }`}
-                    role="listitem"
-                    tabIndex={0}
-                    aria-label={`Notificación ${isRead ? 'leída' : 'no leída'}: ${notification.message_content || notification.tipo || 'Sin contenido'}`}
-                  >
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <div
-                        className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${
-                          isRead ? 'bg-gray-300' : 'bg-blue-600'
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1 gap-2">
-                          <span
-                            className={`text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 ${
-                              notification.notification_type === 'whatsapp'
-                                ? 'bg-green-100 text-green-800'
-                                : notification.notification_type === 'email'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : notification.notification_type === 'citas' || notification.appointment_id
-                                    ? 'bg-purple-100 text-purple-800'
-                                    : notification.tipo
-                                      ? 'bg-purple-100 text-purple-800'
-                                      : 'bg-gray-100 text-gray-800'
+                      return (
+                        <React.Fragment key={notification._id}>
+                          {/* Notificación de OFERTAS */}
+                          <div
+                            onClick={() => handleMarkAsRead(notification)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleMarkAsRead(notification);
+                              }
+                            }}
+                            className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                              isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
                             }`}
+                            role='listitem'
+                            tabIndex={0}
+                            aria-label={`Notificación personalizada para ofertas: ${nombre}`}
                           >
-                            {notification.notification_type
-                              ? notification.notification_type.toUpperCase()
-                              : notification.tipo
-                                ? notification.tipo.toUpperCase()
-                                : 'NOTIFICACIÓN'}
-                          </span>
-                          <span className="text-[10px] sm:text-xs text-gray-500 flex-shrink-0">
-                            {notification.createdAt
-                              ? timeAgo(notification.createdAt)
-                              : notification.creado
-                                ? timeAgo(notification.creado)
-                                : 'Fecha no disponible'}
-                          </span>
+                            <div className='flex items-start gap-2 sm:gap-3'>
+                              <div
+                                className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`}
+                                aria-hidden='true'
+                              />
+                              <div className='flex-1 min-w-0'>
+                                <div className='flex items-center justify-between mb-1 gap-2'>
+                                  <span className='text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-orange-100 text-orange-800'>
+                                    OFERTA
+                                  </span>
+                                  <span className='text-[10px] sm:text-xs text-gray-500 flex-shrink-0'>
+                                    {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
+                                  </span>
+                                </div>
+                                <p
+                                  className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                                >
+                                  Hola {nombre}
+                                </p>
+                                <p
+                                  className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                                >
+                                  {cantidad} nuevos trabajos públicos desde tu última visita
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Notificación de PROMOCIONES */}
+                          <div
+                            onClick={() => handleMarkAsRead(notification)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleMarkAsRead(notification);
+                              }
+                            }}
+                            className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                              isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
+                            }`}
+                            role='listitem'
+                            tabIndex={0}
+                            aria-label={`Notificación personalizada para promociones: ${nombre}`}
+                          >
+                            <div className='flex items-start gap-2 sm:gap-3'>
+                              <div
+                                className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`}
+                                aria-hidden='true'
+                              />
+                              <div className='flex-1 min-w-0'>
+                                <div className='flex items-center justify-between mb-1 gap-2'>
+                                  <span className='text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-green-100 text-green-800'>
+                                    PROMOCIONES
+                                  </span>
+                                  <span className='text-[10px] sm:text-xs text-gray-500 flex-shrink-0'>
+                                    {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
+                                  </span>
+                                </div>
+                                <p
+                                  className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                                >
+                                  Hola {nombre}
+                                </p>
+                                <p
+                                  className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                                >
+                                  {cantidadPromos} nuevas promociones desde tu última visita
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
+                    }
+
+                    // Para notificaciones de tipo "oferta" individuales SOLO SI ES REQUESTER
+                    if (
+                      (tipoLower === 'oferta' || filter === 'ofertas_promociones') &&
+                      userRole === 'requester'
+                    ) {
+                      const nombre = displayName;
+                      const fechaCreacion = notification.creado || notification.createdAt;
+                      let cantidad = offersCountMap[notification._id];
+                      if (cantidad === undefined) cantidad = 0;
+                      if (cantidad === null) cantidad = 0;
+
+                      return (
+                        <div
+                          key={notification._id}
+                          onClick={() => handleMarkAsRead(notification)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleMarkAsRead(notification);
+                            }
+                          }}
+                          className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                            isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
+                          }`}
+                          role='listitem'
+                          tabIndex={0}
+                          aria-label={`Notificación personalizada para ofertas: ${nombre}`}
+                        >
+                          <div className='flex items-start gap-2 sm:gap-3'>
+                            <div
+                              className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`}
+                              aria-hidden='true'
+                            />
+                            <div className='flex-1 min-w-0'>
+                              <div className='flex items-center justify-between mb-1 gap-2'>
+                                <span className='text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-orange-100 text-orange-800'>
+                                  OFERTA
+                                </span>
+                                <span className='text-[10px] sm:text-xs text-gray-500 flex-shrink-0'>
+                                  {fechaCreacion ? timeAgo(fechaCreacion) : 'Fecha no disponible'}
+                                </span>
+                              </div>
+                              <p
+                                className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                              >
+                                Hola {nombre}
+                              </p>
+                              <p
+                                className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                              >
+                                {cantidad} nuevos trabajos públicos desde tu última visita
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        {notification.message_content ? (
-                          <p
-                            className={`text-xs sm:text-sm ${
-                              isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
-                            } line-clamp-3`}
-                          >
-                            {maskSensitiveData(notification.message_content)}
-                          </p>
-                        ) : notification.tipo ? (
-                          <div className="text-xs sm:text-sm">
-                            <p
-                              className={`${
-                                isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
-                              }`}
-                            >
-                              Tipo: {notification.tipo}
-                            </p>
-                            {notification.estado && (
-                              <p className="text-[10px] sm:text-xs text-gray-600 mt-1">
-                                Estado: {notification.estado}
+                      );
+                    }
+
+                    // Para notificaciones de billetera SOLO SI ES FIXER
+                    if (
+                      (notification.tipo === 'billetera' ||
+                        notification.saldo !== undefined ||
+                        isSaldoNotification(notification)) &&
+                      userRole === 'fixer'
+                    ) {
+                      return (
+                        <div
+                          key={notification._id}
+                          onClick={() => handleMarkAsRead(notification)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handleMarkAsRead(notification);
+                            }
+                          }}
+                          className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                            isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
+                          }`}
+                          role='listitem'
+                          tabIndex={0}
+                          aria-label={`Notificación de billetera`}
+                        >
+                          <div className='flex items-start gap-2 sm:gap-3'>
+                            <div
+                              className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${isRead ? 'bg-gray-300' : 'bg-blue-600'}`}
+                              aria-hidden='true'
+                            />
+                            <div className='flex-1 min-w-0'>
+                              <div className='flex items-center justify-between mb-1 gap-2'>
+                                <span className='text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 bg-yellow-100 text-yellow-800'>
+                                  BILLETERA
+                                </span>
+                                <span className='text-[10px] sm:text-xs text-gray-500 flex-shrink-0'>
+                                  {notification.createdAt
+                                    ? timeAgo(notification.createdAt)
+                                    : notification.creado
+                                      ? timeAgo(notification.creado)
+                                      : 'Fecha no disponible'}
+                                </span>
+                              </div>
+                              <p
+                                className={`text-xs sm:text-sm ${isRead ? 'text-gray-700' : 'text-gray-900 font-medium'}`}
+                              >
+                                {notification.message_content || `Tipo: ${notification.tipo}`}
+                              </p>
+                              {notification.saldo !== undefined && (
+                                <p className='text-[10px] sm:text-xs text-gray-600 mt-1'>
+                                  Saldo: {maskSensitiveData(notification.saldo.toString())}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    // Notificaciones genéricas para todos
+                    return (
+                      <div
+                        key={notification._id}
+                        onClick={() => handleMarkAsRead(notification)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleMarkAsRead(notification);
+                          }
+                        }}
+                        className={`p-3 sm:p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          isRead ? 'bg-white hover:bg-gray-50' : 'bg-blue-50 hover:bg-blue-100'
+                        }`}
+                        role='listitem'
+                        tabIndex={0}
+                        aria-label={`Notificación ${isRead ? 'leída' : 'no leída'}: ${notification.message_content || notification.tipo || 'Sin contenido'}`}
+                      >
+                        <div className='flex items-start gap-2 sm:gap-3'>
+                          <div
+                            className={`flex-shrink-0 w-2 h-2 rounded-full mt-1.5 sm:mt-2 ${
+                              isRead ? 'bg-gray-300' : 'bg-blue-600'
+                            }`}
+                            aria-hidden='true'
+                          />
+                          <div className='flex-1 min-w-0'>
+                            <div className='flex items-center justify-between mb-1 gap-2'>
+                              <span
+                                className={`text-[10px] sm:text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded flex-shrink-0 ${
+                                  notification.notification_type === 'whatsapp'
+                                    ? 'bg-green-100 text-green-800'
+                                    : notification.notification_type === 'email'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : notification.notification_type === 'citas' ||
+                                          notification.appointment_id
+                                        ? 'bg-purple-100 text-purple-800'
+                                        : notification.tipo
+                                          ? 'bg-purple-100 text-purple-800'
+                                          : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {notification.notification_type
+                                  ? notification.notification_type.toUpperCase()
+                                  : notification.tipo
+                                    ? notification.tipo.toUpperCase()
+                                    : 'NOTIFICACIÓN'}
+                              </span>
+                              <span className='text-[10px] sm:text-xs text-gray-500 flex-shrink-0'>
+                                {notification.createdAt
+                                  ? timeAgo(notification.createdAt)
+                                  : notification.creado
+                                    ? timeAgo(notification.creado)
+                                    : 'Fecha no disponible'}
+                              </span>
+                            </div>
+                            {notification.message_content ? (
+                              <p
+                                className={`text-xs sm:text-sm ${
+                                  isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
+                                } line-clamp-3`}
+                              >
+                                {maskSensitiveData(notification.message_content)}
+                              </p>
+                            ) : notification.tipo ? (
+                              <div className='text-xs sm:text-sm'>
+                                <p
+                                  className={`${
+                                    isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
+                                  }`}
+                                >
+                                  Tipo: {notification.tipo}
+                                </p>
+                                {notification.estado && (
+                                  <p className='text-[10px] sm:text-xs text-gray-600 mt-1'>
+                                    Estado: {notification.estado}
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              <p
+                                className={`text-xs sm:text-sm ${
+                                  isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
+                                }`}
+                              >
+                                Notificación sin contenido
+                              </p>
+                            )}
+                            {notification.recipient_phone && (
+                              <p className='text-[10px] sm:text-xs text-gray-500 mt-1'>
+                                Tel: {maskSensitiveData(notification.recipient_phone)}
                               </p>
                             )}
                           </div>
-                        ) : (
-                          <p
-                            className={`text-xs sm:text-sm ${
-                              isRead ? 'text-gray-700' : 'text-gray-900 font-medium'
-                            }`}
-                          >
-                            Notificación sin contenido
-                          </p>
-                        )}
-                        {notification.recipient_phone && (
-                          <p className="text-[10px] sm:text-xs text-gray-500 mt-1">
-                            Tel: {maskSensitiveData(notification.recipient_phone)}
-                          </p>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
+                    );
                   })}
 
                   {loadingMore && (
-                    <div className="p-4 text-center">
-                      <SpinnerIcon className="w-6 h-6 mx-auto text-blue-600" />
+                    <div className='p-4 text-center'>
+                      <SpinnerIcon className='w-6 h-6 mx-auto text-blue-600' />
                     </div>
                   )}
 
                   {hasMore && !loadingMore && (
-                    <div ref={observerTarget} className="h-4" aria-hidden="true" />
+                    <div ref={observerTarget} className='h-4' aria-hidden='true' />
                   )}
                 </>
               )}

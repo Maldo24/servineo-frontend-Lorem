@@ -1,3 +1,4 @@
+// src/app/redux/features/jobOffers/types.ts
 export interface OfferData {
   _id: string;
   fixerId: string;
@@ -54,11 +55,29 @@ export interface JobOffersState {
   shouldPersist: boolean;
 }
 
+// ===== AGREGADO: Tipos para Search History y Suggestions =====
+export interface SearchHistoryItem {
+  searchTerm: string;
+  searchedAt?: string;
+}
+
+export interface SuggestionItem {
+  term: string;
+  count?: number;
+  score?: number;
+  source?: string;
+}
+
 export interface OfferResponse {
   total: number;
   count: number;
   data: OfferData[];
   currentPage?: number;
+  totalPages?: number;
+  // ===== AGREGADO: Campos opcionales del backend =====
+  sessionId?: string;
+  searchHistory?: SearchHistoryItem[];
+  suggestions?: SuggestionItem[];
 }
 
 export interface OfferFilters {

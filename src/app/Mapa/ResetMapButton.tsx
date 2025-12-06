@@ -9,6 +9,12 @@ interface ResetMapButtonProps {
 export default function ResetMapButton({ onReset, isOnline = true }: ResetMapButtonProps) {
   const [showMessage, setShowMessage] = useState(false);
 
+  const palette = {
+    whatsappBg: '#2B6AE0',
+    whatsappHover: '#3B7BDD',
+    buttonText: '#FFFFFF',
+  };
+
   const handleClick = () => {
     if (!isOnline) {
       setShowMessage(true);
@@ -23,13 +29,27 @@ export default function ResetMapButton({ onReset, isOnline = true }: ResetMapBut
     <>
       <button
         onClick={handleClick}
-        className='absolute top-3 right-3 z-[1000] 
-                   bg-gradient-to-r from-[#4B3FE8] to-[#3FD6D6]
-                   hover:from-[#3B7BDD] hover:to-[#2B6AE0]
-                   text-white font-semibold py-2 px-5 rounded-xl
-                   shadow-lg hover:shadow-[#3FD6D6]/40 
-                   transition-all duration-300 ease-in-out
-                   border border-white/20 backdrop-blur-sm'
+        style={{
+          background: palette.whatsappBg,
+          color: palette.buttonText,
+          borderRadius: '12px',
+          fontWeight: 600,
+          fontSize: '13px',
+          textAlign: 'center',
+          padding: '8px 0',
+          flex: 1,
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'background 0.3s',
+          fontFamily: "'Roboto', sans-serif",
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.background = palette.whatsappHover;
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.background = palette.whatsappBg;
+        }}
+        className='absolute top-3 right-3 z-[1000] w-[160px]'
       >
         🔄 Reiniciar Mapa
       </button>
