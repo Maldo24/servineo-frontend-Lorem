@@ -225,7 +225,8 @@
     "perPage": "per page",
     "previous": "Previous",
     "next": "Next",
-    "showingResults": "Showing {start} - {end} of {total} results"
+    "showingResults": "Showing {start} - {end} of {total} results",
+    "page": "Page"
   },
   "cardJob": {
     "imageAlt": "Image {current} of {total}",
@@ -1075,7 +1076,19 @@
       "deleteMessage": "This action cannot be undone.",
       "deleted": "Deleted",
       "deleteSuccess": "Offer deleted.",
-      "deleteError": "Could not delete the offer."
+      "deleteError": "Could not delete the offer.",
+      "statusChanged": "Status Changed",
+      "statusChangedSuccess": "Offer status updated successfully.",
+      "statusChangeError": "Could not change the offer status.",
+      "promoCreated": "Promotion created",
+      "promoCreatedSuccess": "Promotion saved successfully.",
+      "promoCreateError": "Could not create the promotion."
+    },
+    "filters": {
+      "all": "All Offers",
+      "active": "Active",
+      "inactive": "Inactive",
+      "noResults": "No offers found with this filter."
     },
     "confirmButton": "Confirm",
     "deleteConfirmation": "Are you sure you want to delete this offer?"

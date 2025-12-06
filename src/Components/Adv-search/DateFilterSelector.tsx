@@ -10,6 +10,7 @@ interface Props {
   selectedDate: Date | null;
   onChange: (filter: string, date?: Date | null) => void;
   onCalendarToggle?: (isOpen: boolean) => void;
+  clearSignal?: number;
 }
 
 const DateFilterSelector: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const DateFilterSelector: React.FC<Props> = ({
   selectedDate,
   onChange,
   onCalendarToggle,
+  clearSignal,
 }) => {
   const t = useTranslations('advancedSearch.date');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -27,6 +29,8 @@ const DateFilterSelector: React.FC<Props> = ({
   const calendarContainerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
+  // keep previous clear signal to detect changes
+  const prevClearRef = useRef<number | undefined>(undefined);
 
   // 🔄 Sincronizar selectedDate (prop) → estados locales (day, month, year)
   useEffect(() => {
@@ -135,6 +139,41 @@ const DateFilterSelector: React.FC<Props> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showCalendar, onCalendarToggle]);
+
+  // 🔁 Cuando el parent solicita limpiar (clearSignal cambia), limpiar inputs y la query 'date'
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (clearSignal == null) return;
+
+    // ignore initial undefined
+    if (prevClearRef.current === clearSignal) return;
+    prevClearRef.current = clearSignal;
+
+    // Clear local inputs
+    setDay('');
+    setMonth('');
+    setYear('');
+
+    // Notify parent that specific date is cleared
+    try {
+      onChange('specific', null);
+    } catch {
+      /* noop */
+    }
+
+    // Remove date from URL if present
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      if (sp.has('date')) {
+        sp.delete('date');
+        const qs = sp.toString();
+        const target = qs ? `${pathname}?${qs}` : pathname;
+        router.replace(target, { scroll: false });
+      }
+    } catch {
+      /* noop */
+    }
+  }, [clearSignal, onChange, pathname, router]);
 
   // 🗓️ Manejadores de calendario
   const handleDateSelect = (date: Date) => {

@@ -12,8 +12,9 @@ import {
   ChevronRight,
   Edit2,
   Trash2,
+  MoreVertical,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useImageCarousel } from '@/app/redux/features/jobOffers/useImageCarousel';
 import type { JobOfferData } from '@/types/jobOffers';
 import { SearchHighlight } from '../SearchHighlight';
@@ -25,6 +26,8 @@ interface JobOfferCardProps {
   onClick?: (offer: JobOfferData) => void;
   onEdit?: (offer: JobOfferData) => void;
   onDelete?: (id: string) => void;
+  onToggleActive?: () => void;
+  onCreatePromo?: () => void;
   className?: string;
   searchQuery?: string;
   readOnly?: boolean;
@@ -37,15 +40,19 @@ export const JobOfferCard = memo<JobOfferCardProps>(
     onClick,
     onEdit,
     onDelete,
+    onToggleActive,
+    onCreatePromo,
     className = '',
     searchQuery = '',
     readOnly = false,
   }) => {
     const router = useRouter();
+    const locale = useLocale();
     const t = useTranslations('cardJob');
     const tCat = useTranslations('Categories');
     const [hasPromotions, setHasPromotions] = useState(false);
     const [loadingPromos, setLoadingPromos] = useState(true);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Verificar si la oferta tiene promociones
     useEffect(() => {
@@ -154,6 +161,54 @@ export const JobOfferCard = memo<JobOfferCardProps>(
       },
       [onDelete, offer._id],
     );
+
+    const handleToggleMenu = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+      setIsMenuOpen((prev) => !prev);
+    }, []);
+
+    const handleToggleActiveClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onToggleActive) {
+          onToggleActive();
+          setIsMenuOpen(false);
+        }
+      },
+      [onToggleActive],
+    );
+
+    const handleViewPromotions = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.push(`/${locale}/promotions/${offer._id}`);
+        setIsMenuOpen(false);
+      },
+      [offer._id, locale, router],
+    );
+
+    const handleCreatePromoClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (onCreatePromo) {
+          onCreatePromo();
+          setIsMenuOpen(false);
+        }
+      },
+      [onCreatePromo],
+    );
+
+    // Close menu when clicking outside
+    useEffect(() => {
+      const handleClickOutside = () => {
+        if (isMenuOpen) setIsMenuOpen(false);
+      };
+      
+      if (isMenuOpen) {
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+      }
+    }, [isMenuOpen]);
 
     const isDashboardMode = !!onEdit || !!onDelete;
     const totalImages = images.length;
@@ -301,25 +356,101 @@ export const JobOfferCard = memo<JobOfferCardProps>(
     const renderFooter = () => {
       if (isDashboardMode && !readOnly) {
         return (
-          <div className='border-t border-gray-100 p-3 flex items-center justify-end gap-2 bg-gray-50/50'>
-            {onEdit && (
-              <button
-                onClick={handleEditClick}
-                className='p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors'
-                title='Editar'
+          <div className='border-t border-gray-100 p-3 flex items-center justify-between bg-gray-50/50'>
+            {/* Status Badge */}
+            <div className='flex items-center gap-2'>
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                  offer.status
+                    ? 'bg-green-100 text-green-700 border border-green-200'
+                    : 'bg-gray-100 text-gray-600 border border-gray-200'
+                }`}
               >
-                <Edit2 className='w-4 h-4' />
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={handleDeleteClick}
-                className='p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors'
-                title='Eliminar'
-              >
-                <Trash2 className='w-4 h-4' />
-              </button>
-            )}
+                {offer.status ? 'Activo' : 'Inactivo'}
+              </span>
+            </div>
+
+            {/* Actions Menu */}
+            <div className='flex items-center gap-2'>
+              {onEdit && (
+                <button
+                  onClick={handleEditClick}
+                  className='p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors'
+                  title='Editar'
+                >
+                  <Edit2 className='w-4 h-4' />
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={handleDeleteClick}
+                  className='p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors'
+                  title='Eliminar'
+                >
+                  <Trash2 className='w-4 h-4' />
+                </button>
+              )}
+              {onToggleActive && (
+                <div className='relative'>
+                  <button
+                    onClick={handleToggleMenu}
+                    className='p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors'
+                    title='Más opciones'
+                  >
+                    <MoreVertical className='w-4 h-4' />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {isMenuOpen && (
+                    <div className='absolute right-0 bottom-full mb-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50'>
+                      <button
+                        onClick={handleToggleActiveClick}
+                        className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-b border-gray-100'
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${offer.status ? 'bg-gray-400' : 'bg-green-500'}`}
+                        />
+                        {offer.status ? 'Desactivar oferta' : 'Activar oferta'}
+                      </button>
+                      <button
+                        onClick={handleViewPromotions}
+                        className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-b border-gray-100'
+                      >
+                        <svg
+                          className='w-4 h-4'
+                          fill='currentColor'
+                          viewBox='0 0 20 20'
+                          xmlns='http://www.w3.org/2000/svg'
+                        >
+                          <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
+                        </svg>
+                        Ver promociones
+                      </button>
+                      {onCreatePromo && (
+                        <>
+                          <div className='h-px bg-gray-100' />
+                          <button
+                            onClick={handleCreatePromoClick}
+                            className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2'
+                          >
+                            <svg
+                              className='w-4 h-4'
+                              fill='none'
+                              stroke='currentColor'
+                              viewBox='0 0 24 24'
+                              xmlns='http://www.w3.org/2000/svg'
+                            >
+                              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 4v16m8-8H4' />
+                            </svg>
+                            Crear promoción
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         );
       }
@@ -413,6 +544,7 @@ export const JobOfferCard = memo<JobOfferCardProps>(
   (prevProps, nextProps) => {
     return (
       prevProps.offer._id === nextProps.offer._id &&
+      prevProps.offer.status === nextProps.offer.status &&
       prevProps.viewMode === nextProps.viewMode &&
       prevProps.searchQuery === nextProps.searchQuery &&
       prevProps.readOnly === nextProps.readOnly &&

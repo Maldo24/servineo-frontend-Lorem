@@ -31,7 +31,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}): Promi
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const url = `${API_BASE}/api/controlC/2fa${endpoint}`;
+  const url = `${API_BASE}/api/editProfile${endpoint}`;
 
   const response = await fetch(url, {
     ...options,

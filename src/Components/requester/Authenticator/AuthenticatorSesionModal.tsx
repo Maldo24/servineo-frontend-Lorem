@@ -40,7 +40,7 @@ export default function AuthenticatorSesion({
     }
 
     try {
-      const res = await api.post<TwoFactorResponse>('/sesion2fa/check-status', { email });
+      const res = await api.post<TwoFactorResponse>('/api/editProfile/check-status', { email });
       const exists = res.data?.data?.exists;
       const twoFactorEnabled = res.data?.data?.twoFactorEnabled;
 

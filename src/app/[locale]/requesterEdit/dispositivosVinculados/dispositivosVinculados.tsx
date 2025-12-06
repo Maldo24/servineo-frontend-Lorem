@@ -40,7 +40,7 @@ export default function DispositivosVinculados() {
     if (!user) return;
     try {
       setCargandoDispositivos(true);
-      const res = await fetch(`${API_URL}/devices/${user.id}`);
+      const res = await fetch(`${API_URL}/api/editProfile/${user.id}`);
       if (!res.ok) throw new Error('Error en la respuesta del backend');
       const data = await res.json();
       setDispositivos(data);
@@ -60,7 +60,7 @@ export default function DispositivosVinculados() {
     userAgent: navigator.userAgent 
   });
     try {
-      const res = await fetch(`${API_URL}/devices/register`, {
+      const res = await fetch(`${API_URL}/api/editProfile/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export default function DispositivosVinculados() {
 
   const cerrarSesionDispositivo = async (_id: string) => {
     try {
-      await fetch(`${API_URL}/devices/${_id}`, { method: 'DELETE' });
+      await fetch(`${API_URL}/api/editProfile/${_id}`, { method: 'DELETE' });
       toast.success('Sesión cerrada correctamente ✓');
       setModalVisible(null);
 
@@ -106,7 +106,7 @@ export default function DispositivosVinculados() {
       const dispositivoActual = dispositivos.find(d => d.userAgent === navigator.userAgent);
       if (!dispositivoActual) return toast.error('No se pudo identificar el dispositivo actual');
 
-      await fetch(`${API_URL}/devices/all/${user?.id}`, {
+      await fetch(`${API_URL}/api/editProfile/all/${user?.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ except: dispositivoActual._id }),

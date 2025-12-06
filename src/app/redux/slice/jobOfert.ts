@@ -1,12 +1,6 @@
 // src\app\redux\slice\jobOfert.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FilterState, JobOffersState } from '../features/jobOffers/types';
-// import {
-//   saveToStorage,
-//   clearJobOffersStorage,
-//   saveCountsToStorage,
-//   STORAGE_KEYS,
-// } from '../features/jobOffers/storage';
 
 const getDefaultState = (): JobOffersState => ({
   loading: false,
@@ -97,11 +91,6 @@ const jobOffersSlice = createSlice({
       state.registrosPorPagina = action.payload;
       state.paginaActual = 1;
 
-      // if (state.shouldPersist) {
-      //   saveToStorage(STORAGE_KEYS.PAGE_SIZE, action.payload);
-      //   saveToStorage(STORAGE_KEYS.PAGE, 1);
-      // }
-
       if (!state.paginaciones['offers']) {
         state.paginaciones['offers'] = {
           paginaActual: 1,
@@ -117,10 +106,6 @@ const jobOffersSlice = createSlice({
 
     setPaginaActual: (state, action: PayloadAction<number>) => {
       state.paginaActual = action.payload;
-
-      // if (state.shouldPersist) {
-      //   saveToStorage(STORAGE_KEYS.PAGE, action.payload);
-      // }
 
       if (!state.paginaciones['offers']) {
         state.paginaciones['offers'] = {
@@ -151,7 +136,6 @@ const jobOffersSlice = createSlice({
         limit,
         totalPages,
         listKey = 'offers',
-        //isInitialSearch,
       } = action.payload;
 
       if (!state.paginaciones[listKey]) {
@@ -168,26 +152,12 @@ const jobOffersSlice = createSlice({
       state.paginaciones[listKey].totalRegistros = total;
       state.paginaciones[listKey].totalPages = totalPages;
 
-      // ✅ Preservar total en búsqueda inicial para no perderlo en páginas siguientes
-      // if (page === 1 && isInitialSearch) {
-      //   state.preservedTotalRegistros = total;
-      // }
-
       const totalToUse = state.preservedTotalRegistros > 0 ? state.preservedTotalRegistros : total;
 
       state.paginaActual = page;
       state.registrosPorPagina = limit;
       state.totalRegistros = totalToUse;
       state.totalPages = totalPages;
-
-      // if (state.shouldPersist) {
-      //   saveToStorage(STORAGE_KEYS.PAGE, page);
-      //   saveCountsToStorage({
-      //     totalRegistros: totalToUse,
-      //     totalPages: totalPages,
-      //     preservedTotalRegistros: state.preservedTotalRegistros,
-      //   });
-      // }
     },
 
     // Limpiar filtros sin persistir
@@ -228,10 +198,6 @@ const jobOffersSlice = createSlice({
 
     resetPagination: (state) => {
       state.paginaActual = 1;
-
-      // if (state.shouldPersist) {
-      //   saveToStorage(STORAGE_KEYS.PAGE, 1);
-      // }
 
       if (!state.paginaciones['offers']) {
         state.paginaciones['offers'] = {

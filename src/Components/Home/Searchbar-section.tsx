@@ -3,7 +3,7 @@
 
 import { Search, X } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useRouter, usePathname } from 'next/navigation'; // 👈 TU CAMBIO: agregado usePathname
+import { useRouter, usePathname } from 'next/navigation';
 import { useSearchHistory } from '@/app/redux/features/searchHistory/useSearchHistory';
 import { useSearchSuggestions } from '@/app/redux/features/searchHistory/useSearchSuggestions';
 import { useSearchKeyboard } from '@/app/redux/features/searchHistory/useSearchKeyboard';
@@ -18,6 +18,8 @@ interface SearchBarProps {
   className?: string;
   disabled?: boolean;
   onSearch?: (query: string) => void;
+  showButton?: boolean;
+  buttonText?: string;
 }
 
 export function SearchBar({
@@ -27,6 +29,8 @@ export function SearchBar({
   className = '',
   disabled = false,
   onSearch,
+  showButton = false,
+  buttonText = 'Buscar',
 }: SearchBarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -57,7 +61,7 @@ export function SearchBar({
     minLength: 1,
     debounceMs: 300,
     maxResults: 6,
-    language: currentLanguage, // 👈 TU CAMBIO: Pasar idioma
+    language: currentLanguage,
   });
 
   // Función para realizar la búsqueda con redirección
@@ -82,7 +86,7 @@ export function SearchBar({
     [router, onSearch],
   );
 
-  // Filtrar elementos visibles con useMemo (CORREGIDO)
+  // Filtrar elementos visibles con useMemo
   const visibleHistory = useMemo(() => {
     const q = value.trim().toLowerCase();
     if (q.length === 0) {
@@ -195,78 +199,59 @@ export function SearchBar({
   }, []);
 
   return (
-    <div className={`flex-1 relative group ${className}`} ref={containerRef}>
-      {/* Icono de búsqueda */}
-      <div className='absolute left-4 top-1/3 -translate-y-1/2 z-10'>
-        <Search
-          className={`w-5 h-5 transition-all duration-300 ${
-            isFocused
-              ? 'text-blue-400 scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]'
-              : 'text-muted-foreground group-hover:text-blue-500'
-          }`}
-        />
-      </div>
+    <div className={`relative ${className}`} ref={containerRef}>
+      <div className='relative'>
+        {/* Icono de búsqueda */}
+        <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+          <Search className='h-5 w-5 text-gray-400' />
+        </div>
 
-      {/* Botón para limpiar */}
-      {value && !disabled && (
-        <button
-          onClick={() => {
-            onChange('');
-            setPreviewValue(null);
+        {/* Input de búsqueda */}
+        <input
+          ref={inputRef}
+          type='text'
+          placeholder={placeholder}
+          value={previewValue ?? value}
+          onChange={handleInputChange}
+          onFocus={() => {
+            setIsFocused(true);
+            setIsOpen(true);
           }}
-          className='absolute right-4 top-1/2 -translate-y-1/2 z-10 text-gray-400 hover:text-gray-600 transition-colors'
-          aria-label='Limpiar búsqueda'
-        >
-          <X className='w-4 h-4' />
-        </button>
-      )}
+          onBlur={() => {
+            setIsFocused(false);
+            setTimeout(() => {
+              if (!containerRef.current?.contains(document.activeElement)) {
+                setIsOpen(false);
+                setPreviewValue(null);
+              }
+            }, 200);
+          }}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          className={`
+            block w-full pl-10 ${showButton ? 'pr-32' : 'pr-3'} py-4 
+            border border-gray-300 rounded-xl 
+            shadow-sm 
+            focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary 
+            text-lg
+            disabled:opacity-50 disabled:cursor-not-allowed
+            ${error ? 'border-red-500' : ''}
+            ${disabled ? 'bg-gray-100' : 'bg-white'}
+          `}
+        />
 
-      {/* Input de búsqueda */}
-      <input
-        ref={inputRef}
-        type='text'
-        placeholder={placeholder}
-        value={previewValue ?? value}
-        onChange={handleInputChange}
-        onFocus={() => {
-          setIsFocused(true);
-          setIsOpen(true);
-        }}
-        onBlur={() => {
-          setIsFocused(false);
-          // Delay para permitir clicks en el dropdown
-          setTimeout(() => {
-            if (!containerRef.current?.contains(document.activeElement)) {
-              setIsOpen(false);
-              setPreviewValue(null);
-            }
-          }, 200);
-        }}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        className={`
-          w-full pl-12 pr-12 py-4 
-          bg-white/90 backdrop-blur-md
-          border-2 rounded-2xl
-          font-medium text-foreground placeholder:text-muted-foreground/60
-          transition-all duration-300 ease-out
-          shadow-lg
-          disabled:opacity-50 disabled:cursor-not-allowed
-          ${
-            error
-              ? 'border-red-500 shadow-[0_0_0_1px_red]'
-              : isFocused
-                ? 'border-primary shadow-[0_0_30px_rgba(59,130,246,0.3)] scale-[1.02] bg-white'
-                : 'border-primary hover:border-blue-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
-          }
-          ${disabled ? 'bg-gray-100' : ''}
-        `}
-      />
-
-      {/* Línea de animación en focus */}
-      {isFocused && !disabled && (
-        <div className='absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent animate-pulse' />
-      )}
+        {/* Botón de búsqueda (opcional) */}
+        {showButton && (
+          <button
+            type='button'
+            onClick={handleSearch}
+            disabled={disabled}
+            className='absolute right-1.5 top-1.5 px-6 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50'
+          >
+            {buttonText}
+          </button>
+        )}
+      </div>
 
       {/* Dropdown unificado */}
       <SearchDropdown
@@ -297,11 +282,12 @@ export function SearchBar({
         onCancelDelete={() => setLongPressedItem(null)}
         maxVisibleHistory={5}
         maxVisibleSuggestions={5}
-        className='border-2 border-primary/20 rounded-2xl shadow-2xl backdrop-blur-md'
+        className='border border-gray-200 rounded-xl shadow-xl mt-2'
       />
+
       {/* Mensaje de error */}
-      <div className='min-h-5 mt-1'>
-        {error && <p className='text-red-500 text-sm leading-4'>{error}</p>}
+      <div className='min-h-5 mt-1 pl-4'>
+        {error && <p className='text-red-500 text-sm leading-4 text-left'>{error}</p>}
       </div>
     </div>
   );
