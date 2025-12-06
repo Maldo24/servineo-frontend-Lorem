@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import DesktopCalendar from '@/Components/calendar/DesktopCalendar';
 import { UserRoleProvider } from '@/app/lib/utils/contexts/UserRoleContext';
@@ -12,33 +12,43 @@ import useDailyConts from '@/app/lib/utils/useDailyConts';
 import useSixMonthsAppointments from '@/hooks/useSixMonthsAppointments';
 import { AppointmentsProvider } from '@/app/lib/utils/contexts/AppointmentsContext/AppoinmentsContext';
 import { AppointmentsStatusProvider } from '@/app/lib/utils/contexts/DayliViewRequesterContext';
-import { useSearchParams } from 'next/navigation';
-
 
 import DatePicker from '@/Components/list/DatePicker/DatePicker';
 
-
-
-
-//segundo
-//const requester_id = '68f518e5ef03787169f81b22';
+export type UserRole = 'fixer' | 'requester';
 
 export default function CalendarPage() {
     const router = useRouter();
     const modeModalRef = useRef<ModeSelectionModalHandles>(null);
-    const searchParams = useSearchParams();
-    const userRole = searchParams.get('role') as 'requester' | 'fixer';
 
-    const input1Ref = useRef<HTMLInputElement>(null);
-    const input2Ref = useRef<HTMLInputElement>(null);
+    const [userRole, setUserRole] = useState<UserRole>('fixer');
+    const [fixer_id, setFixerId] = useState<string>('');
+    const [requester_id, setRequesterId] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [fixer_id, setFixerId] = useState<string>('692fcd08dc02551862744940');
-    const [requester_id, setRequesterId] = useState<string>('692fdb88e984cce53d54cfb4');
+    useEffect(() => {
+        const storedRole = sessionStorage.getItem('roluser');
+        const role: UserRole = (storedRole === 'requester' || storedRole === 'fixer')
+            ? storedRole
+            : 'fixer';
+        setUserRole(role);
+
+        const userData = JSON.parse(localStorage.getItem('servineo_user') || '{}');
+        const userId = userData.id || '';
+
+        if (role === 'requester') {
+            setFixerId(sessionStorage.getItem('fixer_id') || '');
+            setRequesterId(userId);
+        } else {
+            setFixerId(userId);
+            setRequesterId('');
+        }
+
+        setIsLoading(false); // 👈 Marcar como cargado
+    }, []);
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectDate, setSelectDate] = useState<Date>(new Date());
-
-
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
     const today = useMemo(() => {
@@ -51,15 +61,8 @@ export default function CalendarPage() {
         setSelectedDate(newDate);
     };
 
-
-    const switchID = () => {
-        if (input1Ref.current && input2Ref.current) {
-            setFixerId(input1Ref.current.value);
-            setRequesterId(input2Ref.current.value);
-            refetchAll();
-        }
-
-    };
+    console.log(fixer_id, "fixer");
+    console.log(requester_id, "requester");
 
     const handleOpenAvailabilityModal = () => {
         modeModalRef.current?.open();
@@ -73,11 +76,7 @@ export default function CalendarPage() {
         setIsCancelModalOpen(false);
     };
 
-    /*   Esto quedara como vestigio del lorem 
-       *   const handleConfirmCancel = (selectedDays: string[]) => {
-              //por alguna razon que no se explicar mandamos la logica pero xd funcion tonta que no quiero refactorizar 
-          }*/
-
+    // 👇 Solo ejecutar hooks cuando fixer_id esté listo
     const {
         isHourBookedFixer,
         isHourBooked,
@@ -86,14 +85,19 @@ export default function CalendarPage() {
         refetch: refetchSixMonths,
         refetchHour,
         loading,
-    } = useSixMonthsAppointments(fixer_id, today);
+    } = useSixMonthsAppointments(fixer_id || 'placeholder', today);
 
-    const { getAppointmentsForDay, refetch: refetchConts } = useDailyConts({ date: today, fixer_id });
+    const { getAppointmentsForDay, refetch: refetchConts } = useDailyConts({
+        date: today,
+        fixer_id: fixer_id || 'placeholder'
+    });
 
     const refetchAll = useCallback(() => {
-        refetchSixMonths();
-        refetchConts();
-    }, [refetchSixMonths, refetchConts]);
+        if (fixer_id) { // 👈 Solo refetch si hay ID válido
+            refetchSixMonths();
+            refetchConts();
+        }
+    }, [refetchSixMonths, refetchConts, fixer_id]);
 
     const providerValue = useMemo(
         () => ({
@@ -117,6 +121,18 @@ export default function CalendarPage() {
             loading,
         ],
     );
+
+    // 👇 Mostrar pantalla de carga mientras se inicializa
+    if (isLoading || !fixer_id) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-white">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-gray-600">Cargando calendario...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <UserRoleProvider role={userRole} fixer_id={fixer_id} requester_id={requester_id}>
@@ -159,18 +175,15 @@ export default function CalendarPage() {
                                     </svg>
                                 </button>
 
-
                                 {userRole === 'fixer' && (
                                     <h2 className="text-black p-4 text-xl text-center flex-1">Mi Calendario</h2>
                                 )}
                                 {userRole === 'requester' && (
                                     <h2 className="text-black p-4 text-xl text-center flex-1">
-                                        Calendario Diego Paredes
-                                    </h2>
+                                        Calendario                                     </h2>
                                 )}
-
-
                             </div>
+
                             <div className="flex flex-col md:hidden gap-2 px-4 pb-4">
                                 {userRole === 'fixer' && (
                                     <div className="flex gap-2">
@@ -188,65 +201,9 @@ export default function CalendarPage() {
                                         </button>
                                     </div>
                                 )}
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex flex-col">
-                                        <label className="text-sm mb-1">fixerID</label>
-                                        <input
-                                            type="text"
-                                            ref={input1Ref}
-                                            placeholder="id fixer"
-                                            defaultValue={fixer_id}
-                                            className="border p-2 rounded"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <label className="text-sm mb-1">RequesterID</label>
-                                        <input
-                                            type="text"
-                                            ref={input2Ref}
-                                            defaultValue={requester_id}
-                                            placeholder="id requester"
-                                            className="border p-2 rounded"
-                                        />
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={switchID}
-                                    className="w-full bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors cursor-pointer text-sm"
-                                >
-                                    Aceptar
-                                </button>
                             </div>
-                            <div className="hidden md:flex md:items-center md:ml-auto md:mr-4 md:gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-sm font-medium text-gray-700 whitespace-nowrap">fixerID</label>
-                                        <input
-                                            type="text"
-                                            ref={input1Ref}
-                                            defaultValue={fixer_id}
-                                            placeholder="id fixer"
-                                            className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent min-w-[200px]"
-                                        />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-sm font-medium text-gray-700 whitespace-nowrap">requesterID</label>
-                                        <input
-                                            type="text"
-                                            ref={input2Ref}
-                                            defaultValue={requester_id}
-                                            placeholder="id requester"
-                                            className="border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent min-w-[200px]"
-                                        />
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={switchID}
-                                    className="bg-green-700 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors cursor-pointer whitespace-nowrap font-medium"
-                                >
-                                    Aceptar
-                                </button>
 
+                            <div className="hidden md:flex md:items-center md:ml-auto md:mr-4 md:gap-4">
                                 {userRole === 'fixer' && (
                                     <div className="flex items-center gap-2">
                                         <button
@@ -265,7 +222,6 @@ export default function CalendarPage() {
                                 )}
                             </div>
                         </div>
-
 
                         <div className="hidden md:flex flex-col items-center justify-center gap-4 w-full">
                             <div className="w-full flex justify-center">
@@ -307,6 +263,6 @@ export default function CalendarPage() {
                     </div>
                 </AppointmentsStatusProvider>
             </AppointmentsProvider>
-        </UserRoleProvider >
+        </UserRoleProvider>
     );
 }

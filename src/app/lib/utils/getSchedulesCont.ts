@@ -12,7 +12,7 @@ export async function getSchedulesCont(
 ): Promise<Record<string, Record<string, number>>> {
     try {
         const response = await axios.get<AppointmentsResponse>(
-            `${process.env.NEXT_PUBLIC_BACKEND}/api/crud_read/schedules/get_number_of_appointments`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/crud_read/schedules/get_number_of_appointments`,
             {
                 params: {
                     fixer_id,
