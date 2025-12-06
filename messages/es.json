@@ -931,7 +931,7 @@
       "save": "Guardar",
       "saving": "Guardando...",
       "delete": "Eliminar",
-      "addExperience": "Add Experience"  
+      "addExperience": "Add Experience"
     },
     "card": {
       "present": "Presente"
@@ -999,7 +999,7 @@
     },
     "deleteConfirmation": "¿Estás seguro de eliminar esta experiencia?"
   },
-    "JobOffersSection": {
+  "JobOffersSection": {
     "titles": {
       "jobOffers": "Ofertas de Trabajo",
       "myJobOffers": "Mis Ofertas de Trabajo"
@@ -1437,6 +1437,113 @@
     "mapSection": {
       "title": "Encuentra Servicios Cerca de Ti",
       "subtitle": "Explora los profesionales disponibles en tu zona"
+    }
+  },
+  "HowUseServineoTitle": {
+    "title": "Cómo funciona Servineo",
+    "subtitle": "Estos son los pasos que debe seguir para\npoder usar nuestra plataforma facilmente",
+    "guide": "¿Necesitas una experiancia mas inmersiva? prueba nuestra",
+    "guideLink": "guia interactiva",
+    "fingOut": "Descúbrelo"
+  },
+  "Pasos": {
+    "title": "Sigue estos pasos para contratar",
+    "subtitle": "Encuentra el fixer que tenga las habilidades que necesitas,\npuedes empezar con estos pasos",
+    "step1": {
+      "title": "Navega y busca",
+      "description": "Explora nuestros servicios utilizando la barra de búsqueda, filtros por categorías y palabras claves para encontrar lo que buscas."
+    },
+    "step2": {
+      "title": "Contacta",
+      "description": "Comunícate con el fixer directamente mediante su número telefónico para poder saber más sobre el servicio o coordinar el trabajo."
+    },
+    "step3": {
+      "title": "Coordina tu servicio",
+      "description": "Coordina con tu fixer para que el servicio sea lo que tu busca y elige una oferta antes de enviar los datos necesitados por el fixer."
+    },
+    "step4": {
+      "title": "Aprueba y contacta",
+      "description": "Recibe el servicio y deja tus comentarios sobre la calidad del servicio."
+    },
+    "button": "Ver servicios"
+  },
+  "Consejos": {
+    "title": "Consejos para un mejor uso",
+    "subtitle": "Perfecciona tu uso sobre la plataforma,\naqui tenemos algunos consejos",
+    "tip1": {
+      "title": "Filtros",
+      "description": "Aplica los filtros de búsqueda, palabras claves o consulta nuestro mapa si hay fixers cercanos a tu ubicación."
+    },
+    "tip2": {
+      "title": "Calificaciones y reseñas",
+      "description": "Consulta las calificaciones y opiniones de otras personas para saber mas sobre el desempeño de cierto fixer."
+    },
+    "tip3": {
+      "title": "Comunicación",
+      "description": "Comunícate con el fixer para tener más detalles del servicio y aclarar las dudas que tengas."
+    }
+  },
+  "CategoriasPopulares": {
+    "title": "Categorías Populares",
+    "subtitle": "¿No sabes por donde comenzar?",
+    "subtitle2": "Explora nuestras categorías más populares",
+    "card1": {
+      "name": "Plomería",
+      "description": "Reparaciones e instalaciones de fontanería"
+    },
+    "card2": {
+      "name": "Electricidad",
+      "description": "Instalaciones y reparaciones eléctricas"
+    },
+    "card3": {
+      "name": "Carpintería",
+      "description": "Trabajos en madera y muebles"
+    },
+    "card4": {
+      "name": "Limpieza",
+      "description": "Servicios de limpieza profesional"
+    },
+    "card5": {
+      "name": "Jardinería",
+      "description": "Cuidado y mantenimiento de jardines"
+    },
+    "card6": {
+      "name": "Pintura",
+      "description": "Servicios de pintura residencial"
+    },
+    "card7": {
+      "name": "Mudanzas",
+      "description": "Servicios de mudanza y transporte"
+    },
+    "card8": {
+      "name": "Tecnología",
+      "description": "Reparación de equipos tecnológicos"
+    },
+    "demand": "de demanda",
+    "button": "Ver profesionales",
+    "button2": "Ver todas las categorias"
+  },
+  "Accordion": {
+    "title": "Preguntas Frecuentes",
+    "section1": {
+      "question": "¿Cómo funciona Servineo?",
+      "answer": "Servineo conecta hogares con profesionales calificados en Cochabamba. Publica tu necesidad, recibe cotizaciones de fixers verificados y elige al mejor para el trabajo."
+    },
+    "section2": {
+      "question": "¿Qué tipos de servicios ofrecen?",
+      "answer": "Ofrecemos plomería, electricidad, carpintería, pintura, limpieza, jardinería, soldadura, albañilería y muchos servicios más para el hogar."
+    },
+    "section3": {
+      "question": "¿Cómo se verifican los fixers?",
+      "answer": "Todos nuestros fixers pasan por un proceso de verificación que incluye revisión de documentos, entrevistas y evaluación de experiencia previa."
+    },
+    "section4": {
+      "question": "¿Qué garantía ofrecen?",
+      "answer": "Ofrecemos garantía de 30 días en todos los trabajos realizados. Si no estás satisfecho, nuestro equipo de soporte te ayudará a resolver cualquier problema."
+    },
+    "section5": {
+      "question": "¿Cómo se realizan los pagos?",
+      "answer": "Los pagos son 100% seguros a través de nuestra plataforma. Solo liberas el pago cuando el trabajo esté completado y estés satisfecho con el resultado."
     }
   }
 }

@@ -75,9 +75,11 @@ export default function RequesterEditForm() {
       import('leaflet').then((L) => {
         delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: string })._getIconUrl;
         L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+          iconRetinaUrl:
+            'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
           iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+          shadowUrl:
+            'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
         });
       });
     }
@@ -210,28 +212,26 @@ export default function RequesterEditForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1A223F] mb-5 text-left">
-        Editar perfil
-      </h1>
+    <div className='max-w-2xl mx-auto'>
+      <h1 className='text-2xl font-bold text-[#1A223F] mb-5 text-left'>Editar perfil</h1>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-white rounded-2xl p-8"
+        className='space-y-6 bg-white rounded-2xl p-8'
         aria-busy={loading}
       >
         <div>
-          <label className="block text-sm font-semibold mb-1 text-[#1A223F] text-left">
+          <label className='block text-sm font-semibold mb-1 text-[#1A223F] text-left'>
             Número de teléfono:
           </label>
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <input
               type={showTelefono ? 'text' : 'password'}
               value={telefono}
               disabled={!isEditingTelefono}
               onChange={handleTelefonoChange}
-              placeholder="+591 7xxxxxxx"
-              autoComplete="tel"
+              placeholder='+591 7xxxxxxx'
+              autoComplete='tel'
               className={`flex-1 rounded-md border px-3 py-2 focus:outline-none focus:ring-2 transition text-black ${
                 isEditingTelefono
                   ? 'bg-white border-[#759AE0] focus:ring-[#1AA7ED]'
@@ -239,14 +239,14 @@ export default function RequesterEditForm() {
               }`}
             />
             <button
-              type="button"
+              type='button'
               onClick={() => setShowTelefono((p) => !p)}
-              className="p-2 rounded-md border border-[#E5F4FB] bg-[#F5FAFE] hover:bg-[#E5F4FB] transition"
+              className='p-2 rounded-md border border-[#E5F4FB] bg-[#F5FAFE] hover:bg-[#E5F4FB] transition'
             >
               {showTelefono ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
             <button
-              type="button"
+              type='button'
               onClick={() => {
                 setIsEditingTelefono((p) => !p);
                 setErrorTelefono(null);
@@ -261,41 +261,39 @@ export default function RequesterEditForm() {
             </button>
           </div>
           {errorTelefono && (
-            <p className="text-sm text-red-600 mt-1" role="alert">
+            <p className='text-sm text-red-600 mt-1' role='alert'>
               {errorTelefono}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-[#1A223F] text-left">
+          <label className='block text-sm font-semibold mb-1 text-[#1A223F] text-left'>
             Ubicación:
           </label>
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <input
               value={ubicacion.direccion || ''}
               disabled
-              placeholder="País, ciudad, departamento"
-              className="flex-1 rounded-md border px-3 py-2 bg-[#F5FAFE] border-[#E5F4FB] cursor-not-allowed text-black"
+              placeholder='País, ciudad, departamento'
+              className='flex-1 rounded-md border px-3 py-2 bg-[#F5FAFE] border-[#E5F4FB] cursor-not-allowed text-black'
             />
             <button
-              type="button"
+              type='button'
               onClick={handleGetLocation}
-              className="p-2 rounded-md border border-[#E5F4FB] bg-[#F5FAFE] hover:bg-[#2BDDE0]/20 transition"
+              className='p-2 rounded-md border border-[#E5F4FB] bg-[#F5FAFE] hover:bg-[#2BDDE0]/20 transition'
             >
-              <Crosshair size={18} color="#2BDDE0" />
+              <Crosshair size={18} color='#2BDDE0' />
             </button>
           </div>
-          <span className="text-xs text-[#759AE0]">
+          <span className='text-xs text-[#759AE0]'>
             Haz clic en el botón GPS o en el mapa para seleccionar tu ubicación
           </span>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-[#1A223F]">
-            Mapa
-          </label>
-          <div className="w-full h-64 border border-[#E5F4FB] rounded-lg overflow-hidden bg-gradient-to-br from-[#F5FAFE] to-[#E5F4FB] relative">
+          <label className='block text-sm font-semibold mb-1 text-[#1A223F]'>Mapa</label>
+          <div className='w-full h-64 border border-[#E5F4FB] rounded-lg overflow-hidden bg-gradient-to-br from-[#F5FAFE] to-[#E5F4FB] relative'>
             <MapContainer
               center={latLng ? [latLng.lat, latLng.lng] : [-16.5, -68.15]}
               zoom={13}
@@ -303,8 +301,8 @@ export default function RequesterEditForm() {
               whenReady={() => setMapReady(true)}
             >
               <TileLayer
-                attribution="&copy; OpenStreetMap contributors"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; OpenStreetMap contributors'
+                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
               />
               {mapReady && (
                 <LocationMarker
@@ -317,7 +315,7 @@ export default function RequesterEditForm() {
               )}
             </MapContainer>
             {!mapReady && (
-              <span className="absolute inset-0 flex items-center justify-center text-gray-600">
+              <span className='absolute inset-0 flex items-center justify-center text-gray-600'>
                 Cargando mapa...
               </span>
             )}
@@ -325,29 +323,29 @@ export default function RequesterEditForm() {
         </div>
 
         {error && (
-          <p className="text-sm text-red-600" role="alert">
+          <p className='text-sm text-red-600' role='alert'>
             {error}
           </p>
         )}
 
-        <div className="pt-4 flex justify-end gap-3">
+        <div className='pt-4 flex justify-end gap-3'>
           <button
-            type="submit"
+            type='submit'
             disabled={loading}
-            className="flex items-center gap-2 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0] disabled:bg-[#759AE0]"
+            className='flex items-center gap-2 rounded-md bg-[#1A223F] px-4 py-2 text-white font-semibold hover:bg-[#2B31E0] disabled:bg-[#759AE0]'
           >
             {loading ? (
               <>
-                <Loader2 size={14} className="animate-spin" /> Guardando...
+                <Loader2 size={14} className='animate-spin' /> Guardando...
               </>
             ) : (
               'Guardar'
             )}
           </button>
           <button
-            type="button"
+            type='button'
             onClick={() => router.back()}
-            className="rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20"
+            className='rounded-md bg-[#E5F4FB] px-4 py-2 text-[#1A223F] font-semibold hover:bg-[#2BDDE0]/20'
           >
             Cancelar
           </button>

@@ -10,7 +10,7 @@ import NotificationModal from '@/Components/Modal-notifications';
 import { useTranslations } from 'next-intl';
 export default function SignUp() {
   const t = useTranslations('SignUpRegister');
-   const [captchaValid, setCaptchaValid] = useState(false);
+  const [captchaValid, setCaptchaValid] = useState(false);
   const [notification, setNotification] = useState({
     isOpen: false,
     type: 'info' as 'success' | 'error' | 'info' | 'warning',

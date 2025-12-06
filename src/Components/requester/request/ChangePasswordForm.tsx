@@ -149,9 +149,7 @@ export default function ChangePasswordForm({ onCancel }: Props) {
 
   return (
     <div className='relative flex flex-col gap-6 rounded-lg border border-[#E5F4FB] bg-white p-6 shadow-sm transition-all duration-300'>
-      <h1 className="text-2xl font-bold text-[#1A223F] mb-5 text-left">
-        Cambiar Contraseña
-      </h1>
+      <h1 className='text-2xl font-bold text-[#1A223F] mb-5 text-left'>Cambiar Contraseña</h1>
       <p className='text-sm text-gray-400 mb-2'>
         Elige una contraseña segura y no la utilices en otras cuentas.
       </p>

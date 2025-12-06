@@ -55,11 +55,11 @@ interface FilterCountsParams {
 // ===== HELPER: OBTENER USERID =====
 function getUserId(): string | null {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const userStr = localStorage.getItem('servineo_user');
     if (!userStr) return null;
-    
+
     const userData = JSON.parse(userStr);
     return userData._id || userData.id || null;
   } catch (error) {
@@ -71,10 +71,10 @@ function getUserId(): string | null {
 // ===== HELPER: OBTENER O CREAR SESSIONID =====
 function getOrCreateSessionId(): string {
   if (typeof window === 'undefined') return '';
-  
+
   const userId = getUserId();
   if (userId) return ''; // No necesitamos sessionId si hay userId
-  
+
   let sid = localStorage.getItem('search_sessionId');
   if (!sid) {
     sid = `anon-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -86,11 +86,11 @@ function getOrCreateSessionId(): string {
 // ===== HELPER: OBTENER IDENTIFICADOR =====
 function getIdentifier(): { userId?: string; sessionId?: string } {
   const userId = getUserId();
-  
+
   if (userId) {
     return { userId };
   }
-  
+
   const sessionId = getOrCreateSessionId();
   return { sessionId };
 }

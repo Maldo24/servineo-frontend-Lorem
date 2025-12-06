@@ -23,10 +23,10 @@ const Paginacion: React.FC<PaginacionProps> = ({
 
   useEffect(() => {
     setMounted(true);
-    
+
     const calculateDelta = () => {
       const width = window.innerWidth;
-      
+
       // Ajustar delta y máximo sin ellipsis según el ancho de pantalla
       if (width < 480) {
         setDelta(1); // Móvil muy pequeño
@@ -48,10 +48,10 @@ const Paginacion: React.FC<PaginacionProps> = ({
         setMaxSinEllipsis(15);
       }
     };
-    
+
     calculateDelta();
     window.addEventListener('resize', calculateDelta);
-    
+
     return () => window.removeEventListener('resize', calculateDelta);
   }, []);
 
@@ -62,7 +62,7 @@ const Paginacion: React.FC<PaginacionProps> = ({
   // Función para generar el array de páginas con ellipsis responsive
   const generarPaginas = () => {
     const paginas: (number | string)[] = [];
-    
+
     // Si el total de páginas cabe sin ellipsis según el tamaño de pantalla
     if (totalPaginas <= maxSinEllipsis) {
       for (let i = 1; i <= totalPaginas; i++) {
@@ -70,7 +70,7 @@ const Paginacion: React.FC<PaginacionProps> = ({
       }
       return paginas;
     }
-    
+
     // Si hay muchas páginas, usar ellipsis
     paginas.push(1);
 

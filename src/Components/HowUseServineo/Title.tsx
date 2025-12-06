@@ -1,19 +1,33 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import 'animate.css';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { FaArrowDown } from 'react-icons/fa6';
-import { Play, Pause } from 'lucide-react';
+import { Play } from 'lucide-react';
 import * as Popover from '@radix-ui/react-popover';
+import { useTranslations } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
 
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
 const subtitle =
   'Estos son los pasos que debe seguir para\npoder usar nuestra plataforma facilmente';
 
 export const Title = () => {
+  const t = useTranslations('HowUseServineoTitle');
+
   const [playing, setPlaying] = useState(false);
   const [audioAllowed, setAudioAllowed] = useState(false);
   const [open, setOpen] = useState(false);
   const [showPauseScreen, setShowPauseScreen] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  const [checkPause, setCheckPause] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleAllowAudio = async () => {
     setAudioAllowed(true);
@@ -23,51 +37,50 @@ export const Title = () => {
   const handleNoAudio = () => {
     setOpen(false);
     setAudioAllowed(false);
+    setCheckPause(true);
   };
 
   const handlePlayPause = () => {
-    if (!audioAllowed) {
-      setOpen(true);
-      return;
-    }
-
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.pause();
+    if (audioAllowed === false) {
+      if (checkPause === true) {
+        setPlaying(!playing);
+        setShowPauseScreen(!showPauseScreen);
       } else {
-        videoRef.current.play();
+        setOpen(true);
       }
+      //return;
+    } else {
+      //setAudioAllowed(!audioAllowed);
       setPlaying(!playing);
-      setShowPauseScreen(!playing);
+      setShowPauseScreen(!showPauseScreen);
     }
   };
 
-  // Controlar play/pause cuando cambia el estado
-  useEffect(() => {
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
-      }
-    }
-  }, [playing]);
+  // ... dentro de tu componente ...
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // Detectar cuando el video termina
-  const handleVideoEnd = () => {
-    setPlaying(false);
-    setShowPauseScreen(true);
+  const handleRestartTour = () => {
+    // 1. Borramos la flag del tour visto
+    localStorage.removeItem('servineoTourVisto');
+
+    // 2. La lógica de redirección
+    if (pathname !== '/' && !pathname.endsWith('/es') && !pathname.endsWith('/en')) {
+      router.push('/');
+    } else {
+      window.location.reload();
+    }
   };
 
   return (
     <div>
       <div className='flex flex-col items-center min-h-screen gap-[10px] bg-gradient-to-b from-[#2B6AE0] to-[#2B31E0]'>
         <div>
-          <h1 className='text-center text-[60px] text-white mt-[40px]'> Cómo funciona Servineo </h1>
+          <h1 className='text-center text-[60px] text-white mt-[40px]'> {t('title')} </h1>
         </div>
 
         <div>
-          <h3 className='text-white mb-[24px] whitespace-pre-line'> {subtitle} </h3>
+          <h3 className='text-white mb-[24px] whitespace-pre-line'> {t('subtitle')} </h3>
         </div>
 
         {/*popover*/}
@@ -100,47 +113,49 @@ export const Title = () => {
         </Popover.Root>
         {/* */}
 
-        {/* contenedor del video - USANDO <video> NATIVO */}
-        <div className='relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden shadow-lg mb-[30px] bg-black'>
-          <video
-            ref={videoRef}
-            className='w-full h-full object-cover'
-            controls={audioAllowed && playing}
-            muted={!audioAllowed}
-            onEnded={handleVideoEnd}
-            preload='metadata'
-            poster='/videos/poster.jpg' // Opcional: imagen de portada
-          >
-            {/* Agrega múltiples formatos para compatibilidad */}
-            <source src='/videos/SERVINEO_TUTORIAL.mp4' type='video/mp4' />
-            <source src='/videos/SERVINEO_TUTORIAL.webm' type='video/webm' />
-            Tu navegador no soporta videos HTML5.
-          </video>
+        {/* contenedor del video */}
+        <div className='relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden shadow-lg mb-[30px]'>
+          {isClient && (
+            <ReactPlayer
+              src='/videos/SERVINEO_TUTORIAL.mp4'
+              playing={playing}
+              muted={audioAllowed ? false : true}
+              controls
+              height='100%'
+              width='100%'
+              style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
+            />
+          )}
 
-          {showPauseScreen && (
-            <div
-              className='absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer transition-opacity duration-300'
-              onClick={handlePlayPause}
-            >
-              <button className='flex items-center justify-center w-20 h-20 bg-white/20 rounded-full hover:bg-white/30 transition-colors'>
-                <Play className='text-white drop-shadow-lg' size={48} />
+          {showPauseScreen === true && (
+            <div className='absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer transition-opacity duration-300'>
+              <button>
+                <Play
+                  onClick={handlePlayPause}
+                  className='cursor-pointer text-white drop-shadow-lg transition-transform duration-300 hover:scale-130'
+                  size={64}
+                  color='white'
+                />
               </button>
             </div>
           )}
-
-          {/* Botón de play/pause flotante cuando el video está reproduciéndose */}
-          {!showPauseScreen && playing && (
-            <button
-              className='absolute top-4 right-4 flex items-center justify-center w-12 h-12 bg-black/50 rounded-full hover:bg-black/70 transition-colors'
-              onClick={handlePlayPause}
-            >
-              <Pause className='text-white' size={24} />
-            </button>
-          )}
         </div>
         {/* */}
+
+        <div className='mb-[30px]'>
+          <span className='text-white text-[18px]'>
+            {t('guide')}{' '}
+            <button
+              onClick={handleRestartTour}
+              className='text-white font-bold decoration-2 hover:text-gray-200 bg-transparent border-none cursor-pointer p-0 inline font-inherit'
+            >
+              {t('guideLink')}
+            </button>
+          </span>
+        </div>
+
         <div className='flex flex-col items-center mb-[30px] text-[25px] gap-[10px]'>
-          <span className='text-white'> Descúbrelo </span>
+          <span className='text-white'> {t('fingOut')} </span>
           <FaArrowDown
             className='animate__animated animate__shakeY animate__slower animate__infinite'
             color='white'

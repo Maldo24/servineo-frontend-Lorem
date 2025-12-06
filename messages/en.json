@@ -853,11 +853,11 @@
       "myCertifications": "My Certifications"
     },
     "buttons": {
-    "addCertification": "Add Certification",
-    "cancel": "Cancel",
-    "save": "Save",
-    "saving": "Saving...",
-    "delete": "Delete"
+      "addCertification": "Add Certification",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete"
     },
     "card": {
       "issued": "Issued",
@@ -996,7 +996,7 @@
     },
     "deleteConfirmation": "Are you sure you want to delete this experience?"
   },
-    "JobOffersSection": {
+  "JobOffersSection": {
     "titles": {
       "jobOffers": "Job Offers",
       "myJobOffers": "My Job Offers"
@@ -1434,6 +1434,113 @@
     "mapSection": {
       "title": "Find Services Near You",
       "subtitle": "Explore available professionals in your area"
+    }
+  },
+  "HowUseServineoTitle": {
+    "title": "How Servineo Works",
+    "subtitle": "Those are the steps you should\nfollow to use easily our platform",
+    "guide": "Need a more immersive experience? Try our",
+    "guideLink": "interactive guide",
+    "fingOut": "Find out"
+  },
+  "Pasos": {
+    "title": "Follow these steps to hire",
+    "subtitle": "Follow these steps to hire the ideal professional for your needs quickly and easily.",
+    "step1": {
+      "title": "Browse and search",
+      "description": "Explore our wide variety of services and use the search bar to find the service you need."
+    },
+    "step2": {
+      "title": "Contact the fixer",
+      "description": "Get in touch with the fixer through WhatsApp to discuss your needs and get a personalized quote."
+    },
+    "step3": {
+      "title": "Coordinate yours services",
+      "description": "Coordinate with your fixer to ensure the service meets your needs and choose an offer before sending the fixer the required information."
+    },
+    "step4": {
+      "title": "Approve and contact",
+      "description": "Receive the service and leave your comments about the quality of the service."
+    },
+    "button": "View services"
+  },
+  "Consejos": {
+    "title": "Tips for better use",
+    "subtitle": "Perfect your use of the platform\nhere are some tips",
+    "tip1": {
+      "title": "Filters",
+      "description": "Apply search filters, keywords, or check our map to see if there are fixers near your location."
+    },
+    "tip2": {
+      "title": "Ratings and reviews",
+      "description": "Check other people's ratings and reviews to learn more about how a particular fixer performs."
+    },
+    "tip3": {
+      "title": "Comunication",
+      "description": "Contact the fixer for more details about the service and to clarify any doubts you may have."
+    }
+  },
+  "CategoriasPopulares": {
+    "title": "Popular Categories",
+    "subtitle": "Don't know where to start?",
+    "subtitle2": "Explore our most popular categories",
+    "card1": {
+      "name": "Plumbing",
+      "description": "Plumbing repairs and installations"
+    },
+    "card2": {
+      "name": "Electricity",
+      "description": "Electrical installations and repairs"
+    },
+    "card3": {
+      "name": "Carpentry",
+      "description": "Woodwork and furniture projects"
+    },
+    "card4": {
+      "name": "Cleaning",
+      "description": "Professional cleaning services"
+    },
+    "card5": {
+      "name": "Gardening",
+      "description": "Garden care and maintenance"
+    },
+    "card6": {
+      "name": "Painting",
+      "description": "Residential painting services"
+    },
+    "card7": {
+      "name": "Moving",
+      "description": "Moving and transportation services"
+    },
+    "card8": {
+      "name": "Technology",
+      "description": "Tech equipment repair"
+    },
+    "demand": "in demand",
+    "button": "View professionals",
+    "button2": "View all categories"
+  },
+  "Accordion": {
+    "title": "Frecuently Asked Questions",
+    "section1": {
+      "question": "How does Servineo work?",
+      "answer": "Servineo connects homes with qualified professionals in Cochabamba. Post your need, receive quotes from verified fixers, and choose the best one for the job."
+    },
+    "section2": {
+      "question": "What types of services do you offer?",
+      "answer": "We offer plumbing, electricity, carpentry, painting, cleaning, gardening, welding, masonry, and many more home services."
+    },
+    "section3": {
+      "question": "How are fixers verified?",
+      "answer": "All our fixers go through a verification process that includes document review, interviews, and evaluation of previous experience."
+    },
+    "section4": {
+      "question": "What guarantee do you offer?",
+      "answer": "We offer a 30-day guarantee on all work performed. If you are not satisfied, our support team will help you resolve any issue."
+    },
+    "section5": {
+      "question": "How are payments made?",
+      "answer": "Payments are 100% secure through our platform. You only release payment when the work is completed and you are satisfied with the result."
     }
   }
 }

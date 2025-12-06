@@ -121,7 +121,11 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
     const newFiles: File[] = [];
     files.forEach((file) => {
       if (file.size > 5 * 1024 * 1024) {
-        showNotify('error', t('notifications.imageTooBig'), t('notifications.imageSizeMessage').replace('{fileName}', file.name));
+        showNotify(
+          'error',
+          t('notifications.imageTooBig'),
+          t('notifications.imageSizeMessage').replace('{fileName}', file.name),
+        );
       } else {
         newFiles.push(file);
       }
@@ -217,15 +221,24 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
 
   const confirmDelete = (jobId: string) => {
     if (!userId) return;
-    showNotify('warning', t('notifications.deleteTitle'), t('notifications.deleteMessage'), async () => {
-      try {
-        await deleteJob({ jobId, fixerId: userId }).unwrap();
-        setTimeout(() => showNotify('success', t('notifications.deleted'), t('notifications.deleteSuccess')), 300);
-      } catch (error: unknown) {
-        showNotify('error', t('notifications.error'), t('notifications.deleteError'));
-        console.error(error);
-      }
-    });
+    showNotify(
+      'warning',
+      t('notifications.deleteTitle'),
+      t('notifications.deleteMessage'),
+      async () => {
+        try {
+          await deleteJob({ jobId, fixerId: userId }).unwrap();
+          setTimeout(
+            () =>
+              showNotify('success', t('notifications.deleted'), t('notifications.deleteSuccess')),
+            300,
+          );
+        } catch (error: unknown) {
+          showNotify('error', t('notifications.error'), t('notifications.deleteError'));
+          console.error(error);
+        }
+      },
+    );
   };
 
   const mapToCardData = (offer: IJobOffer): JobOfferData => ({
@@ -244,7 +257,7 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
     photos: offer.photos || [],
     allImages: offer.photos || [],
     imagenUrl: offer.photos?.[0] || '',
-    status: offer.status ?? true
+    status: offer.status ?? true,
   });
 
   const isSubmitting = isCreating || isUpdating;
@@ -255,7 +268,11 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
       // Refetch para actualizar la lista inmediatamente
       const result = await refetch();
       console.log('Refetch result:', result);
-      showNotify('success', t('notifications.statusChanged'), t('notifications.statusChangedSuccess'));
+      showNotify(
+        'success',
+        t('notifications.statusChanged'),
+        t('notifications.statusChangedSuccess'),
+      );
     } catch (err) {
       console.error('Error toggling status:', err);
       showNotify('error', t('notifications.error'), t('notifications.statusChangeError'));
@@ -285,7 +302,11 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
       if (result) {
         setIsCreatePromoModalOpen(false);
         setSelectedOfferId('');
-        showNotify('success', t('notifications.promoCreated'), t('notifications.promoCreatedSuccess'));
+        showNotify(
+          'success',
+          t('notifications.promoCreated'),
+          t('notifications.promoCreatedSuccess'),
+        );
         await refetch();
       }
     } catch (error) {
@@ -297,11 +318,12 @@ export function JobOffersSection({ readOnly = false }: { readOnly?: boolean }) {
   if (isLoading) return <div className='p-10 text-center animate-pulse'>{t('loading')}</div>;
 
   // Filtrar ofertas según el estado seleccionado
-  const filteredOffers = apiOffers?.filter((offer) => {
-    if (statusFilter === 'all') return true;
-    const isActive = offer.status ?? true;
-    return statusFilter === 'active' ? isActive : !isActive;
-  }) || [];
+  const filteredOffers =
+    apiOffers?.filter((offer) => {
+      if (statusFilter === 'all') return true;
+      const isActive = offer.status ?? true;
+      return statusFilter === 'active' ? isActive : !isActive;
+    }) || [];
 
   return (
     <div className='space-y-6'>

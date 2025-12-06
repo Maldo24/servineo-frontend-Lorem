@@ -83,7 +83,9 @@ export async function verifyToken(token: string): Promise<ApiResponse> {
     // 💥 SI EL BACKEND INDICA BLOQUEO (423)
     // ------------------------------------------------------
     if (status === 423) {
-      const e = new Error((data?.message as string) || 'Cuenta bloqueada temporalmente.') as ApiError;
+      const e = new Error(
+        (data?.message as string) || 'Cuenta bloqueada temporalmente.',
+      ) as ApiError;
       e.locked = true;
       e.lockedUntil = (data?.lockedUntil as string) ?? undefined;
       e.retryAfterSeconds = (data?.retryAfterSeconds as number) ?? undefined;
