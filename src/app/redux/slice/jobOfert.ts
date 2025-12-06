@@ -130,13 +130,7 @@ const jobOffersSlice = createSlice({
         isInitialSearch?: boolean;
       }>,
     ) => {
-      const {
-        total,
-        page,
-        limit,
-        totalPages,
-        listKey = 'offers',
-      } = action.payload;
+      const { total, page, limit, totalPages, listKey = 'offers' } = action.payload;
 
       if (!state.paginaciones[listKey]) {
         state.paginaciones[listKey] = {

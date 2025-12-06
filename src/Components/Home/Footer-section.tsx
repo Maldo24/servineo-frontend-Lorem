@@ -1,33 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 
-interface FooterSectionProps {
-  onRestartTour?: () => void;
-}
-
-export default function FooterSection({ onRestartTour }: FooterSectionProps = {}) {
-  const router = useRouter();
-  const pathname = usePathname();
+export default function FooterSection() {
   const t = useTranslations('footer');
   const locale = useLocale();
-
-  const handleRestartTour = () => {
-    // Borrar la flag de que ya vio el tour
-    localStorage.removeItem('servineoTourVisto');
-
-    // Si NO estamos en el home, redirigir primero
-    if (pathname !== '/' && !pathname.endsWith('/es') && !pathname.endsWith('/en')) {
-      // Redirigir al home y la recarga automática activará el tour
-      router.push('/');
-    } else {
-      localStorage.removeItem('servineoTourVisto');
-      window.location.reload();
-    }
-  };
 
   const empresaLinks = [
     { name: t('company.aboutUs'), path: `/${locale}/info/about` },
@@ -105,14 +84,7 @@ export default function FooterSection({ onRestartTour }: FooterSectionProps = {}
                   </Link>
                 </li>
               ))}
-              <li>
-                <button
-                  onClick={handleRestartTour}
-                  className='footerLink text-left w-full sm:w-auto cursor-pointer hover:text-[#1AA7ED] transition-colors bg-transparent border-none p-0'
-                >
-                  {t('company.restartTour')}
-                </button>
-              </li>
+              {/* Aquí eliminé el <li> del botón "Ver guía nuevamente" */}
             </ul>
           </div>
 

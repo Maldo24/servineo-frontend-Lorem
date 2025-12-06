@@ -30,22 +30,21 @@ interface SuggestionsResponse {
 // ===== OBTENER USERID DESDE LOCALSTORAGE =====
 function getUserId(): string | null {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const userStr = localStorage.getItem('servineo_user');
     if (!userStr) {
       return null;
     }
-    
+
     const userData = JSON.parse(userStr);
     const userId = userData._id || userData.id || null;
-    
-    if (userId) {
 
+    if (userId) {
     } else {
       console.warn('⚠️ servineo_user existe pero no tiene _id ni id');
     }
-    
+
     return userId;
   } catch (error) {
     console.error('❌ Error parsing servineo_user:', error);
@@ -56,13 +55,13 @@ function getUserId(): string | null {
 // ===== OBTENER O CREAR SESSIONID (SOLO PARA ANÓNIMOS) =====
 function getOrCreateSessionId(): string {
   if (typeof window === 'undefined') return '';
-  
+
   // Si hay userId, NO usar sessionId
   const userId = getUserId();
   if (userId) {
     return '';
   }
-  
+
   // Solo crear sessionId si es anónimo
   let sid = localStorage.getItem('search_sessionId');
   if (!sid) {
@@ -75,11 +74,11 @@ function getOrCreateSessionId(): string {
 // ===== OBTENER IDENTIFICADOR (USERID O SESSIONID) =====
 function getIdentifier(): { userId?: string; sessionId?: string } {
   const userId = getUserId();
-  
+
   if (userId) {
     return { userId };
   }
-  
+
   const sessionId = getOrCreateSessionId();
   return { sessionId };
 }
@@ -87,11 +86,11 @@ function getIdentifier(): { userId?: string; sessionId?: string } {
 // Helper para actualizar sessionId desde backend (solo si viene en respuesta)
 function updateSessionIdFromResponse(response: { sessionId?: string }) {
   if (typeof window === 'undefined') return;
-  
+
   // No actualizar si hay userId
   const userId = getUserId();
   if (userId) return;
-  
+
   // Si el backend devuelve un sessionId, actualizarlo
   if (response.sessionId) {
     const currentSid = localStorage.getItem('search_sessionId');
@@ -113,7 +112,7 @@ function buildUrlWithParams(
       searchParams.append(key, String(value));
     }
   });
-  
+
   const queryString = searchParams.toString();
   return queryString ? `${base}?${queryString}` : base;
 }
@@ -124,7 +123,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
     getSearchHistory: builder.query<string[], string>({
       query: (searchTerm = '') => {
         const identifier = getIdentifier();
-        
+
         if (!identifier.userId && !identifier.sessionId) {
           console.error('❌ No se pudo obtener identificador');
           return { url: '/devmaster/offers', method: 'GET' };
@@ -133,12 +132,12 @@ export const searchHistoryApi = baseApi.injectEndpoints({
         const params: Record<string, string> = {
           action: 'getHistory',
         };
-        
+
         // El backend espera 'search' para filtrar, o vacío para todo
         if (searchTerm && searchTerm.trim()) {
           params.search = searchTerm.trim();
         }
-        
+
         if (identifier.userId) {
           params.userId = identifier.userId;
         } else if (identifier.sessionId) {
@@ -164,7 +163,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
     deleteSearchHistory: builder.mutation<{ success: boolean; updatedHistory: string[] }, string>({
       query: (searchTerm) => {
         const identifier = getIdentifier();
-        
+
         if (!identifier.userId && !identifier.sessionId) {
           console.error('❌ No se pudo obtener identificador para delete');
           return { url: '/devmaster/offers', method: 'GET' };
@@ -174,7 +173,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
           action: 'deleteHistory',
           searchTerm: searchTerm,
         };
-        
+
         if (identifier.userId) {
           params.userId = identifier.userId;
         } else if (identifier.sessionId) {
@@ -197,7 +196,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
     clearSearchHistory: builder.mutation<{ success: boolean; updatedHistory: string[] }, void>({
       query: () => {
         const identifier = getIdentifier();
-        
+
         if (!identifier.userId && !identifier.sessionId) {
           console.error('❌ No se pudo obtener identificador para clear');
           return { url: '/devmaster/offers', method: 'GET' };
@@ -206,7 +205,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
         const params: Record<string, string> = {
           action: 'clearAllHistory',
         };
-        
+
         if (identifier.userId) {
           params.userId = identifier.userId;
         } else if (identifier.sessionId) {
@@ -229,7 +228,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
     getSearchSuggestions: builder.query<string[], { query: string; limit?: number }>({
       query: ({ query, limit = 6 }) => {
         const identifier = getIdentifier();
-        
+
         if (!identifier.userId && !identifier.sessionId) {
           console.error('❌ No se pudo obtener identificador para suggestions');
           return { url: '/devmaster/offers', method: 'GET' };
@@ -240,7 +239,7 @@ export const searchHistoryApi = baseApi.injectEndpoints({
           limit: limit,
           record: 'false',
         };
-        
+
         if (identifier.userId) {
           params.userId = identifier.userId;
         } else if (identifier.sessionId) {
